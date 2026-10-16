@@ -581,3 +581,10 @@ html.lenis{scroll-behavior:auto!important}
   .prose .fchips{grid-template-columns:1fr}
   .prose .fchip-txt span{display:block}
 }
+
+/* Hero beach life: stick figure surfers and beach walkers. They belong to the
+   sunset, so they fade out as the scene turns to night, the same way the sun does. */
+.layer-surfers,.layer-walkers{opacity:calc(1 - var(--night) * .9)}
+/* On phones the fixed Call / Text bar covers the bottom of the sand, which
+   clipped the walkers' feet. Lift just the walkers so they stay in view. */
+@media (max-width:767px){.layer-walkers svg{transform:translate(-60%,-14px)}}
