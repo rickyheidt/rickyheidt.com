@@ -430,3 +430,17 @@ html.fx-cursor input,html.fx-cursor textarea,html.fx-cursor select{cursor:auto}
 .card-link .more{color:var(--ocean);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .card-link:hover .more{color:var(--coral)}
 .card-link:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
+
+/* Phone: tighten the relocation guide fan so the rotated cards stay inside the viewport */
+@media (max-width:640px){
+  .gs3{transform:rotate(7deg) translate(7%,4%)}
+  .gs2{transform:rotate(-6deg) translate(-7%,3%)}
+  .fx .guide-stack:hover .gs3{transform:rotate(10deg) translate(12%,2%)}
+  .fx .guide-stack:hover .gs2{transform:rotate(-9deg) translate(-12%,2%)}
+}
+
+/* Very narrow phones: let the Calendly embed span the full width instead of
+   forcing its 320px minimum past the page gutter */
+@media (max-width:360px){
+  .calendly-embed{margin-left:-16px;margin-right:-16px;border-radius:0}
+}
