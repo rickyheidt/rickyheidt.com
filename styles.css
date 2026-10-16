@@ -444,3 +444,13 @@ html.fx-cursor input,html.fx-cursor textarea,html.fx-cursor select{cursor:auto}
 @media (max-width:360px){
   .calendly-embed{margin-left:-16px;margin-right:-16px;border-radius:0}
 }
+
+/* Lenis smooth scroll support rules. Native smooth scrolling fights Lenis, so
+   it is switched off only while Lenis is running (desktop); phones and reduced
+   motion keep the native smooth anchor scrolling from line 21. The stopped rule
+   locks the background when main.js pauses Lenis for the Calendly popup and the
+   photo lightbox. */
+html.lenis,html.lenis body{height:auto}
+html.lenis{scroll-behavior:auto!important}
+.lenis:not(.lenis-autoToggle).lenis-stopped{overflow:hidden}
+.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
