@@ -76,7 +76,7 @@
   }
   Field.prototype.resize = function () {
     this.w = this.host.clientWidth; this.h = this.host.clientHeight;
-    this.dpr = Math.min(window.devicePixelRatio || 1, SMALL ? 1.5 : 1.75);
+    this.dpr = Math.min(window.devicePixelRatio || 1, SMALL ? 1.25 : 1.5);
     this.c.width = Math.round(this.w * this.dpr); this.c.height = Math.round(this.h * this.dpr);
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
   };
@@ -235,6 +235,7 @@
    * 2. GSAP CHOREOGRAPHY
    * ------------------------------------------------------------- */
   G.registerPlugin(ST);
+  ST.config({ limitCallbacks: true, ignoreMobileResize: true });
 
   // Smooth scrolling (desktop only) synced with ScrollTrigger
   var lenis = null;
@@ -316,7 +317,7 @@
       var tl = G.timeline({
         scrollTrigger: {
           trigger: scene, start: function () { return 'top ' + headerH() + 'px'; }, end: '+=140%',
-          pin: true, scrub: 1, anticipatePin: 1,
+          pin: true, scrub: 0.7, anticipatePin: 1, invalidateOnRefresh: true,
           onUpdate: function (st) { setNight(scene, clamp((st.progress - 0.15) / 0.6, 0, 1)); }
         }
       });
@@ -385,7 +386,7 @@
       function dist() { return Math.max(0, track.scrollWidth - window.innerWidth); }
       var tween = G.to(track, { x: function () { return -dist(); }, ease: 'none',
         scrollTrigger: { trigger: sec, start: function () { return 'top ' + headerH() + 'px'; }, end: function () { return '+=' + dist(); },
-          pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1 } });
+          pin: true, scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1 } });
       $$('.h-card', sec).forEach(function (card) {
         var back = $('.h-art.back', card), front = $('.h-art.front', card);
         var o = { trigger: card, containerAnimation: tween, start: 'left right', end: 'right left', scrub: true };
