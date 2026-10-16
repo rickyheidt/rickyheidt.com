@@ -3,18 +3,15 @@
   publish = "."
   functions = "netlify/functions"
 
-[functions]
-  node_bundler = "esbuild"
+[[headers]]
+  for = "/downloads/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
   for = "/*.css"
   [headers.values]
     Cache-Control = "public, max-age=604800"
-
-[[headers]]
-  for = "/downloads/*"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
   for = "/js/*"
