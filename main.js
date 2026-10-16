@@ -59,10 +59,10 @@
   var lb=document.querySelector('.lightbox'); if(!lb) return;
   var img=lb.querySelector('img'), list=[], i=0;
   function show(){ img.src=list[i]; }
-  function open(l){ list=l; i=0; show(); lb.hidden=false; if(window.__lenis) window.__lenis.stop(); }
+  function open(l,s){ list=l; i=s||0; show(); lb.hidden=false; if(window.__lenis) window.__lenis.stop(); }
   function close(){ lb.hidden=true; if(window.__lenis) window.__lenis.start(); }
   document.querySelectorAll('[data-gallery]').forEach(function(m){
-    m.addEventListener('click',function(){ open(m.getAttribute('data-gallery').split('|')); });
+    m.addEventListener('click',function(){ open(m.getAttribute('data-gallery').split('|'), parseInt(m.getAttribute('data-gallery-start')||'0',10)); });
   });
   lb.querySelector('.lb-close').onclick=close;
   lb.querySelector('.lb-prev').onclick=function(){ i=(i-1+list.length)%list.length; show(); };
