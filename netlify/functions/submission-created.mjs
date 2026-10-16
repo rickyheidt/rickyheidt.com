@@ -13,7 +13,7 @@
  */
 
 const FUB_URL = 'https://api.followupboss.com/v1/events';
-const SOURCE = 'rickytherealtorsd.com';
+const SOURCE = 'rickyheidt.com';
 const SYSTEM = 'RickyTheRealtorSD-Website';
 
 function clean(v) {

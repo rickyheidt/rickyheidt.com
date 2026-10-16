@@ -1,6 +1,6 @@
 # Netlify settings
 [build]
-  publish = "site"
+  publish = "."
   functions = "netlify/functions"
 
 [functions]

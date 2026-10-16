@@ -23,4 +23,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://rickytherealtorsd.com/sitemap.xml
+Sitemap: https://rickyheidt.com/sitemap.xml
