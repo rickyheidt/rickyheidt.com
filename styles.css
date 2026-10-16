@@ -494,3 +494,51 @@ html.lenis{scroll-behavior:auto!important}
 .fl-count{position:absolute;right:14px;bottom:14px;background:rgba(10,30,50,.72);color:#fff;font-size:.8rem;letter-spacing:.04em;padding:7px 12px;border-radius:999px;line-height:1}
 .fl-body .facts{margin-bottom:18px;grid-template-columns:repeat(2,1fr)}
 @media (max-width:860px){.fl-grid{grid-template-columns:1fr;gap:22px}}
+
+/* =========================================================
+   MOBILE REFINEMENT
+   The phone layout read as "zoomed in": the hero filled more than the
+   whole screen, headings kept desktop-sized floors, and section padding
+   was tuned for a wide viewport. These rules raise content density and
+   bring tap targets up to 44px. Phone widths only, desktop is untouched.
+   ========================================================= */
+@media (max-width:767px){
+  /* Let real content peek above the fold instead of a full-screen hero.
+     Bottom padding still clears the fixed Call / Text bar. */
+  /* .scene:not(.scene-home) sets min-height:640px at a higher specificity,
+     so the override has to match it rather than use a bare .scene rule. */
+  .scene:not(.scene-home){min-height:70svh}
+  .scene-home{min-height:78svh}
+  .scene:not(.scene-home) .scene-content{padding-top:clamp(28px,4.5vh,100px)}
+  .scene-content{padding-bottom:76px}
+  .scene-home .scene-content{padding-top:clamp(28px,5vh,110px)}
+  .scene-home h1{font-size:clamp(2.05rem,7.2vw,3.2rem)}
+  /* The interior hero h1 carries its own desktop-sized floor */
+  .scene:not(.scene-home) h1{font-size:clamp(1.95rem,6.4vw,2.8rem)}
+}
+@media (max-width:640px){
+  /* Type scale: the clamp floors were sized for desktop */
+  h1{font-size:clamp(1.95rem,6.6vw,2.6rem)}
+  h2{font-size:clamp(1.45rem,5.2vw,1.9rem)}
+  h3{font-size:1.15rem}
+  .lead{font-size:1.06rem}
+  .scene .eyebrow{font-size:.7rem;letter-spacing:.12em}
+  .scene .trust{gap:8px 16px;margin-top:20px;font-size:.84rem}
+
+  /* Vertical rhythm: recover roughly a sixth of the scroll on a long page */
+  section{padding:44px 0}
+  .section-head{margin-bottom:28px}
+  .card{padding:22px}
+  .grid{gap:18px}
+  .facts{gap:12px;margin:20px 0}
+  .fact{padding:14px}
+
+  /* Tap targets to 44px */
+  .nav-links a{padding:.8em .8em;min-height:44px;display:flex;align-items:center}
+  .social a{width:44px;height:44px}
+  .site-footer li{margin-bottom:0}
+  .site-footer li>a{display:block;padding:13px 0}
+  .brand{min-height:44px;display:flex;flex-direction:column;justify-content:center}
+  .crumbs a{display:inline-block;padding:12px 0}
+  .crumbs{margin-bottom:2px}
+}
