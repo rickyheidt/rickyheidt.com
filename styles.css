@@ -542,3 +542,42 @@ html.lenis{scroll-behavior:auto!important}
   .crumbs a{display:inline-block;padding:12px 0}
   .crumbs{margin-bottom:2px}
 }
+
+/* =========================================================
+   FOLLOW STRIP
+   Social links sized to actually get tapped, placed on the pages
+   people already visit rather than on a page they have to find.
+   No scripts, no third party, nothing that can expire.
+   ========================================================= */
+.follow-band{background:linear-gradient(180deg,rgba(32,124,138,.07),transparent)}
+.follow-band .section-head{margin-bottom:26px}
+.fchips{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.fchip{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:#fff;border:1px solid var(--line);text-decoration:none;color:inherit;min-width:0;transition:transform .2s ease,box-shadow .25s ease,border-color .2s ease}
+.fchip:hover{transform:translateY(-3px);box-shadow:0 20px 38px -26px rgba(13,37,54,.55);border-color:var(--sea)}
+.fchip:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
+.fchip-ico{flex:0 0 auto;width:40px;height:40px;border-radius:12px;display:grid;place-items:center}
+.fchip-ico svg{width:21px;height:21px;fill:#fff}
+.f-instagram .fchip-ico{background:linear-gradient(45deg,#f9ce34,#ee2a7b 55%,#6228d7)}
+.f-tiktok .fchip-ico{background:#111}
+.f-youtube .fchip-ico{background:#ff0033}
+.f-facebook .fchip-ico{background:#1877f2}
+.fchip-txt{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.fchip-txt b{font-size:.96rem}
+.fchip-txt span{font-size:.8rem;color:var(--muted,#5b6b74);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Inside the contact page's prose column the chips sit on a tinted card */
+.prose .follow-strip{margin:0 0 18px}
+.prose .fchips{grid-template-columns:repeat(2,1fr);gap:10px}
+
+@media (max-width:980px){.fchips{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){
+  .fchips{gap:10px}
+  .fchip{padding:12px 13px;gap:10px;min-height:44px;border-radius:14px}
+  .fchip-ico{width:36px;height:36px;border-radius:10px}
+  .fchip-ico svg{width:19px;height:19px}
+  /* The handle truncates mid-word at this width. The platform name and icon
+     carry the tap, so drop the handle rather than clip it. */
+  .fchip-txt span{display:none}
+  .fchip-txt b{font-size:1rem}
+  .prose .fchips{grid-template-columns:1fr}
+  .prose .fchip-txt span{display:block}
+}
