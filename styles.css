@@ -473,11 +473,16 @@ html.lenis{scroll-behavior:auto!important}
 /* Listing page: photo grid and spec blocks */
 .listing-head{margin-bottom:26px}
 .listing-note{margin:14px 0 0;font-size:.9rem;color:var(--muted,#5b6b74)}
-.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.shots .shot{padding:0;border:0;background:none;cursor:pointer;border-radius:14px;overflow:hidden;display:block;line-height:0;box-shadow:0 18px 40px -28px rgba(13,37,54,.5)}
+.shots{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+/* An author display value beats the browser's [hidden] rule, so restate it */
+.shots[hidden]{display:none}
+.shots-more{margin-top:14px}
+.shots-toggle{text-align:center;margin:22px 0 0}
+.shots .shot{position:relative;padding:0;border:0;background:none;cursor:pointer;border-radius:14px;overflow:hidden;display:block;line-height:0;box-shadow:0 18px 40px -28px rgba(13,37,54,.5)}
 .shots .shot.wide{grid-column:1 / -1}
 .shots .shot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .shots .shot.wide img{max-height:580px}
+.shot-count{position:absolute;right:14px;bottom:14px;background:rgba(10,30,50,.72);color:#fff;font-size:.82rem;letter-spacing:.04em;padding:8px 13px;border-radius:999px;line-height:1}
 .fx .shots .shot:hover img{transform:scale(1.04)}
 .shots .shot:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
 .ticks{list-style:none;padding:0;margin:0 0 22px}
@@ -485,7 +490,13 @@ html.lenis{scroll-behavior:auto!important}
 .ticks li::before{content:"";position:absolute;left:0;top:.55em;width:9px;height:9px;border-radius:50%;background:var(--sea)}
 .fineprint{font-size:.82rem;color:var(--muted,#5b6b74);line-height:1.6;border-top:1px solid var(--line);padding-top:16px;margin-top:26px}
 @media (max-width:860px){.shots{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:560px){.shots{grid-template-columns:1fr;gap:10px}}
+@media (max-width:560px){
+  .shots{gap:8px}
+  .shots-more{margin-top:8px}
+  .shots .shot{border-radius:10px}
+  .shots .shot.wide img{aspect-ratio:3/2;max-height:none}
+  .shots-toggle .btn{width:100%}
+}
 .listing-callout{background:linear-gradient(135deg,rgba(32,124,138,.08),rgba(232,112,80,.08));border:1px solid var(--line);border-left:4px solid var(--coral);border-radius:12px;padding:16px 18px;margin:0 0 26px}
 .listing-callout a{color:inherit;text-decoration:none}
 .listing-callout a:hover{text-decoration:underline}

@@ -64,6 +64,13 @@
   document.querySelectorAll('[data-gallery]').forEach(function(m){
     m.addEventListener('click',function(){ open(m.getAttribute('data-gallery').split('|'), parseInt(m.getAttribute('data-gallery-start')||'0',10)); });
   });
+  // One shared photo list for a whole gallery (instead of repeating it on every tile)
+  document.querySelectorAll('[data-gallery-group]').forEach(function(g){
+    var list=g.getAttribute('data-gallery-group').split('|');
+    g.querySelectorAll('[data-gallery-index]').forEach(function(m){
+      m.addEventListener('click',function(){ open(list, parseInt(m.getAttribute('data-gallery-index'),10)||0); });
+    });
+  });
   lb.querySelector('.lb-close').onclick=close;
   lb.querySelector('.lb-prev').onclick=function(){ i=(i-1+list.length)%list.length; show(); };
   lb.querySelector('.lb-next').onclick=function(){ i=(i+1)%list.length; show(); };
@@ -80,5 +87,28 @@
     var t=e.target, box=t&&t.closest?t.closest('.sticky'):null;
     if(!box||box.scrollHeight<=box.clientHeight+1) return;
     if(t.scrollIntoView) t.scrollIntoView({block:'nearest',inline:'nearest'});
+  });
+})();
+
+// "See all photos" style toggles. A button with data-more-toggle shows or hides the block
+// named in aria-controls. Photos inside it do not load until it is opened.
+(function(){
+  document.querySelectorAll('[data-more-toggle]').forEach(function(btn){
+    var box=document.getElementById(btn.getAttribute('aria-controls')); if(!box) return;
+    var lbl=btn.querySelector('.lbl'), more=btn.getAttribute('data-more-label'), less=btn.getAttribute('data-less-label');
+    btn.addEventListener('click',function(){
+      var open=btn.getAttribute('aria-expanded')==='true';
+      box.hidden=open; btn.setAttribute('aria-expanded',open?'false':'true');
+      if(lbl) lbl.textContent=open?more:less;
+      // The page just changed length. Smooth scrolling still holds the old position and
+      // length until it re-measures, which sent "Show fewer photos" to the wrong spot.
+      if(window.__lenis) window.__lenis.resize();
+      if(window.ScrollTrigger) window.ScrollTrigger.refresh();
+      if(open){
+        // collapsing from far down the page: bring the top of the gallery back into view
+        var top=document.getElementById('gallery');
+        if(top){ if(window.__lenis) window.__lenis.scrollTo(top,{offset:-90}); else top.scrollIntoView({behavior:'smooth',block:'start'}); }
+      }
+    });
   });
 })();
