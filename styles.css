@@ -144,7 +144,13 @@ section{padding:84px 0}
 .prose h3{margin-top:1.4em}
 .prose>:first-child{margin-top:0}
 .layout{display:grid;grid-template-columns:1fr 360px;gap:56px;align-items:start}
-.sticky{position:sticky;top:96px}
+/* The pinned sidebar (booking card plus form) is about 1,040px tall, taller than most
+   laptop screens. Pinned and taller than the screen, its lower half could never come
+   into view, and focusing a lower field made the browser scroll the page in circles
+   trying to reveal it. Cap it to the space under the header and let it scroll on its
+   own. The padding and negative margin leave room for the card shadows that would
+   otherwise be clipped, without moving anything. */
+.sticky{position:sticky;top:96px;max-height:calc(100vh - 116px);max-height:calc(100dvh - 116px);overflow-y:auto;overscroll-behavior:auto;scrollbar-width:thin;scrollbar-color:rgba(13,37,54,.28) transparent;padding:4px 6px 26px;margin:-4px -6px 0}
 .callout{background:var(--sea-light);border-radius:var(--radius);padding:22px 24px;margin:24px 0}
 .callout p:last-child{margin:0}
 .note{font-size:.85rem;color:var(--ink-soft)}
@@ -199,7 +205,7 @@ section{padding:84px 0}
 @media (max-width:980px){
   .g3,.g4{grid-template-columns:repeat(2,1fr)}
   .split,.layout,.cta-band{grid-template-columns:1fr}
-  .sticky{position:static}
+  .sticky{position:static;max-height:none;overflow:visible;padding:0;margin:0}
   .foot-grid{grid-template-columns:1fr 1fr}
   .facts{grid-template-columns:repeat(2,1fr)}
 }

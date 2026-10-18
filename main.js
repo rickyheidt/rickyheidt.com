@@ -70,3 +70,15 @@
   lb.addEventListener('click',function(e){ if(e.target===lb) close(); });
   document.addEventListener('keydown',function(e){ if(lb.hidden) return; if(e.key==='Escape') close(); if(e.key==='ArrowRight') lb.querySelector('.lb-next').click(); if(e.key==='ArrowLeft') lb.querySelector('.lb-prev').click(); });
 })();
+
+// Forms in the pinned sidebar scroll inside their own box on shorter screens. When a
+// field is tabbed or clicked into, scroll that box just enough to show the whole field,
+// so it is never left half hidden at the bottom edge. Does nothing where the box is not
+// scrollable (phones, tablets, very tall screens).
+(function(){
+  document.addEventListener('focusin',function(e){
+    var t=e.target, box=t&&t.closest?t.closest('.sticky'):null;
+    if(!box||box.scrollHeight<=box.clientHeight+1) return;
+    if(t.scrollIntoView) t.scrollIntoView({block:'nearest',inline:'nearest'});
+  });
+})();

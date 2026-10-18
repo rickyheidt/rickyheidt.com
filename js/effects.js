@@ -240,7 +240,9 @@
   // Smooth scrolling (desktop only) synced with ScrollTrigger
   var lenis = null;
   if (window.Lenis && FINE && !SMALL) {
-    lenis = new window.Lenis({ lerp: 0.085, smoothWheel: true });
+    // allowNestedScroll lets a box that can scroll on its own (the pinned form sidebar)
+    // scroll natively while it has room, then hands the wheel back to the page at its end.
+    lenis = new window.Lenis({ lerp: 0.085, smoothWheel: true, allowNestedScroll: true });
     window.__lenis = lenis;
     lenis.on('scroll', ST.update);
     G.ticker.add(function (time) { lenis.raf(time * 1000); });
