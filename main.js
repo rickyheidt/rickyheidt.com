@@ -198,3 +198,17 @@
     if(window.ScrollTrigger) window.ScrollTrigger.refresh();
   });
 })();
+
+// Soft spotlight on cards: a faint glow follows the pointer. Mouse and trackpad only,
+// off for reduced motion, and it never changes the layout.
+(function(){
+  if(!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.querySelectorAll('.hood,.nb,.hl,.fcard,.fact').forEach(function(c){
+    c.classList.add('glow');
+    c.addEventListener('pointermove',function(e){
+      var r=c.getBoundingClientRect();
+      c.style.setProperty('--mx',(e.clientX-r.left)+'px'); c.style.setProperty('--my',(e.clientY-r.top)+'px');
+    });
+  });
+})();

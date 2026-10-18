@@ -839,3 +839,9 @@ html.scroll-locked{overflow:hidden;padding-right:var(--sbw,0)}
 .hm-stage{position:relative}
 .hm-tip{position:absolute;z-index:4;pointer-events:none;background:rgba(13,37,54,.94);color:#fff;font:600 .8rem/1 var(--sans);padding:.55em .9em .55em 1.9em;border-radius:999px;white-space:nowrap;box-shadow:0 8px 18px -8px rgba(0,0,0,.5)}
 .hm-tip::before{content:"";position:absolute;left:.75em;top:50%;width:.7em;height:.7em;margin-top:-.35em;border-radius:50%;background:var(--c,#fff);border:1.5px solid #fff}
+
+/* Card spotlight (see main.js) */
+.glow{position:relative;overflow:hidden}
+.glow::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s ease;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(43,138,143,.15),transparent 70%)}
+.glow:hover::before{opacity:1}
+.hood.glow::before{background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.26),transparent 70%)}
