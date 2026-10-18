@@ -605,3 +605,17 @@ html.lenis{scroll-behavior:auto!important}
 /* On phones the fixed Call / Text bar covers the bottom of the sand, which
    clipped the walkers' feet. Lift just the walkers so they stay in view. */
 @media (max-width:767px){.layer-walkers svg{transform:translate(-60%,-14px)}}
+
+.tour{margin-top:56px}
+.tour-head{text-align:center;max-width:620px;margin:0 auto 22px}
+.tour-head h2{margin:6px 0 8px}
+.tour-head p{margin:0;color:var(--muted,#51667a)}
+.tour-frame{position:relative;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#0d2536;box-shadow:0 30px 60px -30px rgba(13,37,54,.55)}
+.tour-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.tour-start{position:absolute;inset:0;width:100%;padding:0;border:0;background:none;cursor:pointer;display:block}
+.tour-start img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.72)}
+.tour-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:10px;background:var(--coral,#e2725b);color:#fff;font-weight:600;padding:16px 26px;border-radius:999px;min-height:48px;box-shadow:0 14px 30px -10px rgba(0,0,0,.5);white-space:nowrap}
+.tour-start:focus-visible{outline:3px solid var(--coral,#e2725b);outline-offset:-3px}
+.tour-alt{text-align:center;margin:14px 0 0;font-size:.95rem}
+.tour-alt a{display:inline-block;padding:10px 6px}
+@media (max-width:560px){.tour{margin-top:40px}.tour-frame{aspect-ratio:4/3;border-radius:12px}.tour-play{padding:14px 20px}}

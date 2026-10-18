@@ -112,3 +112,21 @@
     });
   });
 })();
+
+(function(){
+  var f=document.querySelector('[data-tour-src]');
+  if(!f)return;
+  var b=f.querySelector('[data-tour-start]');
+  if(!b)return;
+  b.addEventListener('click',function(){
+    var i=document.createElement('iframe');
+    i.src=f.getAttribute('data-tour-src');
+    i.title='Interactive 3D tour of 16046 Summer Sage Road, Poway';
+    i.allow='fullscreen; xr-spatial-tracking; gyroscope; accelerometer';
+    i.setAttribute('allowfullscreen','');
+    i.referrerPolicy='strict-origin-when-cross-origin';
+    f.appendChild(i);
+    f.removeChild(b);
+    i.focus();
+  });
+})();
