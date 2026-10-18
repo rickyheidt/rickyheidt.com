@@ -611,8 +611,8 @@ html.lenis{scroll-behavior:auto!important}
 .layer svg.life-ready .life{opacity:1}
 
 /* Page locked behind an open overlay (see __scrollLock in main.js) */
-html.scroll-locked,html.scroll-locked body{overflow:hidden}
-html.scroll-locked{padding-right:var(--sbw,0)}
+/* Lock the page itself only. Putting overflow:hidden on the body as well turns it into its own scroll box, which carries the sticky header (and the menu button) away. */
+html.scroll-locked{overflow:hidden;padding-right:var(--sbw,0)}
 .lightbox{overscroll-behavior:contain;touch-action:none}
 @media (max-width:860px){.nav-links{max-height:calc(100vh - 72px);max-height:calc(100dvh - 72px);overflow-y:auto;overscroll-behavior:contain}}
 
