@@ -1,7 +1,7 @@
 /*!
  * Ricky Heidt site motion layer
  * Parallax coastal scene, cursor reactive particles (sea spray at sunset,
- * bioluminescence at night), scroll choreography, tilt, magnetic buttons.
+ * bioluminescence at night), scroll choreography, magnetic buttons.
  * Everything is progressive enhancement: with JS off or reduced motion on,
  * all content stays visible and readable.
  */
@@ -249,30 +249,6 @@
     G.ticker.lagSmoothing(0);
   }
 
-  // Split headings into masked words
-  function split(el) {
-    if (el.getAttribute('data-split-done')) return $$('.w>span', el);
-    var walker = [], nodes = Array.prototype.slice.call(el.childNodes);
-    el.innerHTML = '';
-    nodes.forEach(function (node) {
-      if (node.nodeType === 3) {
-        node.textContent.split(/(\s+)/).forEach(function (part) {
-          if (!part) return;
-          if (/^\s+$/.test(part)) { el.appendChild(document.createTextNode(' ')); return; }
-          var w = document.createElement('span'); w.className = 'w';
-          var i = document.createElement('span'); i.textContent = part;
-          w.appendChild(i); el.appendChild(w); walker.push(i);
-        });
-      } else {
-        var w2 = document.createElement('span'); w2.className = 'w';
-        var i2 = document.createElement('span'); i2.appendChild(node);
-        w2.appendChild(i2); el.appendChild(w2); walker.push(i2);
-      }
-    });
-    el.setAttribute('data-split-done', '1');
-    return walker;
-  }
-
   // Scroll progress bar
   var bar = document.createElement('div'); bar.className = 'progress'; document.body.appendChild(bar);
   G.to(bar, { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: 0.3 } });
@@ -283,18 +259,8 @@
     var layers = $$('.layer', scene);
     var content = $('.scene-content', scene);
     var copy = $('.scene-copy', scene) || content;
-    var words = split($('h1', scene));
-    var wordBoxes = words.map(function (w) { return w.parentElement; });
-    var rest = $$('.scene-copy > *:not(h1)', scene);
-
-    // Intro: the scene assembles from back to front, the title rises word by word
-    var intro = G.timeline({ defaults: { ease: 'expo.out' } });
-    layers.forEach(function (l, i) {
-      var d = parseFloat(l.getAttribute('data-depth')) || 0;
-      intro.from($('.layer-art', l), { y: 60 + d * 260, duration: 1.8 }, i * 0.06);
-    });
-    intro.from(words, { yPercent: 115, rotate: 6, duration: 1.2, stagger: 0.06 }, 0.25)
-         .from(rest, { y: 34, opacity: 0, duration: 1, stagger: 0.08 }, 0.6);
+    // The hero is left alone on load: nothing drops, rises or fades in, so it
+    // looks the same on every page and does not flicker between them.
 
     // Mouse depth parallax on every layer, content counter-moves
     var movers = layers.map(function (l) {
@@ -330,7 +296,6 @@
         var d = parseFloat(l.getAttribute('data-depth')) || 0;
         tl.to(l, { scale: 1 + d * 0.55, y: d * 140, transformOrigin: '50% 100%', ease: 'none', duration: 1 }, 0);
       });
-      tl.to(wordBoxes, { y: function (i) { return -(90 + i * 46); }, rotate: function (i) { return i % 2 ? -7 : 7; }, ease: 'none', stagger: 0.03, duration: 0.5 }, 0.05);
       tl.to(copy, { y: -70, opacity: 0, ease: 'none', duration: 0.32 }, 0.04);
     } else {
       // Interior pages and phones: layers separate as the hero scrolls away
@@ -344,22 +309,14 @@
     }
   });
 
-  /* --- Section headings: masked word reveals --- */
-  $$('main section:not(.scene) h2').forEach(function (h) {
-    var w = split(h);
-    G.from(w, { yPercent: 115, rotate: 5, duration: 1.1, ease: 'expo.out', stagger: 0.045,
-      scrollTrigger: { trigger: h, start: 'top 88%', once: true } });
-  });
-
-  /* --- Staggered reveals with a little 3D fall --- */
-  $$('[data-stagger]').forEach(function (g) {
-    var flat = g.querySelector('.hood, .sale');
-    G.from(g.children, { y: 70, opacity: 0, rotationX: flat ? 0 : -28, transformOrigin: '50% 0%', transformPerspective: 900,
-      duration: 1.2, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: g, start: 'top 86%', once: true } });
-  });
-  $$('[data-reveal]').forEach(function (el) {
-    G.from(el, { y: 60, opacity: 0, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
-  });
+  /* --- Content stays put on load; things below the fold fade in, nothing moves --- */
+  function inView(el) { var r = el.getBoundingClientRect(); return r.top < window.innerHeight * 0.98 && r.bottom > 0; }
+  function fadeIn(targets, trigger, stagger) {
+    G.from(targets, { opacity: 0, duration: 0.6, ease: 'power1.out', stagger: stagger || 0,
+      scrollTrigger: { trigger: trigger, start: 'top 92%', once: true } });
+  }
+  $$('[data-stagger]').forEach(function (g) { if (!inView(g)) fadeIn(g.children, g, 0.05); });
+  $$('[data-reveal]').forEach(function (el) { if (!inView(el)) fadeIn(el, el); });
 
   /* --- Scroll speed parallax (orbs, portrait, decorative) --- */
   $$('[data-speed]').forEach(function (el) {
@@ -399,21 +356,8 @@
     });
   });
 
-  /* --- 3D tilt with glare, magnetic buttons, custom cursor (mouse only) --- */
+  /* --- Magnetic buttons and custom cursor (mouse only) --- */
   if (FINE) {
-    $$('[data-tilt]').forEach(function (el) {
-      var glare = document.createElement('span'); glare.className = 'glare'; el.appendChild(glare);
-      var max = parseFloat(el.getAttribute('data-tilt')) || 12;
-      var rx = G.quickTo(el, 'rotationX', { duration: 0.6, ease: 'power3' }), ry = G.quickTo(el, 'rotationY', { duration: 0.6, ease: 'power3' });
-      G.set(el, { transformPerspective: 900 });
-      el.addEventListener('pointermove', function (e) {
-        var r = el.getBoundingClientRect(), px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
-        ry((px - 0.5) * max * 2); rx(-(py - 0.5) * max * 2);
-        el.style.setProperty('--gx', (px * 100).toFixed(1) + '%'); el.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
-      });
-      el.addEventListener('pointerleave', function () { rx(0); ry(0); });
-    });
-
     $$('.btn').forEach(function (b) {
       var xTo = G.quickTo(b, 'x', { duration: 0.5, ease: 'power3' }), yTo = G.quickTo(b, 'y', { duration: 0.5, ease: 'power3' });
       b.addEventListener('pointermove', function (e) {
@@ -437,7 +381,7 @@
     document.addEventListener('pointerover', function (e) {
       var t = e.target;
       if (t.closest('.calendly-embed, .calendly-overlay, .calendly-popup')) { doc.classList.remove('fx-cursor'); return; }
-      ring.classList.toggle('big', !!t.closest('a, button, summary, [data-tilt], label'));
+      ring.classList.toggle('big', !!t.closest('a, button, summary, label'));
       ring.classList.toggle('dark', !!t.closest('.scene, .section-ink, .bio, .hgal, .site-footer, .cta-band'));
     });
     document.addEventListener('mouseleave', function () { doc.classList.remove('fx-cursor'); });
