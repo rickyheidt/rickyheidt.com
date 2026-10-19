@@ -387,6 +387,8 @@ html.fx-cursor input,html.fx-cursor textarea,html.fx-cursor select{cursor:auto}
 .sale:hover .sale-media img{transform:scale(1.05)}
 .sale-media .h-art{left:-6%;right:-6%}
 .sold-badge{position:absolute;top:14px;left:14px;z-index:2;background:var(--coral);color:#fff;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+.sold-badge.live{background:var(--sea)}
+a.sale-media{display:block}
 .ph-count{position:absolute;bottom:12px;right:12px;z-index:2;background:rgba(13,37,54,.7);color:#fff;font-size:.75rem;padding:4px 10px;border-radius:999px}
 .sale-body{padding:22px 24px 24px;display:flex;flex-direction:column;gap:2px;flex:1}
 .sale-role{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sea-text)}
