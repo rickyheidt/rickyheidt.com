@@ -344,7 +344,7 @@
       track.scrollLeft = 0;
       function dist() { return Math.max(0, track.scrollWidth - window.innerWidth); }
       var tween = G.to(track, { x: function () { return -dist(); }, ease: 'none',
-        scrollTrigger: { trigger: sec, start: function () { return 'top ' + headerH() + 'px'; }, end: function () { return '+=' + dist(); },
+        scrollTrigger: { trigger: sec, start: function () { return 'top ' + headerH() + 'px'; }, end: function () { return '+=' + Math.round(dist() * 0.6); },   // the cards travel a bit faster than the page scrolls
           pin: true, scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1 } });
       $$('.h-card', sec).forEach(function (card) {
         var back = $('.h-art.back', card), front = $('.h-art.front', card);

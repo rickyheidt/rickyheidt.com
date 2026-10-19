@@ -1,7 +1,8 @@
 /* Neighborhood map for neighborhoods.html.
  * An illustrated map of the San Diego coast: every community is its own colored shape.
  * Hover an area to light it up, click it to zoom in, then pick a neighborhood for details
- * and a link to its guide. Hand drawn and simplified, with no tiles and no outside library.
+ * and a link to its guide. Once zoomed in, drag (or use the arrow keys) to move around.
+ * Hand drawn and simplified, with no tiles and no outside library.
  */
 (function () {
   'use strict';
@@ -15,13 +16,14 @@
 
   // Five areas, five colors, taken from the site palette: coral, sage, indigo, teal and amber.
   var AREAS = {
-    coast:   { name: 'North County coast',    color: '#e2725b', blurb: 'Beach cities from Del Mar to Oceanside, linked by I-5 and the Coaster train.' },
-    inland:  { name: 'North County inland',   color: '#7f9d5a', blurb: 'Foothill and valley communities along SR-78, SR-76 and I-15, from Rancho Santa Fe and Poway to Fallbrook.' },
+    coast:   { name: 'North County Coast',    color: '#e2725b', blurb: 'Beach cities from Del Mar to Oceanside, linked by I-5 and the Coaster train.' },
+    inland:  { name: 'North County Inland',   color: '#7f9d5a', blurb: 'Foothill and valley communities along SR-78, SR-76 and I-15, from Rancho Santa Fe and Poway to Fallbrook.' },
     central: { name: 'Central San Diego',     color: '#5668b3', blurb: 'The urban core and the neighborhoods around Downtown, Balboa Park and Mission Valley.' },
-    beach:   { name: 'Beach and bay',         color: '#2b8a8f', blurb: 'Ocean and bayfront neighborhoods from La Jolla south to Point Loma.' },
-    north:   { name: 'North city and inland', color: '#d99a2b', blurb: 'The north side of the City of San Diego, from University City to Rancho Bernardo.' }
+    beach:   { name: 'Beach and Bay',         color: '#2b8a8f', blurb: 'Ocean and bayfront neighborhoods from La Jolla south to Point Loma.' },
+    north:   { name: 'North City and Inland', color: '#d99a2b', blurb: 'The north side of the City of San Diego, from University City to Rancho Bernardo.' }
   };
   var ORDER = ['coast', 'inland', 'central', 'beach', 'north'];
+  var UNINC = { 'rancho-santa-fe': 1, fallbrook: 1, bonsall: 1 };   // governed by the county, not a city
   // Where each area's name sits on the full map (lat, lon). Written in the sea or open land beside it.
   // ---- Geography: [lat, lon]. Simplified on purpose; a guide to where things are, not a survey. ----
   var BB = { n: 33.43, s: 32.53, w: -117.60, e: -116.95 }, H = 1000;
@@ -36,22 +38,22 @@
   var COVER = [[33.43, -117.33], [33.43, -116.98], [32.93, -116.98], [32.93, -117.05], [32.69, -117.05], [32.69, -117.35], [33.26, -117.50], [33.26, -117.33]];
   
 
-  // Major destinations: [name, lat, lon, icon, shown on the full map, neighborhoods it is near]
+  // Major destinations: [name, lat, lon, icon, shown on the full map, neighborhoods it is near, one line about it]
   var DESTS = [
-    ['Downtown San Diego', 32.7157, -117.1611, 'star', 1, ['downtown-san-diego', 'little-italy']],
-    ['San Diego International Airport', 32.7338, -117.1933, 'plane', 1, ['little-italy', 'point-loma', 'downtown-san-diego']],
-    ['Balboa Park and San Diego Zoo', 32.7341, -117.1470, 'tree', 1, ['hillcrest', 'north-park', 'south-park', 'university-heights', 'downtown-san-diego']],
-    ['Petco Park', 32.7076, -117.1570, 'stadium', 0, ['downtown-san-diego']],
-    ['SeaWorld San Diego', 32.7648, -117.2266, 'star', 0, ['pacific-beach', 'mission-beach']],
-    ['Snapdragon Stadium', 32.7837, -117.1197, 'stadium', 0, ['mission-valley']],
-    ['UC San Diego', 32.8801, -117.2340, 'cap', 1, ['la-jolla', 'university-city']],
-    ['Torrey Pines State Natural Reserve', 32.9236, -117.2569, 'tree', 0, ['del-mar', 'la-jolla']],
-    ['Del Mar Fairgrounds', 32.9761, -117.2579, 'pin', 0, ['del-mar']],
-    ['LEGOLAND California', 33.1260, -117.3117, 'star', 1, ['carlsbad']],
-    ['Oceanside Pier', 33.1936, -117.3837, 'anchor', 0, ['oceanside']],
-    ['San Diego Zoo Safari Park', 33.0970, -116.9967, 'tree', 1, ['escondido']],
-    ['Cabrillo National Monument', 32.6736, -117.2410, 'anchor', 0, ['point-loma']]
-  ].map(function (d) { var q = P(d[1], d[2]); return { n: d[0], x: q[0], y: q[1], icon: d[3], major: !!d[4], near: d[5] }; });
+    ['Downtown San Diego', 32.7157, -117.1611, 'star', 1, ['downtown-san-diego', 'little-italy'], 'The city center, with the waterfront, the Gaslamp Quarter and Petco Park.'],
+    ['San Diego International Airport', 32.7338, -117.1933, 'plane', 1, ['little-italy', 'point-loma', 'downtown-san-diego'], 'The region\'s main commercial airport, on the bay between Little Italy and Point Loma.'],
+    ['Balboa Park and San Diego Zoo', 32.7341, -117.1470, 'tree', 1, ['hillcrest', 'north-park', 'south-park', 'university-heights', 'downtown-san-diego'], 'A large city park with museums, gardens and the San Diego Zoo.'],
+    ['Petco Park', 32.7076, -117.1570, 'stadium', 0, ['downtown-san-diego'], 'The downtown ballpark and home of the San Diego Padres.'],
+    ['SeaWorld San Diego', 32.7648, -117.2266, 'star', 0, ['pacific-beach', 'mission-beach'], 'A marine theme park on Mission Bay.'],
+    ['Snapdragon Stadium', 32.7837, -117.1197, 'stadium', 0, ['mission-valley'], 'The Mission Valley stadium that is home to San Diego State football.'],
+    ['UC San Diego', 32.8801, -117.2340, 'cap', 1, ['la-jolla', 'university-city'], 'The University of California campus in La Jolla.'],
+    ['Torrey Pines State Natural Reserve', 32.9236, -117.2569, 'tree', 0, ['del-mar', 'la-jolla'], 'Coastal trails, sandstone bluffs and the rare Torrey pine.'],
+    ['Del Mar Fairgrounds', 32.9761, -117.2579, 'pin', 0, ['del-mar'], 'Home of the San Diego County Fair and the Del Mar racetrack.'],
+    ['LEGOLAND California', 33.1260, -117.3117, 'star', 1, ['carlsbad'], 'A family theme park in Carlsbad.'],
+    ['Oceanside Pier', 33.1936, -117.3837, 'anchor', 0, ['oceanside'], 'The long wooden pier at the foot of downtown Oceanside.'],
+    ['San Diego Zoo Safari Park', 33.0970, -116.9967, 'tree', 1, ['escondido'], 'A wildlife park in the San Pasqual Valley near Escondido.'],
+    ['Cabrillo National Monument', 32.6736, -117.2410, 'anchor', 0, ['point-loma'], 'A national monument at the tip of Point Loma, with bay views and tide pools.']
+  ].map(function (d, i) { var q = P(d[1], d[2]); return { i: i, n: d[0], x: q[0], y: q[1], icon: d[3], major: !!d[4], near: d[5], b: d[6] }; });
   var ICONS = {
     star: 'M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z',
     plane: 'M21 15v-2l-8-5V3.5a1.5 1.5 0 00-3 0V8l-8 5v2l8-2.5V18l-2 1.5V21l3.5-1 3.5 1v-1.5L13 18v-5.5z',
@@ -74,11 +76,11 @@
   var count = {}; ORDER.forEach(function (g) { count[g] = data.filter(function (d) { return d.g === g; }).length; });
 
   var regionsBar = root.querySelector('.hm-regions'), svgHost = root.querySelector('.hm-svg'), card = root.querySelector('.hm-card'), list = root.querySelector('.hm-list');
-  var state = { area: null, sel: null, q: '' };
+  var state = { area: null, sel: null, dest: null, q: '' };
   var stage = root.querySelector('.hm-stage'), tip = html('div', 'hm-tip', stage); tip.hidden = true;
 
   // ---- build the static map once ----
-  var svg = svgNS('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'group', 'aria-label': 'Illustrated map of San Diego County communities. Choose an area, then a neighborhood.', focusable: 'false' }, svgHost);
+  var svg = svgNS('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'group', 'aria-label': 'Illustrated map of San Diego County communities. Choose an area, then a neighborhood. When zoomed in, drag the map or use the arrow keys to move around, and the plus and minus keys to zoom.', focusable: 'false' }, svgHost);
   var defs = svgNS('defs', {}, svg), og = svgNS('linearGradient', { id: 'hmsea', x1: 0, y1: 0, x2: 1, y2: 0 }, defs);
   svgNS('stop', { offset: 0, 'stop-color': '#4d9fd2' }, og); svgNS('stop', { offset: 1, 'stop-color': '#8ccbea' }, og);
   svgNS('rect', { x: -W, y: -H, width: W * 3, height: H * 3, fill: '#ebe8e2' }, svg);
@@ -136,32 +138,40 @@
   // destinations: small round badges that stay the same size at every zoom
   DESTS.forEach(function (d) {
     var g = svgNS('g', { 'class': 'hm-dest' + (d.major ? ' major' : ''), tabindex: 0, role: 'button', 'aria-label': d.n + ', destination' }, gDests);
-    svgNS('circle', { r: 20, fill: 'transparent' }, g);
+    svgNS('circle', { r: 15, fill: 'transparent' }, g);
     svgNS('circle', { 'class': 'hm-dest-c', r: 11.5 }, g);
     svgNS('path', { 'class': 'hm-dest-i', d: ICONS[d.icon], transform: 'translate(-7 -7) scale(.58)' }, g);
     var lab = svgNS('g', { 'class': 'hm-dest-l' }, g), w = Math.round(d.n.length * 6.5 + 18);
     svgNS('rect', { x: 0, y: -11, width: w, height: 22, rx: 11 }, lab); var t = svgNS('text', { x: 9, y: 4 }, lab); t.textContent = d.n; lab._w = w;
-    d.el = g; d.lab = lab; d.w = w; scaled.push([g, d.x, d.y]);
-    g.addEventListener('click', function () { onDest(d); });
-    g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onDest(d); } });
+    var cnt = svgNS('g', { 'class': 'hm-dest-n', transform: 'translate(10 -10)' }, g); svgNS('circle', { r: 8 }, cnt); d.cntT = svgNS('text', { x: 0, y: 3.5 }, cnt);
+    d.el = g; d.lab = lab; d.w = w; d.cnt = cnt; scaled.push([g, d.x, d.y]);
+    function act() { if (d.group && d.group.length > 1) zoomGroup(d.group); else onDest(d); }
+    g.addEventListener('click', act);
+    g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); } });
     g.addEventListener('mouseenter', function () { g.classList.add('show'); gDests.appendChild(g); });
     g.addEventListener('mouseleave', function () { g.classList.remove('show'); });
     g.addEventListener('focus', function () { g.classList.add('show'); });
     g.addEventListener('blur', function () { g.classList.remove('show'); });
   });
 
-  // ---- viewport: units per pixel keeps text a constant size while zooming ----
-  var view = { x: 0, y: 0, w: W, h: H }, anim = null;
-  function pxWidth() { var r = svg.getBoundingClientRect(); return r.width || 440; }
+  // ---- viewport: the camera is the svg viewBox, and text and badges keep a constant pixel size ----
+  var view = { x: 0, y: 0, w: W, h: H }, anim = null, MIN_W = W / 12;
+  // Where the map sits on screen. The svg keeps the map's shape, so one scale fits both axes.
+  function frame() {
+    var r = svg.getBoundingClientRect(), w = r.width || 440, h = r.height || w * H / W, s = Math.min(w / view.w, h / view.h);
+    return { x: r.left + (w - view.w * s) / 2, y: r.top + (h - view.h * s) / 2, s: s, w: view.w * s, h: view.h * s };
+  }
+  // Keep the camera on the map: never zoomed out past the whole map, never dragged off its edges.
+  function clampView(v) {
+    var w = Math.max(MIN_W, Math.min(W, v.w)), h = w * H / W;
+    return { x: Math.max(0, Math.min(W - w, v.x)), y: Math.max(0, Math.min(H - h, v.y)), w: w, h: h };
+  }
+  function zoomed() { return view.w < W - .5; }
   function applyView() {
     svg.setAttribute('viewBox', view.x.toFixed(1) + ' ' + view.y.toFixed(1) + ' ' + view.w.toFixed(1) + ' ' + view.h.toFixed(1));
-    var k = view.w / pxWidth();
-    var pw = pxWidth();
-    scaled.forEach(function (s) {
-      var x = s[1];
-      if (s[3]) { var px = Math.max(s[3], Math.min(pw - s[3], (x - view.x) / k)); x = view.x + px * k; }   // keep area names on the map
-      s[0].setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + s[2].toFixed(1) + ') scale(' + k.toFixed(4) + ')');
-    });
+    var k = 1 / frame().s;
+    scaled.forEach(function (s) { s[0].setAttribute('transform', 'translate(' + s[1].toFixed(1) + ' ' + s[2].toFixed(1) + ') scale(' + k.toFixed(4) + ')'); });
+    syncControls();
   }
   function boxFor(area) {
     if (!area) return { x: 0, y: 0, w: W, h: H };
@@ -175,20 +185,53 @@
     if (w >= W || h >= H) return { x: 0, y: 0, w: W, h: H };
     return { x: Math.max(0, Math.min(W - w, cx - w / 2)), y: Math.max(0, Math.min(H - h, cy - h / 2)), w: w, h: h };
   }
-  function goTo(box, done) {
-    if (anim) cancelAnimationFrame(anim);
+  function homeBox() { return boxFor(state.q ? null : state.area); }
+  function sameBox(a, b) { return Math.abs(a.x - b.x) < 1 && Math.abs(a.y - b.y) < 1 && Math.abs(a.w - b.w) < 1; }
+  function inView(p, m) { m = m || 0; return p.x > view.x + view.w * m && p.x < view.x + view.w * (1 - m) && p.y > view.y + view.h * m && p.y < view.y + view.h * (1 - m); }
+  function centerOn(p, w) { w = w || view.w; return clampView({ x: p.x - w / 2, y: p.y - w * H / W / 2, w: w }); }
+  function stopAnim() { if (anim) { cancelAnimationFrame(anim); anim = null; } root.classList.remove('hm-anim'); }
+  function goTo(box, done, dur) {
+    stopAnim(); box = clampView(box);
     if (reduce.matches) { view = box; applyView(); done && done(); return; }
-    var from = { x: view.x, y: view.y, w: view.w, h: view.h }, t0 = null, dur = 560;
-    gLabels.style.opacity = 0;
+    var from = view, t0 = null, zooming = Math.abs(box.w - from.w) > .5;
+    dur = dur || 560;
+    if (zooming) { gLabels.style.opacity = 0; root.classList.add('hm-anim'); }
     function step(ts) {
       if (t0 === null) t0 = ts;
       var u = Math.min(1, (ts - t0) / dur), e = u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
       view = { x: from.x + (box.x - from.x) * e, y: from.y + (box.y - from.y) * e, w: from.w + (box.w - from.w) * e, h: from.h + (box.h - from.h) * e };
       applyView();
-      if (u < 1) anim = requestAnimationFrame(step); else { anim = null; done && done(); }
+      if (u < 1) anim = requestAnimationFrame(step); else { anim = null; root.classList.remove('hm-anim'); done && done(); }
     }
     anim = requestAnimationFrame(step);
   }
+  function zoomBy(f) { goTo(centerOn({ x: view.x + view.w / 2, y: view.y + view.h / 2 }, view.w / f), placeLabels, 320); }
+
+  // ---- zoom controls, over the ocean in the lower left corner ----
+  var zoomBar = html('div', 'hm-zoom', svgHost); zoomBar.setAttribute('role', 'group'); zoomBar.setAttribute('aria-label', 'Map zoom');
+  function zbtn(label, icon, fn) {
+    var b = html('button', 'hm-zb', zoomBar); b.type = 'button'; b.setAttribute('aria-label', label); b.title = label;
+    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="' + icon + '"/></svg>';
+    b.addEventListener('click', function () { if (b.getAttribute('aria-disabled') !== 'true') fn(); });
+    return b;
+  }
+  var zIn = zbtn('Zoom in', 'M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z', function () { zoomBy(1.6); });
+  var zOut = zbtn('Zoom out', 'M5 11h14v2H5z', function () { zoomBy(1 / 1.6); });
+  var zHome = zbtn('Reset the map view', 'M4 9V4h5v2H6v3zm11-5h5v5h-2V6h-3zM4 15h2v3h3v2H4zm14 3v-3h2v5h-5v-2z', function () { goTo(homeBox(), placeLabels); });
+  function syncControls() {
+    var z = zoomed();
+    root.classList.toggle('zoomed', z);
+    // Zoomed in, one finger drags the map. On the full map, a swipe scrolls the page as usual.
+    svg.style.touchAction = z ? 'none' : 'pan-y pinch-zoom';
+    zIn.setAttribute('aria-disabled', view.w <= MIN_W + .5 ? 'true' : 'false');
+    zOut.setAttribute('aria-disabled', z ? 'false' : 'true');
+    zHome.setAttribute('aria-disabled', sameBox(view, clampView(homeBox())) ? 'true' : 'false');
+  }
+  var how = document.createElement('p'); how.className = 'hm-how';
+  how.textContent = window.matchMedia('(pointer: coarse)').matches
+    ? 'Tap an area or the + button to zoom in, then drag with one finger to look around or pinch to zoom.'
+    : 'Click an area or the + button to zoom in, then drag the map to look around.';
+  stage.insertBefore(how, stage.querySelector('.hm-note'));
 
   // ---- state to screen ----
   function visible(d) {
@@ -207,56 +250,108 @@
       el.setAttribute('tabindex', tab ? 0 : -1);
       el.setAttribute('aria-label', ov ? AREAS[d.g].name + ': ' + d.n + '. Zoom in.' : d.n + ', show details');
     });
+    DESTS.forEach(function (d) { d.el.classList.toggle('on', state.dest === d); });
     if (selOutline) selOutline.setAttribute('d', state.sel ? path(byslug[state.sel].c, true) : '');
     ORDER.forEach(function (g) { areaLabelEls[g].style.display = ov ? '' : 'none'; });
     regionsBar.querySelectorAll('.hm-r').forEach(function (b) { var on = (b.getAttribute('data-a') || '') === (state.area || ''); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
   }
-  function placeLabels() {
-    var k = view.w / pxWidth(), placed = [], show = data.filter(visible);
-    data.forEach(function (d) { labelEls[d.s].style.display = 'none'; });
-    gLabels.style.opacity = 1;
-    if (overview()) { placeDests([]); return; }
-    var pw = pxWidth(), ph = pw * H / W;
-    DESTS.forEach(function (d) { var dx = (d.x - view.x) / k, dy = (d.y - view.y) / k; if (dx > 0 && dx < pw && dy > 0 && dy < ph) placed.push([dx - 14, dy - 14, 28, 28, d]); });
-    var spots = [[0, 5, 'middle'], [0, -12, 'middle'], [0, 22, 'middle'], [0, -29, 'middle'], [0, 39, 'middle']];
-    show.sort(function (a, b) { return (state.sel === b.s) - (state.sel === a.s); });
-    show.forEach(function (d) {
-      var px = (d.x - view.x) / k, py = (d.y - view.y) / k, el = labelEls[d.s], w = d.n.length * 6.7 + 10, pick = null;
-      for (var i = 0; i < spots.length && !pick; i++) {
-        var s = spots[i], x0 = px - w / 2, y0 = py + s[1] - 14, ok = x0 > 2 && x0 + w < pw - 2 && y0 > 2 && y0 + 20 < ph - 2;
-        for (var j = 0; j < placed.length && ok; j++) { var b = placed[j]; if (x0 < b[0] + b[2] && x0 + w > b[0] && y0 < b[1] + b[3] && y0 + 20 > b[1]) ok = false; }
-        if (ok) pick = { s: s, box: [x0, y0, w, 20] };
-      }
-      el.style.display = ''; var t = el._t, s2 = pick ? pick.s : spots[0];
-      t.setAttribute('y', s2[1]); t.setAttribute('text-anchor', 'middle');
-      t.setAttribute('class', 'hm-label' + (pick ? '' : ' hm-extra') + (state.sel === d.s ? ' hm-on' : ''));
-      if (pick) placed.push(pick.box);
+  // Destinations shown at this zoom: the major ones always, the rest once you zoom in or pick an area.
+  // Badges closer than R pixels fold into the most important one, which shows a count and zooms in when chosen.
+  function groupDests(fr) {
+    var R = 30, groups = [], boxes = [], more = !overview() || view.w < W * .62;
+    DESTS.forEach(function (d) { d.px = (d.x - view.x) * fr.s; d.py = (d.y - view.y) * fr.s; d.group = null; d.el.style.display = 'none'; });
+    DESTS.filter(function (d) { return (d.major || more || state.dest === d) && d.px > 10 && d.px < fr.w - 10 && d.py > 10 && d.py < fr.h - 10; })
+      .sort(function (a, b) { return (b === state.dest) - (a === state.dest) || b.major - a.major || a.i - b.i; })
+      .forEach(function (d) {
+        for (var i = 0; i < groups.length; i++) if (Math.hypot(d.px - groups[i][0].px, d.py - groups[i][0].py) < R) { groups[i].push(d); return; }
+        groups.push([d]);
+      });
+    groups.forEach(function (g) {
+      var d = g[0], n = g.length - 1;
+      d.group = g; d.el.style.display = '';
+      d.cnt.style.display = n ? '' : 'none'; d.cntT.textContent = '+' + n;
+      d.el.setAttribute('aria-label', n ? d.n + ' and ' + n + ' more ' + (n > 1 ? 'destinations' : 'destination') + ' close by. Zoom in to see them.' : d.n + ', destination. Show details.');
+      boxes.push(n ? [d.px - 14, d.py - 20, 34, 34, d] : [d.px - 14, d.py - 14, 28, 28, d]);   // room for the count bubble
     });
-    placeDests(placed);
+    return boxes;
   }
-  // Destination names: shown where there is room; the rest appear on hover or focus.
-  function placeDests(placed) {
-    var k = view.w / pxWidth(), pw = pxWidth(), ph = pw * H / W, ov = overview();
+  function placeLabels() {
+    var fr = frame(), s = fr.s, pw = fr.w, ph = fr.h;
+    data.forEach(function (d) { labelEls[d.s].style.display = 'none'; });
+    gLabels.style.opacity = 1; root.classList.remove('hm-anim');
+    var placed = groupDests(fr);
+    if (!overview() || view.w < W * .5) {
+      var show = data.filter(function (d) {
+        var px = (d.x - view.x) * s, py = (d.y - view.y) * s;
+        return visible(d) && px > -20 && px < pw + 20 && py > -20 && py < ph + 20;
+      });
+      var spots = [[0, 5, 'middle'], [0, -12, 'middle'], [0, 22, 'middle'], [0, -29, 'middle'], [0, 39, 'middle']];
+      show.sort(function (a, b) { return (state.sel === b.s) - (state.sel === a.s); });
+      show.forEach(function (d) {
+        var px = (d.x - view.x) * s, py = (d.y - view.y) * s, el = labelEls[d.s], w = d.n.length * 6.7 + 10, pick = null;
+        for (var i = 0; i < spots.length && !pick; i++) {
+          var sp = spots[i], x0 = px - w / 2, y0 = py + sp[1] - 14, ok = x0 > 2 && x0 + w < pw - 2 && y0 > 2 && y0 + 20 < ph - 2;
+          for (var j = 0; j < placed.length && ok; j++) { var b = placed[j]; if (x0 < b[0] + b[2] && x0 + w > b[0] && y0 < b[1] + b[3] && y0 + 20 > b[1]) ok = false; }
+          if (ok) pick = { s: sp, box: [x0, y0, w, 20] };
+        }
+        el.style.display = ''; var t = el._t, s2 = pick ? pick.s : spots[0];
+        t.setAttribute('y', s2[1]); t.setAttribute('text-anchor', 'middle');
+        t.setAttribute('class', 'hm-label' + (pick ? '' : ' hm-extra') + (state.sel === d.s ? ' hm-on' : ''));
+        if (pick) placed.push(pick.box);
+      });
+    }
+    placeDests(placed, fr);
+  }
+  // Destination names go where there is room. On the full map they wait for hover, focus or a tap.
+  function placeDests(placed, fr) {
+    var pw = fr.w, ph = fr.h, full = overview() && !zoomed();
     DESTS.forEach(function (d) {
-      var px = (d.x - view.x) / k, py = (d.y - view.y) / k, inView = px > -4 && px < pw + 4 && py > -4 && py < ph + 4;
-      d.el.style.display = inView && !(ov && !d.major) ? '' : 'none';
-      d.lab.style.display = 'none'; d.lab.classList.remove('flip');
-      if (!inView || (ov && !d.major)) return;
+      d.lab.style.display = 'none';
+      if (!d.group) return;
       var spots = [[16, 0], [-16 - d.w, 0], [16, -24], [16, 24], [-16 - d.w, -24], [-16 - d.w, 24]], pick = null;
-      for (var i = 0; i < spots.length && !pick; i++) {
-        var x0 = px + spots[i][0], y0 = py + spots[i][1] - 11, ok = x0 > 2 && x0 + d.w < pw - 2 && y0 > 2 && y0 + 22 < ph - 2;
+      for (var i = 0; i < spots.length && !pick && !full; i++) {
+        var x0 = d.px + spots[i][0], y0 = d.py + spots[i][1] - 11, ok = x0 > 2 && x0 + d.w < pw - 2 && y0 > 2 && y0 + 22 < ph - 2;
         for (var j = 0; j < placed.length && ok; j++) { var b = placed[j]; if (b[4] === d) continue; if (x0 < b[0] + b[2] + 3 && x0 + d.w + 3 > b[0] && y0 < b[1] + b[3] + 3 && y0 + 22 + 3 > b[1]) ok = false; }
         if (ok) pick = { s: spots[i], box: [x0, y0, d.w, 22] };
       }
-      if (pick) { d.lab.style.display = ''; d.lab.setAttribute('transform', 'translate(' + pick.s[0] + ' ' + pick.s[1] + ')'); placed.push(pick.box); }
-      else d.lab.setAttribute('transform', 'translate(16 0)');
+      if (pick) { d.lab.style.display = ''; d.lab.setAttribute('transform', 'translate(' + pick.s[0] + ' ' + pick.s[1] + ')'); placed.push(pick.box); return; }
+      // no free spot: keep the name ready for hover (or shown, when chosen) on a side that stays inside the map
+      var fit = spots.filter(function (sp) { var x0 = d.px + sp[0], y0 = d.py + sp[1] - 11; return x0 > 2 && x0 + d.w < pw - 2 && y0 > 2 && y0 + 22 < ph - 2; })[0];
+      if (!fit) fit = [Math.max(2 - d.px, Math.min(pw - 2 - d.w - d.px, -d.w / 2)), d.py > 40 ? -26 : 26];
+      d.lab.setAttribute('transform', 'translate(' + fit[0] + ' ' + fit[1] + ')');
+      if (state.dest === d) d.lab.style.display = '';
     });
   }
+  function clearHot() {
+    gCells.classList.remove('hovering'); tip.hidden = true;
+    data.forEach(function (o) { cellEls[o.s].classList.remove('hot'); });
+  }
   function onDest(d) {
-    var slug = d.near.filter(function (n) { return visible(byslug[n]); })[0] || d.near[0];
-    if (overview()) setArea(byslug[slug].g); else select(slug);
+    var a0 = state.area;
+    state.dest = d; state.sel = null;
+    if (!state.q && !state.area) state.area = byslug[d.near[0]].g;
+    clearHot(); paint(); renderSide();
+    if (state.area !== a0) goTo(fitWith(boxFor(state.area), d), placeLabels);
+    else if (!inView(d, .08)) goTo(centerOn(d), placeLabels);
+    else placeLabels();
+  }
+  // A box that also takes in point p, with a little room around it.
+  function fitWith(b, p) {
+    var m = b.w * .08;
+    if (p.x > b.x + m && p.x < b.x + b.w - m && p.y > b.y + m && p.y < b.y + b.h - m) return b;
+    var x0 = Math.min(b.x, p.x - m), x1 = Math.max(b.x + b.w, p.x + m), y0 = Math.min(b.y, p.y - m), y1 = Math.max(b.y + b.h, p.y + m), w = Math.max(x1 - x0, (y1 - y0) * W / H);
+    return clampView({ x: (x0 + x1) / 2 - w / 2, y: (y0 + y1) / 2 - w * H / W / 2, w: w });
+  }
+  // A grouped badge zooms in until its destinations sit at least 44 pixels apart.
+  function zoomGroup(g) {
+    var fr = frame(), dmin = Infinity, cx = 0, cy = 0;
+    g.forEach(function (a, i) { cx += a.x / g.length; cy += a.y / g.length; for (var j = i + 1; j < g.length; j++) dmin = Math.min(dmin, Math.hypot(a.x - g[j].x, a.y - g[j].y)); });
+    var w = Math.min(view.w / 1.6, fr.w * dmin / 44);
+    if (!state.q && !state.area) { state.area = byslug[g[0].near[0]].g; state.sel = null; state.dest = null; clearHot(); paint(); renderSide(); }
+    goTo(centerOn({ x: cx, y: cy }, w), placeLabels);
   }
   function onHover(d, on) {
+    if (on && gest && gest.on) return;
     gCells.classList.toggle('hovering', on);
     if (overview() || state.q) {
       tip.hidden = !on;
@@ -296,16 +391,27 @@
       b.addEventListener('mouseleave', function () { lightArea(g, false); });
     });
   }
+  function closeCard() { state.sel = null; state.dest = null; update(false); }
+  function cardTop(label) {
+    var top = html('div', 'hm-card-top', card);
+    var back = html('button', 'hm-back', top, '‹ ' + label); back.type = 'button'; back.addEventListener('click', closeCard);
+    var x = html('button', 'hm-x', top, '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close details'); x.addEventListener('click', closeCard);
+  }
   function renderSide() {
     card.textContent = ''; list.textContent = '';
-    var d = state.sel ? byslug[state.sel] : null;
-    if (d) {
-      var top = html('div', 'hm-card-top', card);
-      var back = html('button', 'hm-back', top, '‹ ' + AREAS[d.g].name); back.type = 'button'; back.addEventListener('click', function () { state.sel = null; update(false); });
-      var x = html('button', 'hm-x', top, '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close details'); x.addEventListener('click', function () { state.sel = null; update(false); });
+    var d = state.sel ? byslug[state.sel] : null, D = state.dest;
+    if (D) {
+      cardTop(state.q ? 'Search results' : state.area ? AREAS[state.area].name : 'All of San Diego');
+      html('span', 'hm-badge hm-badge-dest', card, 'Destination');
+      html('h3', '', card, D.n); html('p', 'hm-blurb hm-dblurb', card, D.b);
+      html('p', 'hm-near-h hm-near-dh', card, 'Nearby neighborhoods'); var rowD = html('div', 'hm-near hm-near-d', card);
+      D.near.forEach(function (s) { var c = html('button', 'hm-chip', rowD, byslug[s].n); c.type = 'button'; c.addEventListener('click', function () { select(s); }); });
+    } else if (d) {
+      cardTop(AREAS[d.g].name);
       var badge = html('span', 'hm-badge', card, AREAS[d.g].name); badge.style.background = AREAS[d.g].color;
       html('h3', '', card, d.n); html('p', 'hm-blurb', card, d.b);
       var z = html('p', 'hm-zip', card); html('strong', '', z, 'ZIP '); z.appendChild(document.createTextNode(d.z));
+      z.appendChild(document.createTextNode('. ' + (UNINC[d.s] ? 'Unincorporated community' : d.r === 'sd' ? 'A neighborhood of the City of San Diego' : 'Separate city')));
       var a = html('a', 'btn btn-coral', card, 'View the ' + d.n + ' guide'); a.href = d.s + '.html';
       var dn = DESTS.filter(function (x) { return x.near.indexOf(d.s) > -1; });
       if (dn.length) { html('p', 'hm-near-h hm-dn-h', card, 'Nearby destinations'); html('p', 'hm-dn', card, dn.map(function (x) { return x.n; }).join(', ')); }
@@ -346,17 +452,101 @@
   function update(zoom) {
     paint(); renderSide();
     if (zoom === false) { placeLabels(); return; }
-    goTo(boxFor(state.q ? null : state.area), placeLabels);
+    goTo(homeBox(), placeLabels);
   }
-  function setArea(g) { state.area = g; state.sel = null; gCells.classList.remove('hovering'); data.forEach(function (o) { cellEls[o.s].classList.remove('hot'); }); update(); }
+  function setArea(g) { state.area = g; state.sel = null; state.dest = null; clearHot(); update(); }
   function select(s) {
     var d = byslug[s]; if (!d) return;
     var changed = state.area !== d.g && !state.q;
-    state.sel = s; if (!state.q) state.area = d.g;
+    state.sel = s; state.dest = null; if (!state.q) state.area = d.g;
     paint(); renderSide();
-    if (changed) goTo(boxFor(state.area), placeLabels); else placeLabels();
+    if (changed) goTo(boxFor(state.area), placeLabels);
+    else if (!inView(d, .1)) goTo(centerOn(d), placeLabels);   // panned away from it: bring it back into view
+    else placeLabels();
     try { cellEls[s].focus({ preventScroll: true }); } catch (e) { }
   }
+
+  // ---- dragging, pinching and zoom gestures ----
+  // One pointer drags once it moves a few pixels; two touch pointers pinch. A drag never counts as a click.
+  var pts = {}, gest = null, dragged = 0, settle = null;
+  function endGesture() {
+    if (gest && gest.on) { dragged = Date.now(); root.classList.remove('dragging'); placeLabels(); }
+    gest = null;
+  }
+  function startPinch() {
+    var ids = Object.keys(pts), a = pts[ids[0]], b = pts[ids[1]];
+    stopAnim(); clearHot(); root.classList.add('dragging');
+    gest = { pinch: true, on: true, d: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, m: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], v: view, fr: frame() };
+    ids.forEach(function (id) { try { svg.setPointerCapture(+id); } catch (e) { } });
+  }
+  svg.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'mouse') { if (e.button !== 0) return; pts = {}; }
+    dragged = 0;
+    pts[e.pointerId] = [e.clientX, e.clientY];
+    var n = Object.keys(pts).length;
+    if (n === 1) gest = { id: e.pointerId, x: e.clientX, y: e.clientY, v: view, fr: frame(), on: false, touch: e.pointerType !== 'mouse' };
+    else if (n === 2 && zoomed()) startPinch();
+  });
+  svg.addEventListener('pointermove', function (e) {
+    if (!pts[e.pointerId]) return;
+    if (e.pointerType === 'mouse' && !(e.buttons & 1)) { pointerEnd(e); return; }   // the button was released off the map
+    pts[e.pointerId] = [e.clientX, e.clientY];
+    if (!gest) return;
+    var fr = gest.fr, v = gest.v, w, ux, uy;
+    if (gest.pinch) {
+      var ids = Object.keys(pts); if (ids.length < 2) return;
+      var a = pts[ids[0]], b = pts[ids[1]], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+      w = Math.max(MIN_W, Math.min(W, v.w * gest.d / Math.max(1, Math.hypot(a[0] - b[0], a[1] - b[1]))));
+      ux = v.x + (gest.m[0] - fr.x) * v.w / fr.w; uy = v.y + (gest.m[1] - fr.y) * v.w / fr.w;   // the map point under the fingers stays under them
+      view = clampView({ x: ux - (mx - fr.x) * w / fr.w, y: uy - (my - fr.y) * w / fr.w, w: w });
+      applyView(); return;
+    }
+    if (e.pointerId !== gest.id) return;
+    var dx = e.clientX - gest.x, dy = e.clientY - gest.y;
+    if (!gest.on) {
+      if (!zoomed() || Math.hypot(dx, dy) < (gest.touch ? 8 : 4)) return;
+      gest.on = true; stopAnim(); clearHot(); root.classList.add('dragging');
+      try { svg.setPointerCapture(e.pointerId); } catch (_) { }
+      var u0 = view.w / fr.w; gest.v = v = { x: view.x + dx * u0, y: view.y + dy * u0, w: view.w };   // carry on from here without a jump
+    }
+    var u = v.w / fr.w;
+    view = clampView({ x: v.x - dx * u, y: v.y - dy * u, w: v.w });
+    applyView();
+  });
+  function pointerEnd(e) {
+    if (!pts[e.pointerId]) return;
+    delete pts[e.pointerId];
+    var left = Object.keys(pts);
+    if (gest && gest.pinch && left.length === 1) {   // one finger lifted: the other keeps dragging
+      var p = pts[left[0]]; gest = { id: +left[0], x: p[0], y: p[1], v: view, fr: frame(), on: true, touch: true };
+      return;
+    }
+    endGesture();
+  }
+  svg.addEventListener('pointerup', pointerEnd);
+  svg.addEventListener('pointercancel', pointerEnd);
+  svg.addEventListener('lostpointercapture', function (e) { if (e.target === svg) pointerEnd(e); });   // not when a child hands its touch capture to the svg
+  window.addEventListener('blur', function () { pts = {}; endGesture(); });
+  svg.addEventListener('click', function (e) { if (Date.now() - dragged < 400) { e.stopPropagation(); e.preventDefault(); } }, true);
+  // Ctrl or Cmd with the wheel (and trackpad pinch) zooms around the pointer. A plain wheel scrolls the page.
+  svg.addEventListener('wheel', function (e) {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault(); stopAnim();
+    var fr = frame(), f = Math.exp(-Math.max(-60, Math.min(60, e.deltaMode ? e.deltaY * 16 : e.deltaY)) * .008), w = view.w / f;
+    var ux = view.x + (e.clientX - fr.x) / fr.s, uy = view.y + (e.clientY - fr.y) / fr.s;
+    w = Math.max(MIN_W, Math.min(W, w));
+    view = clampView({ x: ux - (e.clientX - fr.x) * w / fr.w, y: uy - (e.clientY - fr.y) * w / fr.w, w: w });
+    applyView(); clearTimeout(settle); settle = setTimeout(placeLabels, 140);
+  }, { passive: false });
+  // Keyboard: with a neighborhood or badge focused, arrows move the map, + and - zoom, Escape closes the details.
+  svg.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var k = e.key, d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[k];
+    if (k === '+' || k === '=') { e.preventDefault(); if (view.w > MIN_W + .5) zoomBy(1.6); }
+    else if (k === '-' || k === '_') { e.preventDefault(); if (zoomed()) zoomBy(1 / 1.6); }
+    else if (k === 'Escape' && (state.sel || state.dest)) { e.preventDefault(); closeCard(); }
+    else if (d && zoomed()) { e.preventDefault(); goTo({ x: view.x + d[0] * view.w * .2, y: view.y + d[1] * view.h * .2, w: view.w }, placeLabels, 220); }
+  });
 
   svg.addEventListener('mousemove', function (e) {
     if (tip.hidden) return;
@@ -364,12 +554,12 @@
   });
   svg.addEventListener('mouseleave', function () { tip.hidden = true; });
   var q = document.getElementById('dir-q');
-  if (q) q.addEventListener('input', function () { state.q = q.value.trim().toLowerCase(); state.sel = null; update(); });
-  window.addEventListener('resize', function () { applyView(); placeLabels(); });
+  if (q) q.addEventListener('input', function () { state.q = q.value.trim().toLowerCase(); state.sel = null; state.dest = null; update(); });
+  window.addEventListener('resize', function () { view = clampView(view); applyView(); placeLabels(); });
 
   renderRegions();
   var hash = (location.hash || '').replace('#', '');
   if (byslug[hash]) { state.area = byslug[hash].g; state.sel = hash; }
-  view = boxFor(state.area); applyView(); paint(); renderSide(); placeLabels();
+  view = clampView(boxFor(state.area)); applyView(); paint(); renderSide(); placeLabels();
   root.classList.add('ready');
 })();

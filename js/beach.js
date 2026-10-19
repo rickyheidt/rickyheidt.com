@@ -99,6 +99,9 @@
       st.x = g.x0; st.y = g.y0; st.moving = false; st.ph = g.s0; st.pose = g.pose; st.sx = g.dir;
       // Turn toward the next leg during the last third of a second of a pause.
       if (nxt.k === 'walk' && nxt.dir !== g.dir && st.rem < 0.35) st.sx = lerp(g.dir, nxt.dir, ease(1 - st.rem / 0.35));
+      // A companion needs longer to walk around to the other side before the next leg.
+      var sw = Math.min(2.5, len);
+      if (nxt.k === 'walk' && nxt.dir !== g.dir && st.rem < sw) { st.swap = ease(1 - st.rem / sw); st.nextDir = nxt.dir; }
     }
     return st;
   }
@@ -305,7 +308,7 @@
       addPerson({ seed: 51, x0: 760, y0: 816, xr: [740, 900], yr: [813, 819], v: [4, 6], pause: [3, 8], legs: 4, sc: .78, m: 1, off: 9 }, walkHost);
 
       // Someone who waves at whoever is looking
-      addPerson({ seed: 61, x0: 780, y0: 846, xr: [700, 850], yr: [842, 850], v: [4, 6], pause: [5, 11], legs: 3, hop: 50, sc: 1.18, hat: true, waveAt: [0, 2], m: 1, off: 5 }, walkHost);
+      addPerson({ seed: 61, x0: 780, y0: 824, xr: [700, 850], yr: [821, 827], v: [4, 6], pause: [5, 11], legs: 3, hop: 50, sc: 1.18, hat: true, waveAt: [0, 2], m: 1, off: 5 }, walkHost);
 
       // Two friends chatting, one with a straw hat
       addPerson({ seed: 71, x0: 572, y0: 846, dir: 1, pose: 'talk', sc: 1.22, m: 0 }, walkHost);
@@ -348,9 +351,17 @@
         var L = f.buddy.of;
         st = L.last;
         if (!st) return;
-        // Trails behind the leader, sliding across when the leader turns around.
-        x = st.x - L.sx * f.buddy.gap; y = st.y + 1.2; sx = L.sx;
-        var st2 = { pose: st.pose, ph: st.ph + 0.37, el: st.el, rem: st.rem, moving: st.moving };
+        // Trails behind the leader. When the leader is about to turn around, the companion
+        // walks past in front of them to the other side, then turns to follow.
+        var gap = f.buddy.gap, u = st.swap, st2;
+        if (u != null) {
+          x = st.x - lerp(st.dir, st.nextDir, u) * gap; y = st.y + 1.2 + Math.sin(Math.PI * u) * 3;
+          sx = u < .85 ? st.dir : lerp(st.dir, st.nextDir, ease((u - .85) / .15));
+          st2 = { pose: 'walk', ph: st.ph + 0.37 + u * Math.round(2 * gap / 8), el: st.el, rem: st.rem, moving: true };
+        } else {
+          x = st.x - st.dir * gap; y = st.y + 1.2; sx = st.dir;
+          st2 = { pose: st.pose, ph: st.ph + 0.37, el: st.el, rem: st.rem, moving: st.moving };
+        }
         poseOf(f.p, st2, t);
       } else {
         st = stateAt(f, t); f.last = st;
