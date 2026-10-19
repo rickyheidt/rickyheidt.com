@@ -242,6 +242,8 @@ section{padding:84px 0}
 .layer{position:absolute;top:-7%;left:-6%;right:-6%;bottom:-2%;pointer-events:none;container-type:size}
 .layer-inner,.layer-art{position:absolute;inset:0;will-change:transform}
 .layer svg{position:absolute;bottom:0;left:60%;width:max(100cqw,160cqh);height:max(100cqh,62.5cqw);transform:translateX(-60%)}
+.layer-bluff .bluff-v{display:none}
+.layer-bluff .bluff-v.is-on{display:block}
 .layer-stars{opacity:var(--night)}
 .layer-sun{opacity:calc(1 - var(--night) * .85)}
 .glint-wrap{opacity:calc(1 - var(--night) * .9)}
