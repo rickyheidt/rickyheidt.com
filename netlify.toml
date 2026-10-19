@@ -8,15 +8,18 @@
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
 
+# Styles and scripts: browsers check with Netlify on each visit and get a quick
+# "not modified" when nothing changed. A long fixed cache let returning visitors keep an
+# old stylesheet after an update (the new neighborhoods menu showed up unstyled).
 [[headers]]
   for = "/*.css"
   [headers.values]
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/js/*"
   [headers.values]
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Keep the links in the source exactly as written. Netlify's Pretty URLs
 # post-processing rewrites href="about.html" to href="/about", which no longer

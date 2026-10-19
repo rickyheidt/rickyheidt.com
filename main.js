@@ -21,13 +21,37 @@
 (function(){
   var t=document.querySelector('.menu-toggle'),m=document.getElementById('menu');
   if(t&&m){
-    var wide=window.matchMedia('(min-width: 861px)');
+    var wide=window.matchMedia('(min-width: 861px)'), pushed=false, goTo=null;
+    // The open menu holds one history entry, so the back button closes it like the other overlays.
     var set=function(o){
+      if(o===m.classList.contains('open')) return;
       m.classList.toggle('open',o); t.setAttribute('aria-expanded',o?'true':'false');
       window.__scrollLock[o?'lock':'unlock']('menu');
+      if(o){ try{ history.pushState({menu:1},''); pushed=true; }catch(e){ pushed=false; } }
+      else if(pushed){ pushed=false; history.back(); }
     };
+    window.addEventListener('popstate',function(){
+      if(goTo){ var u=goTo; goTo=null; location.href=u; return; }
+      if(m.classList.contains('open')){ pushed=false; set(false); }
+    });
     t.addEventListener('click',function(){ set(!m.classList.contains('open')); });
-    m.addEventListener('click',function(e){ if(e.target.closest('a')) set(false); });
+    m.addEventListener('click',function(e){
+      var a=e.target.closest('a'); if(!a) return;
+      // Following a link: step back off the menu's history entry first, then go, so the
+      // back button on the next page returns here in one press.
+      if(pushed && a.hash && a.origin===location.origin && a.pathname===location.pathname && !e.ctrlKey && !e.metaKey){
+        // A section of this page: swap the menu's history entry for the section and scroll to it.
+        e.preventDefault(); pushed=false; history.replaceState(null,'',a.href); set(false);
+        var to=document.getElementById(decodeURIComponent(a.hash.slice(1))); if(to) to.scrollIntoView();
+        return;
+      }
+      if(pushed && a.href && !a.target && !e.ctrlKey && !e.metaKey && !e.shiftKey && a.origin===location.origin){
+        e.preventDefault(); goTo=a.href; set(false);
+        setTimeout(function(){ if(goTo){ var u=goTo; goTo=null; location.href=u; } },400);
+        return;
+      }
+      set(false);
+    });
     document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&m.classList.contains('open')){ set(false); t.focus(); } });
     var drop=function(){ if(wide.matches) set(false); };
     wide.addEventListener?wide.addEventListener('change',drop):wide.addListener(drop);
@@ -48,17 +72,32 @@
     return p;
   }
   function url(u){ return u+(u.indexOf('?')<0?'?':'&')+'hide_gdpr_banner=1&primary_color=e2725b&utm_source=website'; }
+  var opener=null, pushed=false, wasOpen=false;
   document.addEventListener('click',function(e){
     var a=e.target.closest('[data-calendly]'); if(!a) return;
-    e.preventDefault();
+    e.preventDefault(); opener=a;
     load().then(function(){
       window.Calendly.initPopupWidget({url:url(a.getAttribute('data-calendly'))});
     }).catch(function(){ window.open(a.href,'_blank','noopener'); });
   });
-  // hold the page still while the popup is open, release it when it closes
+  // Hold the page still while the popup is open and release it when it closes. Like the photo
+  // viewer, Escape or the browser back button closes it, and focus goes back to the button.
+  function popup(){ return document.querySelector('.calendly-overlay'); }
+  function closePopup(){ var x=document.querySelector('.calendly-popup-close'), o=popup(); if(x) x.click(); else if(o) o.remove(); }
   new MutationObserver(function(){
-    window.__scrollLock[document.querySelector('.calendly-overlay')?'lock':'unlock']('calendly');
+    var open=!!popup(); if(open===wasOpen) return; wasOpen=open;
+    window.__scrollLock[open?'lock':'unlock']('calendly');
+    if(open){
+      try{ history.pushState({calendly:1},''); pushed=true; }catch(e){ pushed=false; }
+      setTimeout(function(){ var x=document.querySelector('.calendly-popup-close'); if(x){ if(!x.hasAttribute('tabindex')) x.setAttribute('tabindex','0'); x.setAttribute('role','button'); if(!x.getAttribute('aria-label')) x.setAttribute('aria-label','Close the booking calendar'); x.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); x.click(); } }); x.focus(); } },50);
+    }
+    else{
+      if(pushed){ pushed=false; history.back(); }
+      if(opener){ try{ opener.focus({preventScroll:true}); }catch(e){} }
+    }
   }).observe(document.body,{childList:true});
+  window.addEventListener('popstate',function(){ if(popup()){ pushed=false; closePopup(); } });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && popup()) closePopup(); });
   var box=document.querySelector('[data-calendly-inline]');
   if(box){
     var go=function(){
@@ -86,25 +125,51 @@
     if(window.ScrollTrigger) window.ScrollTrigger.refresh();
   });});
   var lb=document.querySelector('.lightbox'); if(!lb) return;
-  var img=lb.querySelector('img'), list=[], i=0;
-  function show(){ img.src=list[i]; }
-  function open(l,s){ list=l; i=s||0; show(); lb.hidden=false; window.__scrollLock.lock('lightbox'); }
-  function close(){ lb.hidden=true; window.__scrollLock.unlock('lightbox'); }
+  var img=lb.querySelector('img'), list=[], i=0, opener=null, pushed=false;
+  // A modal photo viewer: focus moves in and stays in, Escape or the browser back button closes it,
+  // and focus returns to the photo that opened it.
+  lb.setAttribute('role','dialog'); lb.setAttribute('aria-modal','true'); lb.setAttribute('aria-label','Photo viewer');
+  function show(){ img.src=list[i]; img.alt='Photo '+(i+1)+' of '+list.length; }
+  function open(l,s,from){
+    list=l; i=s||0; show(); opener=from||document.activeElement; lb.hidden=false; window.__scrollLock.lock('lightbox');
+    try{ history.pushState({lightbox:1},''); pushed=true; }catch(e){ pushed=false; }
+    lb.querySelector('.lb-close').focus();
+  }
+  function shut(){
+    if(lb.hidden) return;
+    lb.hidden=true; window.__scrollLock.unlock('lightbox');
+    if(opener && opener.focus){ try{ opener.focus({preventScroll:true}); }catch(e){} }
+  }
+  function close(){ if(pushed){ pushed=false; history.back(); } shut(); }
+  window.addEventListener('popstate',function(){ if(!lb.hidden){ pushed=false; shut(); } });
   document.querySelectorAll('[data-gallery]').forEach(function(m){
-    m.addEventListener('click',function(){ open(m.getAttribute('data-gallery').split('|'), parseInt(m.getAttribute('data-gallery-start')||'0',10)); });
+    if(!/^(BUTTON|A)$/.test(m.tagName)){   // photo tiles that are plain boxes still work from the keyboard
+      m.setAttribute('role','button'); m.tabIndex=0; if(!m.hasAttribute('aria-label')) m.setAttribute('aria-label','View photo');
+      m.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); m.click(); } });
+    }
+    m.addEventListener('click',function(){ open(m.getAttribute('data-gallery').split('|'), parseInt(m.getAttribute('data-gallery-start')||'0',10), m); });
   });
   // One shared photo list for a whole gallery (instead of repeating it on every tile)
   document.querySelectorAll('[data-gallery-group]').forEach(function(g){
     var list=g.getAttribute('data-gallery-group').split('|');
     g.querySelectorAll('[data-gallery-index]').forEach(function(m){
-      m.addEventListener('click',function(){ open(list, parseInt(m.getAttribute('data-gallery-index'),10)||0); });
+      m.addEventListener('click',function(){ open(list, parseInt(m.getAttribute('data-gallery-index'),10)||0, m); });
     });
   });
   lb.querySelector('.lb-close').onclick=close;
   lb.querySelector('.lb-prev').onclick=function(){ i=(i-1+list.length)%list.length; show(); };
   lb.querySelector('.lb-next').onclick=function(){ i=(i+1)%list.length; show(); };
   lb.addEventListener('click',function(e){ if(e.target===lb) close(); });
-  document.addEventListener('keydown',function(e){ if(lb.hidden) return; if(e.key==='Escape') close(); if(e.key==='ArrowRight') lb.querySelector('.lb-next').click(); if(e.key==='ArrowLeft') lb.querySelector('.lb-prev').click(); });
+  document.addEventListener('keydown',function(e){
+    if(lb.hidden) return;
+    if(e.key==='Escape') close();
+    else if(e.key==='ArrowRight') lb.querySelector('.lb-next').click();
+    else if(e.key==='ArrowLeft') lb.querySelector('.lb-prev').click();
+    else if(e.key==='Tab'){
+      var f=[].slice.call(lb.querySelectorAll('button')), a=f.indexOf(document.activeElement);
+      e.preventDefault(); f[(a+(e.shiftKey?-1:1)+f.length)%f.length].focus();
+    }
+  });
 })();
 
 // Forms in the pinned sidebar scroll inside their own box on shorter screens. The box
@@ -210,5 +275,19 @@
       var r=c.getBoundingClientRect();
       c.style.setProperty('--mx',(e.clientX-r.left)+'px'); c.style.setProperty('--my',(e.clientY-r.top)+'px');
     });
+  });
+})();
+
+// Lead forms: once a submit is on its way, a second click does not send the lead twice.
+// The button shows that it is sending, and resets if the visitor comes back with the back button.
+(function(){
+  document.querySelectorAll('form[data-netlify]').forEach(function(f){
+    var b=f.querySelector('[type="submit"]'); if(!b) return;
+    var label=b.textContent;
+    f.addEventListener('submit',function(e){
+      if(f.__sent){ e.preventDefault(); return; }
+      f.__sent=true; b.setAttribute('aria-disabled','true'); b.classList.add('is-sending'); b.textContent='Sending...';
+    });
+    window.addEventListener('pageshow',function(){ f.__sent=false; b.removeAttribute('aria-disabled'); b.classList.remove('is-sending'); b.textContent=label; });
   });
 })();
