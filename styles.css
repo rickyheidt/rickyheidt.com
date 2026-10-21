@@ -884,3 +884,14 @@ html.scroll-locked{overflow:hidden;padding-right:var(--sbw,0)}
 .hgal .eyebrow{color:#8fd0cc}
 .nb-kind{display:block;margin:0 0 6px;font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--sea-text)}
 .hmap-sec{scroll-margin-top:30px}   /* keeps "Explore the map" clear of the sticky header when linked to */
+
+/* alt-scenes: whole hero scenes beside the beach. The picker sets data-scene on
+   the section; each scene shows its own layers and keeps the shared sky, sun and stars. */
+.layer[data-scene]{display:none}
+.scene[data-scene="fair"] .layer:not([data-scene]):not(.layer-sun):not(.layer-stars),.scene[data-scene="racetrack"] .layer:not([data-scene]):not(.layer-sun):not(.layer-stars),.scene[data-scene="highway"] .layer:not([data-scene]):not(.layer-sun):not(.layer-stars):not(.layer-fore){display:none}
+.scene[data-scene="fair"] .layer[data-scene="fair"],.scene[data-scene="highway"] .layer[data-scene="highway"],.scene[data-scene="racetrack"] .layer[data-scene="racetrack"]{display:block}
+/* The highway's sunset clouds fade as the scene turns to night, like the sun. */
+.layer-hw-clouds{opacity:calc(1 - var(--night) * .8)}
+/* On phones the copy runs full width, so ease the fair rides and the grandstand toward the right edge. */
+@media (max-width:767px){.layer-fair-rides svg{transform:translateX(-50%)}.layer-rt-stand svg,.layer-rt-apron svg{transform:translateX(-55%)}}
+/* /alt-scenes */
