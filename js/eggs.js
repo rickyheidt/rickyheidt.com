@@ -7,7 +7,8 @@
  *   - a balloon at the fair: it slips free and floats away
  *   - the train on the coast: its horn
  *   - a horse at the track: a photo finish
- * Each one makes its own sound, built here with Web Audio, and only on a click.
+ * Each one makes its own sound, only on a click: the dog's bark is a recording
+ * (sounds/dog-bark.mp3), the rest are built here with Web Audio.
  * Clicks on links, buttons and form fields are left alone.
  */
 (function () {
@@ -38,22 +39,27 @@
 
   /* ---------- Sound, made on the spot (no audio files) ---------- */
 
-  var ac = null;
+  // Every sound runs through one master volume, kept low: these are surprises,
+  // not alarms, and someone may be browsing at work.
+  var ac = null, master = null, VOLUME = 0.32;
   function audio() {
-    if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+    if (!ac) {
+      try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+      master = ac.createGain(); master.gain.value = VOLUME; master.connect(ac.destination);
+    }
     if (ac.state === 'suspended') ac.resume();
     return ac;
   }
   // A train horn: a minor chord on reedy tones, swelling in and tailing off.
   function horn() {
     var a = audio(); if (!a) return;
-    var t = a.currentTime, out = a.createGain(), lp = a.createBiquadFilter();
+    var t = a.currentTime, env = a.createGain(), lp = a.createBiquadFilter();
     lp.type = 'lowpass'; lp.frequency.value = 1400;
-    out.gain.setValueAtTime(0, t);
-    out.gain.linearRampToValueAtTime(0.16, t + 0.08);
-    out.gain.setValueAtTime(0.16, t + 0.9);
-    out.gain.exponentialRampToValueAtTime(0.001, t + 1.4);
-    lp.connect(out); out.connect(a.destination);
+    env.gain.setValueAtTime(0, t);
+    env.gain.linearRampToValueAtTime(0.16, t + 0.08);
+    env.gain.setValueAtTime(0.16, t + 0.9);
+    env.gain.exponentialRampToValueAtTime(0.001, t + 1.4);
+    lp.connect(env); env.connect(master);
     [277.2, 329.6, 415.3].forEach(function (f) {
       var o = a.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f;
       o.connect(lp); o.start(t); o.stop(t + 1.45);
@@ -66,7 +72,7 @@
     for (var i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
     var s = a.createBufferSource(), g = a.createGain(), hp = a.createBiquadFilter();
     hp.type = 'highpass'; hp.frequency.value = 1800; g.gain.value = 0.22;
-    s.buffer = buf; s.connect(hp); hp.connect(g); g.connect(a.destination); s.start();
+    s.buffer = buf; s.connect(hp); hp.connect(g); g.connect(master); s.start();
   }
 
   function noiseBuf(a, secs) {
@@ -74,8 +80,26 @@
     for (var i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
     return buf;
   }
-  // A dog's "woof woof": a falling growl through a mouth-shaped filter, twice.
+  // A real bark (sounds/dog-bark.mp3), fetched the first time the dog is clicked.
+  // If it can't load, the woof made below stands in.
+  var barkBuf = null, barkLoading = false;
   function bark() {
+    var a = audio(); if (!a) return;
+    if (barkBuf) return playBuf(barkBuf, 0.48);
+    if (barkLoading) return;
+    barkLoading = true;
+    fetch('sounds/dog-bark.mp3').then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); })
+      .then(function (b) { return new Promise(function (ok, no) { a.decodeAudioData(b, ok, no); }); })
+      .then(function (buf) { barkBuf = buf; playBuf(buf, 0.48); })
+      .catch(function () { barkLoading = false; woof(); });
+  }
+  function playBuf(buf, vol) {
+    var a = audio(); if (!a) return;
+    var s = a.createBufferSource(), g = a.createGain();
+    s.buffer = buf; g.gain.value = vol; s.connect(g); g.connect(master); s.start();
+  }
+  // A made-up "woof woof": a falling growl through a mouth-shaped filter, twice.
+  function woof() {
     var a = audio(); if (!a) return;
     [0, 0.26].forEach(function (dt) {
       var t = a.currentTime + dt, o = a.createOscillator(), n = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain(), ng = a.createGain();
@@ -83,7 +107,7 @@
       n.buffer = noiseBuf(a, 0.2); ng.gain.value = 0.35;
       bp.type = 'bandpass'; bp.frequency.setValueAtTime(900, t); bp.frequency.exponentialRampToValueAtTime(500, t + 0.16); bp.Q.value = 2.2;
       g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.5, t + 0.015); g.gain.exponentialRampToValueAtTime(0.001, t + 0.19);
-      o.connect(bp); n.connect(ng); ng.connect(bp); bp.connect(g); g.connect(a.destination);
+      o.connect(bp); n.connect(ng); ng.connect(bp); bp.connect(g); g.connect(master);
       o.start(t); o.stop(t + 0.2); n.start(t); n.stop(t + 0.2);
     });
   }
@@ -94,12 +118,12 @@
     o.type = 'triangle'; o.frequency.setValueAtTime(700, t); o.frequency.exponentialRampToValueAtTime(1500, t + 0.25);
     vib.frequency.value = 28; vg.gain.value = 60; vib.connect(vg); vg.connect(o.frequency);
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.12, t + 0.03); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-    o.connect(g); g.connect(a.destination); o.start(t); vib.start(t); o.stop(t + 0.32); vib.stop(t + 0.32);
+    o.connect(g); g.connect(master); o.start(t); vib.start(t); o.stop(t + 0.32); vib.stop(t + 0.32);
     var n = a.createBufferSource(), bp = a.createBiquadFilter(), ng = a.createGain();
     n.buffer = noiseBuf(a, 1.2); bp.type = 'bandpass'; bp.Q.value = 1.4;
     bp.frequency.setValueAtTime(400, t + 0.15); bp.frequency.exponentialRampToValueAtTime(2200, t + 1.2);
     ng.gain.setValueAtTime(0, t + 0.15); ng.gain.linearRampToValueAtTime(0.07, t + 0.5); ng.gain.exponentialRampToValueAtTime(0.001, t + 1.3);
-    n.connect(bp); bp.connect(ng); ng.connect(a.destination); n.start(t + 0.15); n.stop(t + 1.35);
+    n.connect(bp); bp.connect(ng); ng.connect(master); n.start(t + 0.15); n.stop(t + 1.35);
   }
   // A rocket going up: a thin rising whistle.
   function whistle() {
@@ -107,7 +131,7 @@
     var t = a.currentTime, o = a.createOscillator(), g = a.createGain();
     o.type = 'sine'; o.frequency.setValueAtTime(900, t); o.frequency.exponentialRampToValueAtTime(2300, t + 0.7);
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.035, t + 0.1); g.gain.exponentialRampToValueAtTime(0.001, t + 0.75);
-    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 0.78);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.78);
   }
   // A burst: a low thump, then a scatter of crackles.
   function boom() {
@@ -115,12 +139,12 @@
     var t = a.currentTime, n = a.createBufferSource(), lp = a.createBiquadFilter(), g = a.createGain();
     n.buffer = noiseBuf(a, 1); lp.type = 'lowpass'; lp.frequency.setValueAtTime(900, t); lp.frequency.exponentialRampToValueAtTime(90, t + 0.6);
     g.gain.setValueAtTime(0.45, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.9);
-    n.connect(lp); lp.connect(g); g.connect(a.destination); n.start(t); n.stop(t + 1);
+    n.connect(lp); lp.connect(g); g.connect(master); n.start(t); n.stop(t + 1);
     for (var i = 0; i < 14; i++) {
       var ct = t + 0.12 + Math.random() * 0.7, c = a.createBufferSource(), hp = a.createBiquadFilter(), cg = a.createGain();
       c.buffer = noiseBuf(a, 0.03); hp.type = 'highpass'; hp.frequency.value = 2500;
       cg.gain.setValueAtTime(0.06 + Math.random() * 0.06, ct); cg.gain.exponentialRampToValueAtTime(0.001, ct + 0.03);
-      c.connect(hp); hp.connect(cg); cg.connect(a.destination); c.start(ct); c.stop(ct + 0.035);
+      c.connect(hp); hp.connect(cg); cg.connect(master); c.start(ct); c.stop(ct + 0.035);
     }
   }
   // The grandstand roars: shaped noise in the voice range, swelling and fading.
@@ -130,7 +154,7 @@
     n.buffer = noiseBuf(a, 2.4); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = .7; bp2.type = 'peaking'; bp2.frequency.value = 2400; bp2.gain.value = 6;
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.16, t + 0.35); g.gain.setValueAtTime(0.16, t + 1.3); g.gain.exponentialRampToValueAtTime(0.001, t + 2.3);
     lfo.frequency.value = 5.5; lg.gain.value = 0.04; lfo.connect(lg); lg.connect(g.gain);
-    n.connect(bp); bp.connect(bp2); bp2.connect(g); g.connect(a.destination); n.start(t); n.stop(t + 2.4); lfo.start(t); lfo.stop(t + 2.4);
+    n.connect(bp); bp.connect(bp2); bp2.connect(g); g.connect(master); n.start(t); n.stop(t + 2.4); lfo.start(t); lfo.stop(t + 2.4);
   }
 
   /* ---------- The sun: five quick clicks for fireworks ---------- */
