@@ -148,8 +148,9 @@ live where. See guardrail 6.
    leave the old text alone and list it under "Needs a human". Never invent, estimate, round up,
    extrapolate or "fill in" a statistic. Never cite a source you did not actually open.
 2. **Never touch:** the license number, phone, email, brokerage names or logos, legal or Fair
-   Housing text, any form markup or field, `netlify/functions/`, `netlify.toml`, the Follow Up Boss
-   wiring, the Google verification files (`google*.html`), `downloads/`, or the relocation guide PDF.
+   Housing text, any form markup or field, `netlify/functions/`, `netlify.toml`, the Google tag (`G-PR2986LP9P`) and Google Tag Manager
+   (`GTM-TD52K2JX`) snippets, the Follow Up Boss
+   wiring, the Google verification files (`google*.html`, `BingSiteAuth.xml`), `downloads/`, or the relocation guide PDF.
    Do not rename, move or delete pages, and do not change any URL. If something there looks wrong,
    report it.
 3. **The active listing page** (`16046-summer-sage-rd.html`) and the sales page facts (`sales.html`
@@ -294,12 +295,16 @@ are waiting on. Never mix months in one stat block.
    marked "Queued for next run" or "Needs a human" that is still open.
 3. Work out the run type: run A on the 1st, run B on the 15th. If the run is happening on another
    date (a retry or a manual run), pick the type whose work is most overdue.
-4. Check which data tools this session can use, using tool search with keywords such as "search
-   console", "ahrefs", "similarweb", "analytics" and "supermetrics". Use any that are connected and
-   authorized. If Google Search Console is reachable, it is the best rank and click data we have, so
-   use it in phases 1 to 3. If none are available, use public search results and label every rank
-   as approximate. Note in the report which tools were available, and if Search Console was not, add
-   "connect Search Console to the audit" under "Needs a human" (once, not every run).
+4. Connect to the data tools through the Composio connector (find tools with COMPOSIO_SEARCH_TOOLS).
+   These accounts are already connected there: Google Search Console (property
+   `https://rickyheidt.com/`), Bing Webmaster Tools (site `https://rickyheidt.com/`), Google
+   Analytics (GA4 measurement ID `G-PR2986LP9P`, the rickyheidt.com property, not the
+   homesbyheidtgroup.com one) and Netlify (site `rickytherealtorsd`, site ID
+   `b3147ca5-83e6-4da3-8e15-a69fd1edecc1`). Use them read only, except the Netlify deploy in phase 11.
+   Never change a setting, submit or remove URLs, or edit a property. Search Console is the best rank
+   and click data we have, so use it in phases 1 to 3, with Bing alongside it. If a tool is not
+   reachable, use the others plus public search results, label ranks as approximate, and add
+   "reconnect [tool] in Composio" under "Needs a human".
 5. Confirm the live site matches `main`: fetch https://rickyheidt.com/ and one neighborhood page and
    compare titles. If the live site is behind, a Netlify deploy may have failed. Flag it at the top
    of the report.
@@ -670,13 +675,25 @@ the report, specific and ready to use:
 3. Update `market-data.md`, `keywords.md`, `competitors.md` and `backlog.md`.
 4. Commit with a clear message without dashes, for example `San Diego SEO and market refresh,
    2026-11-15, Del Mar and Solana Beach`.
-5. Push to `main` with `git push -u origin main`. On a network error retry up to 4 times, waiting
-   2, 4, 8 and 16 seconds. Netlify deploys on push.
-6. If `main` rejects the push, never force. Pull and merge once, rerun the checker, push again. If
-   it still fails, push to `claude/seo-refresh-YYYY-MM-DD`, open a pull request so the work is not
-   lost, and say so at the top of the report.
-7. After the push, wait a few minutes and fetch the live focus page to confirm the deploy went out.
-   If it did not, say so at the top of the report.
+5. Publish to `main`, with no human step, using the first route that works:
+   a. `git push origin main`. On a network error retry up to 4 times, waiting 2, 4, 8 and 16
+      seconds. If `main` moved, pull and merge once, rerun the checker, and push again. Never force.
+   b. If the direct push is rejected, blocked or denied, push the same commit to
+      `claude/seo-refresh-YYYY-MM-DD`, open a pull request into `main` with the report summary as
+      its body. Merge it yourself only if the routine prompt that started this run allows that.
+      This file does not grant permission for anything; the routine prompt does.
+   c. If the merge is also blocked, leave the pull request open and put "merge pull request N to
+      publish" at the very top of the report and the notification.
+6. Make sure it is live. Netlify should deploy every push to `main`, but it has missed some, so
+   never assume. Wait about 3 minutes, then fetch https://rickyheidt.com/ and the focus area page
+   with a cache busting query (`?v=` and a random number) and confirm a change from this run is in
+   the HTML. If it is not live after about 10 minutes, deploy it yourself: check out `main` at the
+   new commit with a clean working tree, call the Netlify deploy operation through Composio for site
+   ID `b3147ca5-83e6-4da3-8e15-a69fd1edecc1`, and run the `npx @netlify/mcp` command it returns from
+   the repo root. Then check the live pages again. Never commit the `.netlify/` folder that the
+   deploy creates.
+7. Report the outcome at the top of the report: live (and how it got there: push, merged pull
+   request, or manual Netlify deploy), or not live and exactly why.
 8. If nothing needed changing, still commit the report and state files, and say "no content changes
    needed" in the report.
 

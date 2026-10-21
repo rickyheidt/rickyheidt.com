@@ -95,6 +95,8 @@ for (const f of pages) {
   if (!hidden && !html.includes(DRE)) add('WARN', f, `DRE license ${DRE} not shown`);
   for (const t of imgs) if (!/\bwidth=/.test(t) || !/\bheight=/.test(t)) { add('WARN', f, '<img> without width and height (layout shift risk)'); break; }
   if (html.length > 500_000) big.push(f);
+  if (!html.includes('G-PR2986LP9P')) add('ERROR', f, 'Google Analytics tag G-PR2986LP9P is missing');
+  if (!html.includes('GTM-TD52K2JX')) add('ERROR', f, 'Google Tag Manager GTM-TD52K2JX is missing');
 
   // House style: no em or en dashes in titles, descriptions, schema or visible copy
   const dashIn = [['title', title || ''], ['meta description', desc || ''], ['JSON-LD', JSON.stringify(ld)], ['page copy', text(html)]];
