@@ -885,6 +885,28 @@ html.scroll-locked{overflow:hidden;padding-right:var(--sbw,0)}
 .nb-kind{display:block;margin:0 0 6px;font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--sea-text)}
 .hmap-sec{scroll-margin-top:30px}   /* keeps "Explore the map" clear of the sticky header when linked to */
 
+
+/* Easter eggs in the hero (js/eggs.js): speech bubbles, fireworks, photo finish. */
+.egg-bubble{position:absolute;z-index:5;transform:translate(-50%,-100%);padding:6px 11px;border-radius:14px;background:#fffaf0;color:#0b1d2b;font:700 .95rem/1 Inter,system-ui,sans-serif;box-shadow:0 6px 18px rgba(10,20,40,.25);pointer-events:none;animation:egg-pop .35s cubic-bezier(.2,1.6,.4,1) both}
+.egg-bubble::after{content:"";position:absolute;left:50%;bottom:-5px;width:10px;height:10px;background:inherit;transform:translateX(-50%) rotate(45deg)}
+.egg-bubble.small{font-size:.8rem;padding:5px 9px}
+.egg-bubble.out{opacity:0;transition:opacity .45s ease}
+@keyframes egg-pop{from{opacity:0;transform:translate(-50%,-80%) scale(.6)}to{opacity:1;transform:translate(-50%,-100%) scale(1)}}
+.egg-sky{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;transition:opacity .8s ease}
+.egg-sky.out{opacity:0}
+.egg-flash{position:absolute;inset:0;z-index:6;background:#fff;pointer-events:none;animation:egg-flash .7s ease-out both}
+@keyframes egg-flash{from{opacity:.9}to{opacity:0}}
+.egg-photo{position:absolute;z-index:6;right:max(24px,calc((100% - 1180px) / 2));top:22%;display:grid;gap:5px;padding:12px 18px 14px;border-radius:6px;background:#fffaf0;border-top:7px solid var(--silk,#d63a3a);color:#0b1d2b;box-shadow:0 14px 34px rgba(10,20,40,.3);transform:rotate(-3deg);pointer-events:none;animation:egg-pop2 .35s ease-out both}
+.egg-photo small{font:600 .68rem/1 Inter,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#51667a}
+.egg-photo b{display:flex;align-items:center;gap:9px;font:600 1.4rem/1.1 Fraunces,Georgia,serif}
+.egg-photo span{font:500 .92rem/1.2 Inter,system-ui,sans-serif}
+.egg-photo p{margin:2px 0 0;display:flex;align-items:center;gap:6px;font:500 .78rem/1 Inter,system-ui,sans-serif;color:#51667a}
+.egg-photo em{display:inline-grid;place-items:center;min-width:1.5em;height:1.5em;padding:0 .2em;border-radius:3px;font:800 .8rem/1 Inter,system-ui,sans-serif;font-style:normal;box-shadow:inset 0 0 0 1px rgba(11,29,43,.2)}
+.egg-photo b em{font-size:.95rem}
+.egg-photo.out{opacity:0;transition:opacity .5s ease}
+@keyframes egg-pop2{from{opacity:0;transform:rotate(-3deg) translateY(10px)}to{opacity:1;transform:rotate(-3deg)}}
+@media (prefers-reduced-motion:reduce){.egg-bubble,.egg-photo{animation:none}.egg-flash{animation:none;opacity:0}}
+
 /* alt-scenes: whole hero scenes beside the beach. The picker sets data-scene on
    the section; each scene shows its own layers and keeps the shared sky, sun and stars. */
 .layer[data-scene]{display:none}
@@ -892,6 +914,7 @@ html.scroll-locked{overflow:hidden;padding-right:var(--sbw,0)}
 .scene[data-scene="fair"] .layer[data-scene="fair"],.scene[data-scene="highway"] .layer[data-scene="highway"],.scene[data-scene="racetrack"] .layer[data-scene="racetrack"]{display:block}
 /* The highway's sunset clouds fade as the scene turns to night, like the sun. */
 .layer-hw-clouds{opacity:calc(1 - var(--night) * .8)}
+.hw-haze{opacity:calc(1 - var(--night) * .85)}
 /* On phones the copy runs full width, so ease the fair rides and the grandstand toward the right edge. */
 @media (max-width:767px){.layer-fair-rides svg{transform:translateX(-50%)}.layer-rt-stand svg,.layer-rt-apron svg{transform:translateX(-55%)}}
 /* /alt-scenes */

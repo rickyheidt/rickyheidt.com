@@ -531,5 +531,5 @@
   small.addEventListener ? small.addEventListener('change', function () { render(clock()); }) : 0;
   start();
 
-  window.__beach = { render: render, clock: clock, stop: stop, people: people, riders: riders };
+  window.__beach = { render: render, clock: clock, stop: stop, people: people, riders: riders, dogs: dogs };
 })();
