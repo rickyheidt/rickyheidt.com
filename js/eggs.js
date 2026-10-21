@@ -272,16 +272,22 @@
       if (inside(r, x, y, 4) && r.right > best) { best = r.right; hit = i; }
     }
     if (hit < 0) return false;
-    // The leader is whoever is furthest along right now.
+    // The leader is whoever's nose is furthest along right now.
     var lead = 0, far = -1e9;
     for (var k = 0; k < horses.length; k++) { var rr = horses[k].getBoundingClientRect(); if (rr.right > far) { far = rr.right; lead = k; } }
-    var silks = horses[lead].style.getPropertyValue('--silk') || '#e4745c';
+    var silks = (horses[lead].style.getPropertyValue('--silk') || '#e4745c').trim().toLowerCase();
+    var NAMES = { '#e4745c': 'Coral', '#2f4f86': 'Navy', '#ffd79a': 'Gold', '#9fe0a8': 'Green', '#c58cff': 'Purple', '#ff9fd8': 'Pink', '#7fc8d8': 'Sky blue' };
     photoBusy = true; shutter(); cheer();
     var flash = document.createElement('div'); flash.className = 'egg-flash'; scene.appendChild(flash);
     var svgs = scene.querySelectorAll('.layer-rt-track svg, .layer-rt-apron svg, .layer-rt-stand svg');
     if (!reduce.matches) svgs.forEach(function (s) { if (s.pauseAnimations) s.pauseAnimations(); });
     var card = document.createElement('div'); card.className = 'egg-photo';
-    card.innerHTML = '<b>Photo finish</b><span><i style="background:' + silks.trim() + '"></i>Wins by a nose</span>';
+    card.style.setProperty('--silk', silks);
+    // How far clear the leader is decides the call: a nose, a neck or a length.
+    var noses = [].map.call(horses, function (h) { return h.getBoundingClientRect().right; }).sort(function (a, b) { return b - a; });
+    var gap = (noses[0] - noses[1]) / Math.max(1, horses[lead].getBoundingClientRect().width);
+    var by = gap < .12 ? 'a nose' : gap < .4 ? 'a neck' : 'a length';
+    card.innerHTML = '<b>Photo finish</b><span><i></i>' + (NAMES[silks] || 'The leader') + ' silks by ' + by + '</span>';
     scene.appendChild(card);
     setTimeout(function () { flash.remove(); }, 700);
     setTimeout(function () {
