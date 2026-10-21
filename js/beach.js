@@ -1,7 +1,7 @@
 /* Beach life: the stick figures on the hero scene.
  *
  * Every scene page carries two empty layers (.layer-surfers and .layer-walkers).
- * This script draws the cast into them. Each figure follows its own itinerary
+ * This script draws the cast into them: people with skin, hair and clothes, a dog. Each figure follows its own itinerary
  * (walk, pause, turn around, wave) generated once from a fixed seed, and every
  * position is a pure function of a shared clock kept in sessionStorage. That is
  * why the same people are in the same places when you move between pages
@@ -108,27 +108,86 @@
 
   /* ---------- People ---------- */
 
+  // Each person gets a look from their seed: skin, hair, clothes. Far-side limbs
+  // are a shade darker so the figure reads as round rather than flat.
+  var SKINS = ['#f1c9a5', '#e0ac82', '#c68e62', '#a06a44', '#7a4e32', '#f6d8bc'];
+  var HAIRS = ['#2a1a12', '#4a2e1a', '#7a4a22', '#c99a5a', '#1a1414', '#8a3a22', '#e2c58a'];
+  var TOPS = ['#e4745c', '#f6f1e7', '#7fc8d8', '#2f4f86', '#ffd79a', '#ff9fc0', '#9fe0a8', '#c58cff'];
+  var BOTTOMS = ['#2f4f86', '#c9a77a', '#3f7d97', '#c94f45', '#4a6a8a', '#1d2a3a', '#e9c193'];
+  function shade(hex, k) {
+    var n = parseInt(hex.slice(1), 16), r = n >> 16, g = n >> 8 & 255, b = n & 255;
+    return 'rgb(' + Math.round(r * k) + ',' + Math.round(g * k) + ',' + Math.round(b * k) + ')';
+  }
+  function look(seed) {
+    var r = rng(seed * 7919 + 13), pick = function (a) { return a[Math.floor(r() * a.length)]; };
+    var lk = { skin: pick(SKINS), hair: pick(HAIRS), top: pick(TOPS), bottom: pick(BOTTOMS) };
+    var h = r(); lk.hairStyle = h < .45 ? 'short' : h < .75 ? 'long' : 'pony';
+    var t = r(); lk.topStyle = t < .5 ? 'tee' : t < .78 ? 'tank' : 'bikini';
+    if (lk.topStyle === 'bikini') lk.hairStyle = r() < .5 ? 'long' : 'pony';
+    lk.shades = r() < .3;
+    lk.long = r() < .35;   // knee-length shorts instead of swim trunks
+    return lk;
+  }
+  function fill(parent, d, f, extra) { var a = { d: d, fill: f }; for (var k in extra) a[k] = extra[k]; return mk('path', a, parent); }
+
+  // A leg in its own group so it swings from the hip; the shin bends at the knee.
+  function buildLeg(parent, lk, far) {
+    var k = far ? .82 : 1, skin = far ? shade(lk.skin, k) : lk.skin, bot = far ? shade(lk.bottom, k) : lk.bottom;
+    var g = mk('g', {}, parent);
+    fill(g, 'M-2.4,-13 L2.4,-13 L2.2,-8.2 Q1.6,-6.6 0,-6.6 Q-1.8,-6.6 -2.1,-8.2 Z', skin);
+    var knee = mk('g', {}, g);
+    fill(knee, 'M-1.8,-7.4 Q-2.2,-4.6 -1.2,-1.4 L1.2,-1.4 Q1.9,-4.4 1.7,-7.4 Z', skin);
+    fill(knee, 'M-1.1,-1.7 L1.2,-1.7 Q2.8,-1.2 3,-0.3 L3,0.4 L-1.2,0.4 Z', shade(lk.skin, far ? .74 : .94));
+    fill(g, lk.long ? 'M-2.7,-13.6 L2.7,-13.6 L2.6,-6.8 L-2.4,-6.8 Z' : 'M-2.7,-13.6 L2.7,-13.6 L2.5,-9.6 L-2.4,-9.6 Z', bot);
+    return { g: g, knee: knee };
+  }
+  // An arm swings from the shoulder; a tee gets a short sleeve.
+  function buildArm(parent, lk, far) {
+    var skin = far ? shade(lk.skin, .82) : lk.skin;
+    var g = mk('g', {}, parent);
+    fill(g, 'M-1.3,-21.6 Q-1.7,-17.4 -1,-13.8 L1,-13.8 Q1.5,-17.6 1.4,-21.6 Z', skin);
+    mk('circle', { cx: 0, cy: -13.4, r: 1.25, fill: skin }, g);
+    if (lk.topStyle === 'tee') fill(g, 'M-1.9,-22.6 L1.9,-22.6 L1.7,-18.6 L-1.6,-18.6 Z', far ? shade(lk.top, .82) : lk.top);
+    return g;
+  }
+
   function buildPerson(host, o) {
-    var root = mk('g', {}, host);
+    var lk = look(o.seed || 1), root = mk('g', {}, host);
     mk('ellipse', { cx: 0, cy: 1, rx: 7.5, ry: 1.7, fill: INK, opacity: '.2' }, root);
-    var p = { root: root, o: o };
+    var p = { root: root, o: o, lk: lk };
     p.body = mk('g', {}, root);
-    p.farArm = limb(p.body, 'M0,-21.5 L0,-13.5'); p.farArm.setAttribute('opacity', '.85');
-    p.farLeg = limb(p.body, 'M0,-12.5 L0,0'); p.farLeg.setAttribute('opacity', '.7');
-    limb(p.body, 'M0,-23.6 L0,-12.5');
-    mk('circle', { cx: 0, cy: -27.6, r: 3.4, fill: INK }, p.body);
+    p.farArm = buildArm(p.body, lk, true);
+    var fl = buildLeg(p.body, lk, true); p.farLeg = fl.g; p.farKnee = fl.knee;
+    // Torso: skin, then the top. Bikini tops are a band; tanks show the shoulders.
+    fill(p.body, 'M-3,-23.4 Q0,-24.4 3.2,-23.4 Q3.4,-18 2.7,-13 L-2.7,-13 Q-3.4,-18 -3,-23.4 Z', lk.skin);
+    if (lk.topStyle === 'bikini') fill(p.body, 'M-2.9,-21.4 Q0,-20.4 3.2,-21.4 L3.1,-18.8 Q0,-18 -2.9,-18.8 Z', lk.top);
+    else fill(p.body, lk.topStyle === 'tee' ? 'M-3.2,-23.6 Q0,-24.6 3.4,-23.6 Q3.6,-18 2.9,-12.6 L-2.9,-12.6 Q-3.6,-18 -3.2,-23.6 Z'
+                                           : 'M-2.2,-23.2 L-1,-23.2 Q0,-21.6 1.2,-23.2 L2.4,-23.2 Q3.4,-18 2.9,-12.6 L-2.9,-12.6 Q-3.4,-18 -2.2,-23.2 Z', lk.top);
+    fill(p.body, 'M-0.9,-25.6 L1.1,-25.6 L1.2,-23.4 L-0.9,-23.4 Z', lk.skin);
+    // Head in profile, facing the way they walk.
+    var hd = mk('g', {}, p.body);
+    if (lk.hairStyle === 'long') fill(hd, 'M-3.2,-29 Q-4,-24.2 -1.4,-22.6 L0.4,-24.6 Q-1.4,-25.8 -1,-28 Z', lk.hair);
+    if (lk.hairStyle === 'pony') { fill(hd, 'M-3.4,-29.4 Q-6.4,-28 -5.6,-24.4 Q-4.4,-26.2 -3,-27.4 Z', lk.hair); }
+    mk('ellipse', { cx: 0.3, cy: -27.9, rx: 3.1, ry: 3.4, fill: lk.skin }, hd);
+    fill(hd, 'M3.1,-28.6 L4.2,-27.1 L3.2,-26.7 Z', lk.skin);
+    mk('ellipse', { cx: -1, cy: -27.6, rx: 0.6, ry: 0.9, fill: shade(lk.skin, .84) }, hd);
+    fill(hd, 'M-3,-27.8 Q-3.4,-31.8 0.3,-31.7 Q3.6,-31.6 3.5,-29 Q1.8,-30.2 0,-29.6 Q-1.4,-29.2 -1.8,-27 Z', lk.hair);
+    if (lk.shades) fill(hd, 'M1.4,-28.9 L3.6,-28.9 L3.5,-27.7 L1.6,-27.7 Z', '#16202e');
+    else mk('circle', { cx: 2.3, cy: -28.3, r: .38, fill: '#1d2a3a' }, hd);
     if (o.hat) {
-      mk('ellipse', { cx: 0.4, cy: -29.7, rx: 6.4, ry: 1.2, fill: CREAM }, p.body);
-      mk('path', { d: 'M-2.8,-29.9 Q0.4,-34.6 3.6,-29.9Z', fill: CREAM }, p.body);
+      mk('ellipse', { cx: 0.4, cy: -30.4, rx: 6.4, ry: 1.2, fill: CREAM }, hd);
+      fill(hd, 'M-2.8,-30.6 Q0.4,-35.2 3.6,-30.6Z', CREAM);
+      fill(hd, 'M-2.7,-31.2 L3.5,-31.2 L3.4,-30.5 L-2.6,-30.5 Z', CORAL, { opacity: '.85' });
     }
-    p.nearLeg = limb(p.body, 'M0,-12.5 L0,0');
+    var nl = buildLeg(p.body, lk, false); p.nearLeg = nl.g; p.nearKnee = nl.knee;
     if (o.board) {
       p.board = mk('g', {}, p.body);
       mk('path', { d: 'M5,-35 Q10.4,-18 5,-1 Q-0.4,-18 5,-35Z', fill: CORAL }, p.board);
       mk('path', { d: 'M5,-31.5 L5,-4', stroke: CREAM, 'stroke-width': 1, opacity: '.9', fill: 'none' }, p.board);
-      p.nearArm = limb(p.body, 'M0,-21.5 L4.6,-15.5');
+      p.nearArm = buildArm(p.body, lk, false);
+      rot(p.nearArm, -38, 0, -21.5);
     } else {
-      p.nearArm = limb(p.body, 'M0,-21.5 L0,-13.5');
+      p.nearArm = buildArm(p.body, lk, false);
     }
     return p;
   }
@@ -158,31 +217,52 @@
     rot(p.farArm, fa, 0, -21.5);
     rot(p.nearLeg, nl, 0, -12.5);
     rot(p.farLeg, fl, 0, -12.5);
+    // The trailing leg bends at the knee as it lifts off.
+    rot(p.nearKnee, Math.max(0, nl) * 1.1, 0, -7);
+    rot(p.farKnee, Math.max(0, fl) * 1.1, 0, -7);
     p.body.setAttribute('transform', 'translate(0 ' + (-bob).toFixed(2) + ')');
   }
 
   /* ---------- The dog ---------- */
 
+  // A golden retriever in profile, facing right. Legs swing from the shoulder and
+  // hip pivots used by the render loop; the tail wags from its root.
+  var COAT = '#c98a3e', COAT_D = '#a86d2c', COAT_L = '#e0a95c';
+  function dogLeg(parent, d, col) { return fill(parent, d, col); }
   function buildDog(host) {
     var d = { root: mk('g', {}, host) };
-    mk('ellipse', { cx: 0, cy: 1, rx: 9, ry: 1.5, fill: INK, opacity: '.2' }, d.root);
+    mk('ellipse', { cx: 0, cy: 1, rx: 10, ry: 1.6, fill: INK, opacity: '.2' }, d.root);
     d.stand = mk('g', {}, d.root);
-    d.fl1 = limb(d.stand, 'M4,-7.5 L4,0', 1.8); d.fl2 = limb(d.stand, 'M2,-7.5 L2,0', 1.8);
-    d.hl1 = limb(d.stand, 'M-5,-7.5 L-5,0', 1.8); d.hl2 = limb(d.stand, 'M-3,-7.5 L-3,0', 1.8);
-    d.fl2.setAttribute('opacity', '.7'); d.hl2.setAttribute('opacity', '.7');
-    limb(d.stand, 'M-6.5,-8.4 L5,-8.4', 4.2);
-    d.tail = limb(d.stand, 'M-6.8,-9 L-11,-13', 1.6);
-    mk('circle', { cx: 8.2, cy: -11.4, r: 2.7, fill: INK }, d.stand);
-    limb(d.stand, 'M10,-10.6 L13,-10', 1.9);
-    limb(d.stand, 'M7,-13.4 L5.8,-16', 1.5);
+    // Far legs first, a shade darker.
+    d.fl2 = dogLeg(d.stand, 'M1,-8 L3.2,-8 L2.9,-1.2 L4,-0.4 L4,0.4 L1.4,0.4 L1.5,-1.2 Z', COAT_D);
+    d.hl2 = dogLeg(d.stand, 'M-5.4,-9.6 L-2,-9.6 Q-1.6,-6.6 -3.2,-4.6 L-3,-0.4 L-2,0 L-2,0.5 L-4.4,0.5 L-4.6,-4.6 Q-5.8,-6.8 -5.4,-9.6 Z', COAT_D);
+    d.tail = fill(d.stand, 'M-7.4,-12.6 Q-11,-13.6 -13.2,-16.8 Q-11.2,-16 -10,-15.6 Q-11.6,-14.4 -9.6,-13.2 Q-8.6,-12.6 -7.2,-11.4 Z', COAT_L);
+    // Body: deep chest, tucked belly, rump.
+    fill(d.stand, 'M-7.6,-12.2 Q-6.8,-13.8 -3,-13.6 L4.2,-13.4 Q7,-13.8 8.4,-12 Q9.4,-9.8 7.6,-7.8 Q5.6,-6.6 3.4,-7.2 Q0,-8.4 -3,-8.2 Q-6.4,-8 -7.4,-9.4 Q-8.2,-10.8 -7.6,-12.2 Z', COAT);
+    fill(d.stand, 'M-3,-8.4 Q0,-8.6 3.4,-7.4 Q1,-7.8 -3,-7.8 Z', COAT_D);
+    // Neck, head with snout and a soft ear, collar.
+    fill(d.stand, 'M5.2,-12.6 Q7,-15.6 9.2,-16.8 L11.2,-14.4 Q9.2,-12.4 8.4,-10.6 Z', COAT);
+    fill(d.stand, 'M8.2,-17.6 Q9.6,-19.6 12,-18.8 Q13.2,-18.2 13.6,-17 L16.4,-16.4 Q17,-15.4 16.2,-14.8 L12.8,-14.4 Q10.4,-14 9.2,-14.8 Q7.8,-16 8.2,-17.6 Z', COAT);
+    mk('circle', { cx: 16.4, cy: -15.9, r: .75, fill: '#2a1a12' }, d.stand);
+    mk('circle', { cx: 12.6, cy: -17.3, r: .45, fill: '#2a1a12' }, d.stand);
+    fill(d.stand, 'M9.4,-18 Q8,-17.6 8.2,-14.6 Q9,-13.8 10,-14.6 Q10.6,-16.4 10.4,-17.8 Z', COAT_D);
+    fill(d.stand, 'M8.2,-14 L10.6,-15.2 L11,-14.4 L8.8,-13.2 Z', CORAL);
+    // Near legs.
+    d.fl1 = dogLeg(d.stand, 'M3.2,-8.4 L5.8,-8.4 L5.2,-1.2 L6.4,-0.4 L6.4,0.4 L3.6,0.4 L3.7,-1.2 Z', COAT);
+    d.hl1 = dogLeg(d.stand, 'M-7.4,-10.6 L-3.6,-10.6 Q-3.2,-7 -5,-4.8 L-4.8,-0.4 L-3.8,0 L-3.8,0.5 L-6.4,0.5 L-6.6,-4.8 Q-7.8,-7.4 -7.4,-10.6 Z', COAT);
+    // Sitting: haunches down, chest up, front legs straight.
     d.sit = mk('g', {}, d.root);
-    limb(d.sit, 'M3.5,-10 L3.5,0', 1.8);
-    limb(d.sit, 'M-5.5,-3.5 L-1.5,-3.5 L-1.5,0', 1.8);
-    limb(d.sit, 'M-6,-4.6 L3.5,-11', 4.2);
-    d.tail2 = limb(d.sit, 'M-6.4,-3.4 L-11,-4.2', 1.6);
-    mk('circle', { cx: 6.2, cy: -14.2, r: 2.7, fill: INK }, d.sit);
-    limb(d.sit, 'M8,-13.4 L11,-12.8', 1.9);
-    limb(d.sit, 'M5,-16.6 L3.8,-19', 1.5);
+    d.tail2 = fill(d.sit, 'M-6.8,-2 Q-10.4,-1.4 -13,-2.6 Q-11,-0.6 -9.4,-0.4 Q-8,-0.2 -6.6,-0.4 Z', COAT_L);
+    fill(d.sit, 'M2.4,-9 L4.6,-9 L4.4,-0.6 L5.4,0 L5.4,0.5 L2.6,0.5 Z', COAT_D);
+    fill(d.sit, 'M-7.4,-1 Q-8.4,-6 -4.4,-8.4 Q-0.4,-11.6 3.6,-13.6 Q6.6,-14.6 7.6,-12 Q8,-9.6 6,-8 Q4,-6.8 3.4,-3.6 L3.2,0 L-6.6,0.4 Q-7.6,-0.2 -7.4,-1 Z', COAT);
+    fill(d.sit, 'M-6.4,-0.2 Q-6.8,-4.2 -3,-5 Q-1.4,-2.6 -1.4,0.4 L-6,0.5 Z', COAT_D);
+    fill(d.sit, 'M4.6,-13.8 Q6.2,-17 8.4,-18.2 L10.2,-15.8 Q8.4,-14 7.6,-12 Z', COAT);
+    fill(d.sit, 'M7.4,-19 Q8.8,-21 11.2,-20.2 Q12.4,-19.6 12.8,-18.4 L15.6,-17.8 Q16.2,-16.8 15.4,-16.2 L12,-15.8 Q9.6,-15.4 8.4,-16.2 Q7,-17.4 7.4,-19 Z', COAT);
+    mk('circle', { cx: 15.6, cy: -17.3, r: .75, fill: '#2a1a12' }, d.sit);
+    mk('circle', { cx: 11.8, cy: -18.7, r: .45, fill: '#2a1a12' }, d.sit);
+    fill(d.sit, 'M8.6,-19.4 Q7.2,-19 7.4,-16 Q8.2,-15.2 9.2,-16 Q9.8,-17.8 9.6,-19.2 Z', COAT_D);
+    fill(d.sit, 'M7.4,-15.4 L9.8,-16.6 L10.2,-15.8 L8,-14.6 Z', CORAL);
+    fill(d.sit, 'M4,-9.4 L6.4,-9.4 L6.2,-0.6 L7.4,0 L7.4,0.5 L4.4,0.5 Z', COAT);
     d.leash = mk('path', { d: 'M0,0 L0,0', fill: 'none', stroke: INK, 'stroke-width': 0.9, opacity: '.75' }, host);
     return d;
   }
@@ -217,18 +297,23 @@
   }
 
   function buildSitter(host, x, y, sc, wavePeriod, seed) {
-    var s = { root: mk('g', { transform: 'translate(' + x + ' ' + y + ') scale(' + sc + ' 1)' }, host), per: wavePeriod, seed: seed };
-    // Reclining on the lounger, facing right.
-    limb(s.root, 'M-3,-9 L-9,-11 L-17,-6.4', 2.2);
-    limb(s.root, 'M-3,-9 L8.5,-15.6', 2.2);
-    mk('circle', { cx: 11.6, cy: -17.4, r: 3.1, fill: INK }, s.root);
-    s.arm = limb(s.root, 'M6,-14.2 L-1,-10.6', 2.2);
+    var lk = look(seed + 90), s = { root: mk('g', { transform: 'translate(' + x + ' ' + y + ') scale(' + sc + ' 1)' }, host), per: wavePeriod, seed: seed };
+    // Reclining on the lounger, facing right, in a swimsuit.
+    fill(s.root, 'M-3,-9.4 L-9,-11.6 Q-10,-10.6 -9.4,-9.8 L-4,-7.8 Z', shade(lk.skin, .85));
+    fill(s.root, 'M-9.4,-11.4 L-16.8,-7.4 Q-17.4,-6.2 -16.4,-5.8 L-9,-9.6 Z', shade(lk.skin, .85));
+    fill(s.root, 'M-4,-10.6 Q2,-14.6 8.4,-17 L9.6,-14.4 Q3,-11.6 -3,-7.6 Z', lk.skin);
+    fill(s.root, 'M-4.4,-10.4 Q-1,-12.4 1.4,-13.4 L2.6,-11 Q0,-9.8 -3.4,-7.8 Z', lk.bottom);
+    if (lk.topStyle === 'bikini') fill(s.root, 'M4,-15.2 L6.6,-16.4 L7.4,-14.6 L4.8,-13.4 Z', lk.top);
+    mk('ellipse', { cx: 11.6, cy: -18.2, rx: 3, ry: 3.3, fill: lk.skin }, s.root);
+    fill(s.root, 'M8.8,-18.4 Q8.6,-22 11.8,-21.8 Q14.6,-21.6 14.6,-19.4 Q13,-20.2 11.4,-19.8 Q10,-19.4 9.8,-17.2 Z', lk.hair);
+    fill(s.root, 'M12.6,-19 L14.6,-19 L14.5,-17.9 L12.8,-17.9 Z', '#16202e');
+    s.arm = fill(s.root, 'M5.4,-15.6 L6.6,-13.4 L-0.4,-9.8 L-1.2,-11.2 Z', lk.skin);
     return s;
   }
   function sitterPose(s, t) {
     var ph = (t + s.seed) % s.per, a = 0;
     if (ph < 4) { var b = clamp(Math.min(ph, 4 - ph) / 0.5, 0, 1); a = -(125 + 20 * Math.sin(t * 8)) * b; }
-    rot(s.arm, a, 6, -14.2);
+    rot(s.arm, a, 6, -14.6);
   }
 
   /* ---------- Water ---------- */
@@ -241,11 +326,18 @@
     mk('path', { d: 'M-2,-9 C2,-12 9,-12 13,-8', fill: 'none', stroke: '#fff', 'stroke-width': 1.7, 'stroke-linecap': 'round', opacity: '.9' }, r.s);
     r.bob = mk('g', {}, r.s);
     mk('ellipse', { cx: 0, cy: 2.6, rx: 19, ry: 2, fill: '#eaf6f8', opacity: '.38' }, r.bob);
-    mk('path', { d: 'M-16,0 Q-2,-3.2 16,-1.6 Q19,0 16,1.6 Q-2,3.2 -16,0Z', fill: INK }, r.bob);
-    var b = mk('g', { fill: 'none', stroke: INK, 'stroke-width': 2.2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, r.bob);
-    mk('path', { d: 'M6,-2.4 L5,-9 L1,-13' }, b); mk('path', { d: 'M-6,-2.4 L-3,-9 L1,-13' }, b);
-    mk('path', { d: 'M1,-13 L-3,-21' }, b); mk('path', { d: 'M-3,-20 L-12,-17.5' }, b); mk('path', { d: 'M-3,-20.5 L6,-23.5' }, b);
-    mk('circle', { cx: -4.6, cy: -25.2, r: 3.2, fill: INK, stroke: 'none' }, b);
+    var lk = look(Math.round(c.x));
+    mk('path', { d: 'M-16,0 Q-2,-3.2 16,-1.6 Q19,0 16,1.6 Q-2,3.2 -16,0Z', fill: ['#f6f1e7', '#ffd79a', '#e4745c', '#7fc8d8'][Math.round(c.x) % 4] }, r.bob);
+    mk('path', { d: 'M-15,0.2 Q-2,-1.4 15.6,-0.4', fill: 'none', stroke: INK, 'stroke-width': .6, opacity: '.35' }, r.bob);
+    // Crouched in a wetsuit: legs bent, arms out for balance.
+    var W = '#16202e', b = mk('g', { fill: 'none', stroke: W, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, r.bob);
+    mk('path', { d: 'M6,-2.4 L5,-9 L1,-13', 'stroke-width': 3 }, b); mk('path', { d: 'M-6,-2.4 L-3,-9 L1,-13', 'stroke-width': 3 }, b);
+    mk('path', { d: 'M1,-13 L-3,-21', 'stroke-width': 4.4 }, b);
+    mk('path', { d: 'M-3,-20 L-12,-17.5', 'stroke-width': 2.2 }, b); mk('path', { d: 'M-3,-20.5 L6,-23.5', 'stroke-width': 2.2 }, b);
+    mk('circle', { cx: -12.4, cy: -17.4, r: 1.1, fill: lk.skin, stroke: 'none' }, r.bob);
+    mk('circle', { cx: 6.4, cy: -23.6, r: 1.1, fill: lk.skin, stroke: 'none' }, r.bob);
+    mk('ellipse', { cx: -4.4, cy: -25.4, rx: 2.9, ry: 3.2, fill: lk.skin }, r.bob);
+    mk('path', { d: 'M-7.2,-25.6 Q-7.6,-29.2 -4.2,-29 Q-1.4,-28.8 -1.6,-26.6 Q-3,-27.6 -4.6,-27 Q-5.8,-26.6 -6,-24.6 Z', fill: lk.hair }, r.bob);
     return r;
   }
   function riderPose(r, t) {
@@ -260,10 +352,13 @@
     var s = { c: c, root: mk('g', {}, host) };
     s.in = mk('g', {}, s.root);
     mk('ellipse', { cx: 0, cy: 2.6, rx: 17, ry: 2, fill: '#eaf6f8', opacity: '.38' }, s.in);
-    mk('path', { d: 'M-16,0 Q-2,-3.2 16,-1.6 Q19,0 16,1.6 Q-2,3.2 -16,0Z', fill: INK }, s.in);
-    var b = mk('g', { fill: 'none', stroke: INK, 'stroke-width': 2.2, 'stroke-linecap': 'round' }, s.in);
-    mk('path', { d: 'M-1,-3 L-1,-13' }, b); mk('path', { d: 'M-1,-3 L7,-7.5 L12,-2.6' }, b); mk('path', { d: 'M-1,-12 L7,-8' }, b);
-    mk('circle', { cx: -1, cy: -17, r: 3.2, fill: INK, stroke: 'none' }, b);
+    var lk = look(Math.round(c.x) + 3);
+    mk('path', { d: 'M-16,0 Q-2,-3.2 16,-1.6 Q19,0 16,1.6 Q-2,3.2 -16,0Z', fill: ['#7fc8d8', '#f6f1e7', '#ffd79a'][Math.round(c.x) % 3] }, s.in);
+    var W = '#16202e', b = mk('g', { fill: 'none', stroke: W, 'stroke-linecap': 'round' }, s.in);
+    mk('path', { d: 'M-1,-3 L-1,-13', 'stroke-width': 4.2 }, b); mk('path', { d: 'M-1,-3 L7,-7.5 L12,-2.6', 'stroke-width': 3 }, b); mk('path', { d: 'M-1,-12 L7,-8', 'stroke-width': 2.2 }, b);
+    mk('circle', { cx: 7.4, cy: -7.8, r: 1.1, fill: lk.skin }, s.in);
+    mk('ellipse', { cx: -0.6, cy: -17.2, rx: 2.9, ry: 3.2, fill: lk.skin }, s.in);
+    mk('path', { d: 'M-3.4,-17.4 Q-3.8,-21 -0.4,-20.8 Q2.4,-20.6 2.2,-18.4 Q0.8,-19.4 -0.8,-18.8 Q-2,-18.4 -2.2,-16.4 Z', fill: lk.hair }, s.in);
     return s;
   }
   function paddlerPose(s, t) {
@@ -385,11 +480,11 @@
       d.stand.style.display = sit ? 'none' : '';
       d.sit.style.display = sit ? '' : 'none';
       var s = Math.sin(st.ph * 6.2832 * 1.0), a = moving ? 28 : 3;
-      rot(d.fl1, a * s, 4, -7.5); rot(d.hl2, a * s, -3, -7.5);
-      rot(d.fl2, -a * s, 2, -7.5); rot(d.hl1, -a * s, -5, -7.5);
+      rot(d.fl1, a * s, 4.5, -8.4); rot(d.hl2, a * s, -3.7, -9.6);
+      rot(d.fl2, -a * s, 2.1, -8); rot(d.hl1, -a * s, -5.5, -10.6);
       var wag = 18 * Math.sin(t * (moving ? 14 : 9));
-      rot(d.tail, -wag, -6.8, -9); rot(d.tail2, -wag, -6.4, -3.4);
-      var hx = o.x + o.sx * o.k * 6, hy = o.y - o.k * 16.4, cx = x + o.sx * dk * (sit ? 7 : 8), cy = y - dk * (sit ? 12 : 10);
+      rot(d.tail, -wag, -7.4, -12); rot(d.tail2, -wag, -6.8, -1.2);
+      var hx = o.x + o.sx * o.k * 6, hy = o.y - o.k * 16.4, cx = x + o.sx * dk * (sit ? 9 : 9.8), cy = y - dk * (sit ? 15.4 : 14);
       d.leash.setAttribute('d', 'M' + hx.toFixed(1) + ',' + hy.toFixed(1) + ' L' + cx.toFixed(1) + ',' + cy.toFixed(1));
     });
     sitters.forEach(function (s) { sitterPose(s, t); });
