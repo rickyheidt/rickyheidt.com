@@ -896,11 +896,13 @@ html.scroll-locked{overflow:hidden;padding-right:var(--sbw,0)}
 .egg-sky.out{opacity:0}
 .egg-flash{position:absolute;inset:0;z-index:6;background:#fff;pointer-events:none;animation:egg-flash .7s ease-out both}
 @keyframes egg-flash{from{opacity:.9}to{opacity:0}}
-.egg-photo{position:absolute;z-index:6;right:max(24px,calc((100% - 1180px) / 2));top:22%;display:grid;gap:6px;padding:14px 18px;border-radius:6px;background:#fffaf0;border-top:7px solid var(--silk,#e4745c);color:#0b1d2b;box-shadow:0 14px 34px rgba(10,20,40,.3);transform:rotate(-3deg);pointer-events:none;animation:egg-pop2 .35s ease-out both}
-.egg-photo b{font:600 1.35rem/1 Fraunces,Georgia,serif;letter-spacing:.02em;text-transform:uppercase}
-.egg-photo span{display:flex;align-items:center;gap:8px;font:500 .9rem/1.2 Inter,system-ui,sans-serif}
-.egg-photo i{width:14px;height:14px;border-radius:3px;display:inline-block;background:var(--silk,#e4745c);box-shadow:inset 0 0 0 1px rgba(11,29,43,.25)}
-.egg-photo small{font:500 .78rem/1 Inter,system-ui,sans-serif;color:#51667a;padding-left:22px;text-transform:capitalize}
+.egg-photo{position:absolute;z-index:6;right:max(24px,calc((100% - 1180px) / 2));top:22%;display:grid;gap:5px;padding:12px 18px 14px;border-radius:6px;background:#fffaf0;border-top:7px solid var(--silk,#d63a3a);color:#0b1d2b;box-shadow:0 14px 34px rgba(10,20,40,.3);transform:rotate(-3deg);pointer-events:none;animation:egg-pop2 .35s ease-out both}
+.egg-photo small{font:600 .68rem/1 Inter,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#51667a}
+.egg-photo b{display:flex;align-items:center;gap:9px;font:600 1.4rem/1.1 Fraunces,Georgia,serif}
+.egg-photo span{font:500 .92rem/1.2 Inter,system-ui,sans-serif}
+.egg-photo p{margin:2px 0 0;display:flex;align-items:center;gap:6px;font:500 .78rem/1 Inter,system-ui,sans-serif;color:#51667a}
+.egg-photo em{display:inline-grid;place-items:center;min-width:1.5em;height:1.5em;padding:0 .2em;border-radius:3px;font:800 .8rem/1 Inter,system-ui,sans-serif;font-style:normal;box-shadow:inset 0 0 0 1px rgba(11,29,43,.2)}
+.egg-photo b em{font-size:.95rem}
 .egg-photo.out{opacity:0;transition:opacity .5s ease}
 @keyframes egg-pop2{from{opacity:0;transform:rotate(-3deg) translateY(10px)}to{opacity:1;transform:rotate(-3deg)}}
 @media (prefers-reduced-motion:reduce){.egg-bubble,.egg-photo{animation:none}.egg-flash{animation:none;opacity:0}}

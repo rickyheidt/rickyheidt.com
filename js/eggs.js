@@ -276,26 +276,28 @@
     // a fixed point in its drawing (124, -92); map it to the screen for every
     // horse and take the one furthest along. Outlines would mislead here: a
     // front leg reaching forward mid-stride sticks out past the nose.
-    // Named by the drape (saddle cloth) and the horse's coat; each is different in the field.
-    var DRAPES = { '#d63a3a': 'Red', '#f6f1e7': 'White', '#2f6fd6': 'Blue', '#f2c84b': 'Yellow', '#3f9a5a': 'Green', '#1d2a3a': 'Black', '#f08a24': 'Orange' };
-    var NAMES = { '#7a4428': 'bay', '#4a2c1d': 'dark bay', '#a3582e': 'chestnut', '#9a958e': 'grey', '#2a2220': 'black', '#d4a85a': 'palomino', '#b8894f': 'buckskin' };
     var noses = [];
     for (var k = 0; k < horses.length; k++) {
       var m = horses[k].getScreenCTM(); if (!m) continue;
-      noses.push({ x: m.a * 124 + m.c * -92 + m.e, len: Math.abs(m.a) * 180, coat: (horses[k].style.getPropertyValue('--coat') || '').trim().toLowerCase(), drape: (horses[k].style.getPropertyValue('--cloth') || '').trim().toLowerCase() });
+      var st = horses[k].style;
+      noses.push({ x: m.a * 124 + m.c * -92 + m.e, len: Math.abs(m.a) * 180, num: horses[k].getAttribute('data-num'), name: horses[k].getAttribute('data-name'),
+        cloth: st.getPropertyValue('--cloth').trim(), ink: st.getPropertyValue('--num').trim() });
     }
     noses.sort(function (a, b) { return b.x - a.x; });
-    var coat = noses.length ? noses[0].coat : '#7a4428', drape = noses.length ? noses[0].drape : '#d63a3a';
     // Call the margin from the real gap, in lengths of the leading horse.
     var gap = noses.length > 1 ? (noses[0].x - noses[1].x) / noses[0].len : 1;
     var by = gap < .05 ? 'a nose' : gap < .12 ? 'a head' : gap < .25 ? 'a neck' : gap < .6 ? 'half a length' : gap < 1.4 ? 'a length' : Math.round(gap) + ' lengths';
+    // Program numbers on their saddle-cloth colors, as the tote board posts them.
+    function chip(h) { return '<em style="background:' + h.cloth + ';color:' + h.ink + '">' + h.num + '</em>'; }
+    var w = noses[0] || { num: '1', name: 'Sunset Cliffs', cloth: '#d63a3a', ink: '#fff' };
     photoBusy = true; shutter(); cheer();
     var flash = document.createElement('div'); flash.className = 'egg-flash'; scene.appendChild(flash);
     var svgs = scene.querySelectorAll('.layer-rt-track svg, .layer-rt-apron svg, .layer-rt-stand svg');
     if (!reduce.matches) svgs.forEach(function (s) { if (s.pauseAnimations) s.pauseAnimations(); });
     var card = document.createElement('div'); card.className = 'egg-photo';
-    card.style.setProperty('--silk', drape);
-    card.innerHTML = '<b>Photo finish</b><span><i></i>' + (DRAPES[drape] || 'The leader\'s') + ' drape leads by ' + by + '</span><small>The ' + (NAMES[coat] || 'leader') + '</small>';
+    card.style.setProperty('--silk', w.cloth);
+    card.innerHTML = '<small>Photo finish</small><b>' + chip(w) + w.name + '</b><span>wins by ' + by + '</span>' +
+      (noses.length > 2 ? '<p>2nd ' + chip(noses[1]) + ' 3rd ' + chip(noses[2]) + '</p>' : '');
     scene.appendChild(card);
     setTimeout(function () { flash.remove(); }, 700);
     setTimeout(function () {
