@@ -272,22 +272,30 @@
       if (inside(r, x, y, 4) && r.right > best) { best = r.right; hit = i; }
     }
     if (hit < 0) return false;
-    // The result comes from the race card itself: which lap is running, and who wins it.
-    var NAMES = { '#e4745c': 'Coral', '#2f4f86': 'Navy', '#ffd79a': 'Gold', '#9fe0a8': 'Green', '#c58cff': 'Purple', '#ff9fd8': 'Pink', '#7fc8d8': 'Sky blue' };
-    var silks = '#e4745c', by = 'a nose';
-    try {
-      var fieldEl = scene.querySelector('.layer-rt-track .rt-field'), race = JSON.parse(fieldEl.getAttribute('data-race'));
-      var svgT = fieldEl.ownerSVGElement.getCurrentTime();
-      var lap = Math.floor((((svgT + race.off) % race.card) + race.card) % race.card / race.race) % race.winners.length;
-      silks = race.winners[lap].toLowerCase(); by = race.calls[lap];
-    } catch (err) {}
+    // The photo shows whoever is in front at this instant. Each horse's nose is
+    // a fixed point in its drawing (124, -92); map it to the screen for every
+    // horse and take the one furthest along. Outlines would mislead here: a
+    // front leg reaching forward mid-stride sticks out past the nose.
+    // Named by the drape (saddle cloth) and the horse's coat; each is different in the field.
+    var DRAPES = { '#d63a3a': 'Red', '#f6f1e7': 'White', '#2f6fd6': 'Blue', '#f2c84b': 'Yellow', '#3f9a5a': 'Green', '#1d2a3a': 'Black', '#f08a24': 'Orange' };
+    var NAMES = { '#7a4428': 'bay', '#4a2c1d': 'dark bay', '#a3582e': 'chestnut', '#9a958e': 'grey', '#2a2220': 'black', '#d4a85a': 'palomino', '#b8894f': 'buckskin' };
+    var noses = [];
+    for (var k = 0; k < horses.length; k++) {
+      var m = horses[k].getScreenCTM(); if (!m) continue;
+      noses.push({ x: m.a * 124 + m.c * -92 + m.e, len: Math.abs(m.a) * 180, coat: (horses[k].style.getPropertyValue('--coat') || '').trim().toLowerCase(), drape: (horses[k].style.getPropertyValue('--cloth') || '').trim().toLowerCase() });
+    }
+    noses.sort(function (a, b) { return b.x - a.x; });
+    var coat = noses.length ? noses[0].coat : '#7a4428', drape = noses.length ? noses[0].drape : '#d63a3a';
+    // Call the margin from the real gap, in lengths of the leading horse.
+    var gap = noses.length > 1 ? (noses[0].x - noses[1].x) / noses[0].len : 1;
+    var by = gap < .05 ? 'a nose' : gap < .12 ? 'a head' : gap < .25 ? 'a neck' : gap < .6 ? 'half a length' : gap < 1.4 ? 'a length' : Math.round(gap) + ' lengths';
     photoBusy = true; shutter(); cheer();
     var flash = document.createElement('div'); flash.className = 'egg-flash'; scene.appendChild(flash);
     var svgs = scene.querySelectorAll('.layer-rt-track svg, .layer-rt-apron svg, .layer-rt-stand svg');
     if (!reduce.matches) svgs.forEach(function (s) { if (s.pauseAnimations) s.pauseAnimations(); });
     var card = document.createElement('div'); card.className = 'egg-photo';
-    card.style.setProperty('--silk', silks);
-    card.innerHTML = '<b>Photo finish</b><span><i></i>' + (NAMES[silks] || 'The winner') + ' silks win by ' + by + '</span>';
+    card.style.setProperty('--silk', drape);
+    card.innerHTML = '<b>Photo finish</b><span><i></i>' + (DRAPES[drape] || 'The leader\'s') + ' drape leads by ' + by + '</span><small>The ' + (NAMES[coat] || 'leader') + '</small>';
     scene.appendChild(card);
     setTimeout(function () { flash.remove(); }, 700);
     setTimeout(function () {
