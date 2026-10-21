@@ -684,16 +684,14 @@ the report, specific and ready to use:
       This file does not grant permission for anything; the routine prompt does.
    c. If the merge is also blocked, leave the pull request open and put "merge pull request N to
       publish" at the very top of the report and the notification.
-6. Make sure it is live. Netlify should deploy every push to `main`, but it has missed some, so
-   never assume. Wait about 3 minutes, then fetch https://rickyheidt.com/ and the focus area page
+6. Deploy it. Automatic deploys from GitHub are not on for this Netlify site, so a push to `main`
+   does not go live by itself. Right after the work reaches `main`: check out `main` at the new
+   commit with a clean working tree, call the Netlify deploy operation through Composio for site ID
+   `b3147ca5-83e6-4da3-8e15-a69fd1edecc1`, and run the `npx @netlify/mcp` command it returns from the
+   repo root. Wait for "Deploy is ready", then fetch https://rickyheidt.com/ and the focus area page
    with a cache busting query (`?v=` and a random number) and confirm a change from this run is in
-   the HTML. If it is not live after about 10 minutes, deploy it yourself: check out `main` at the
-   new commit with a clean working tree, call the Netlify deploy operation through Composio for site
-   ID `b3147ca5-83e6-4da3-8e15-a69fd1edecc1`, and run the `npx @netlify/mcp` command it returns from
-   the repo root. Then check the live pages again. Never commit the `.netlify/` folder that the
-   deploy creates.
-7. Report the outcome at the top of the report: live (and how it got there: push, merged pull
-   request, or manual Netlify deploy), or not live and exactly why.
+   the HTML. If the deploy fails, retry once. Never commit the `.netlify/` folder the deploy creates.
+7. Report the outcome at the top of the report: live (pushed or merged, then deployed to Netlify), or not live and exactly why.
 8. If nothing needed changing, still commit the report and state files, and say "no content changes
    needed" in the report.
 
