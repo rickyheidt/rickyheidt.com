@@ -892,6 +892,7 @@ html.scroll-locked{overflow:hidden;padding-right:var(--sbw,0)}
 .scene[data-scene="fair"] .layer[data-scene="fair"],.scene[data-scene="highway"] .layer[data-scene="highway"],.scene[data-scene="racetrack"] .layer[data-scene="racetrack"]{display:block}
 /* The highway's sunset clouds fade as the scene turns to night, like the sun. */
 .layer-hw-clouds{opacity:calc(1 - var(--night) * .8)}
+.hw-haze{opacity:calc(1 - var(--night) * .85)}
 /* On phones the copy runs full width, so ease the fair rides and the grandstand toward the right edge. */
 @media (max-width:767px){.layer-fair-rides svg{transform:translateX(-50%)}.layer-rt-stand svg,.layer-rt-apron svg{transform:translateX(-55%)}}
 /* /alt-scenes */
