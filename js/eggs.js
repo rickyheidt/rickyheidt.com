@@ -41,7 +41,7 @@
 
   // Every sound runs through one master volume, kept low: these are surprises,
   // not alarms, and someone may be browsing at work.
-  var ac = null, master = null, VOLUME = 0.32;
+  var ac = null, master = null, VOLUME = 0.1;
   function audio() {
     if (!ac) {
       try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
@@ -272,22 +272,22 @@
       if (inside(r, x, y, 4) && r.right > best) { best = r.right; hit = i; }
     }
     if (hit < 0) return false;
-    // The leader is whoever's nose is furthest along right now.
-    var lead = 0, far = -1e9;
-    for (var k = 0; k < horses.length; k++) { var rr = horses[k].getBoundingClientRect(); if (rr.right > far) { far = rr.right; lead = k; } }
-    var silks = (horses[lead].style.getPropertyValue('--silk') || '#e4745c').trim().toLowerCase();
+    // The result comes from the race card itself: which lap is running, and who wins it.
     var NAMES = { '#e4745c': 'Coral', '#2f4f86': 'Navy', '#ffd79a': 'Gold', '#9fe0a8': 'Green', '#c58cff': 'Purple', '#ff9fd8': 'Pink', '#7fc8d8': 'Sky blue' };
+    var silks = '#e4745c', by = 'a nose';
+    try {
+      var fieldEl = scene.querySelector('.layer-rt-track .rt-field'), race = JSON.parse(fieldEl.getAttribute('data-race'));
+      var svgT = fieldEl.ownerSVGElement.getCurrentTime();
+      var lap = Math.floor((((svgT + race.off) % race.card) + race.card) % race.card / race.race) % race.winners.length;
+      silks = race.winners[lap].toLowerCase(); by = race.calls[lap];
+    } catch (err) {}
     photoBusy = true; shutter(); cheer();
     var flash = document.createElement('div'); flash.className = 'egg-flash'; scene.appendChild(flash);
     var svgs = scene.querySelectorAll('.layer-rt-track svg, .layer-rt-apron svg, .layer-rt-stand svg');
     if (!reduce.matches) svgs.forEach(function (s) { if (s.pauseAnimations) s.pauseAnimations(); });
     var card = document.createElement('div'); card.className = 'egg-photo';
     card.style.setProperty('--silk', silks);
-    // How far clear the leader is decides the call: a nose, a neck or a length.
-    var noses = [].map.call(horses, function (h) { return h.getBoundingClientRect().right; }).sort(function (a, b) { return b - a; });
-    var gap = (noses[0] - noses[1]) / Math.max(1, horses[lead].getBoundingClientRect().width);
-    var by = gap < .12 ? 'a nose' : gap < .4 ? 'a neck' : 'a length';
-    card.innerHTML = '<b>Photo finish</b><span><i></i>' + (NAMES[silks] || 'The leader') + ' silks by ' + by + '</span>';
+    card.innerHTML = '<b>Photo finish</b><span><i></i>' + (NAMES[silks] || 'The winner') + ' silks win by ' + by + '</span>';
     scene.appendChild(card);
     setTimeout(function () { flash.remove(); }, 700);
     setTimeout(function () {
