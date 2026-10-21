@@ -885,6 +885,25 @@ html.scroll-locked{overflow:hidden;padding-right:var(--sbw,0)}
 .nb-kind{display:block;margin:0 0 6px;font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--sea-text)}
 .hmap-sec{scroll-margin-top:30px}   /* keeps "Explore the map" clear of the sticky header when linked to */
 
+
+/* Easter eggs in the hero (js/eggs.js): speech bubbles, fireworks, photo finish. */
+.egg-bubble{position:absolute;z-index:5;transform:translate(-50%,-100%);padding:6px 11px;border-radius:14px;background:#fffaf0;color:#0b1d2b;font:700 .95rem/1 Inter,system-ui,sans-serif;box-shadow:0 6px 18px rgba(10,20,40,.25);pointer-events:none;animation:egg-pop .35s cubic-bezier(.2,1.6,.4,1) both}
+.egg-bubble::after{content:"";position:absolute;left:50%;bottom:-5px;width:10px;height:10px;background:inherit;transform:translateX(-50%) rotate(45deg)}
+.egg-bubble.small{font-size:.8rem;padding:5px 9px}
+.egg-bubble.out{opacity:0;transition:opacity .45s ease}
+@keyframes egg-pop{from{opacity:0;transform:translate(-50%,-80%) scale(.6)}to{opacity:1;transform:translate(-50%,-100%) scale(1)}}
+.egg-sky{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;transition:opacity .8s ease}
+.egg-sky.out{opacity:0}
+.egg-flash{position:absolute;inset:0;z-index:6;background:#fff;pointer-events:none;animation:egg-flash .7s ease-out both}
+@keyframes egg-flash{from{opacity:.9}to{opacity:0}}
+.egg-photo{position:absolute;z-index:6;right:max(24px,calc((100% - 1180px) / 2));top:22%;display:grid;gap:6px;padding:14px 18px;border-radius:6px;background:#fffaf0;color:#0b1d2b;box-shadow:0 14px 34px rgba(10,20,40,.3);transform:rotate(-3deg);pointer-events:none;animation:egg-pop2 .35s ease-out both}
+.egg-photo b{font:600 1.35rem/1 Fraunces,Georgia,serif;letter-spacing:.02em;text-transform:uppercase}
+.egg-photo span{display:flex;align-items:center;gap:8px;font:500 .9rem/1.2 Inter,system-ui,sans-serif}
+.egg-photo i{width:14px;height:14px;border-radius:3px;display:inline-block}
+.egg-photo.out{opacity:0;transition:opacity .5s ease}
+@keyframes egg-pop2{from{opacity:0;transform:rotate(-3deg) translateY(10px)}to{opacity:1;transform:rotate(-3deg)}}
+@media (prefers-reduced-motion:reduce){.egg-bubble,.egg-photo{animation:none}.egg-flash{animation:none;opacity:0}}
+
 /* alt-scenes: whole hero scenes beside the beach. The picker sets data-scene on
    the section; each scene shows its own layers and keeps the shared sky, sun and stars. */
 .layer[data-scene]{display:none}
