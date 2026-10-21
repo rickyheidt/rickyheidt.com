@@ -8,6 +8,9 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SITE = 'https://rickyheidt.com';
+// NAP and license facts that must match on every page (guardrail: never edit these, only check them)
+const PHONE = '+18587587336';
+const DRE = '02230045';
 const HIDDEN = new Set(['404.html', 'thank-you.html', 'guide-download.html']);
 const findings = [];
 const add = (level, page, msg) => findings.push({ level, page, msg });
@@ -21,6 +24,8 @@ const thisYear = new Date().getFullYear();
 const strip = s => s.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<svg[\s\S]*?<\/svg>/g, ' ');
 const text = h => strip(h).replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/g, ' ').replace(/\s+/g, ' ').trim();
 const titles = new Map(), descs = new Map();
+const DASH = /[\u2013\u2014]/;
+const big = [];
 
 for (const f of pages) {
   const html = readFileSync(join(ROOT, f), 'utf8');
@@ -55,10 +60,17 @@ for (const f of pages) {
   for (const p of ['og:title', 'og:description', 'og:url', 'og:image'])
     if (!hidden && !html.includes(`property="${p}"`)) add('WARN', f, `missing ${p}`);
 
+  const ld = [];
   for (const m of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
-    try { JSON.parse(m[1]); } catch (e) { add('ERROR', f, `JSON-LD does not parse: ${e.message}`); }
+    try { ld.push(JSON.parse(m[1])); } catch (e) { add('ERROR', f, `JSON-LD does not parse: ${e.message}`); }
   }
   if (!hidden && !html.includes('application/ld+json')) add('WARN', f, 'no JSON-LD structured data');
+  const nodes = [];
+  const walk = o => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') { nodes.push(o); Object.values(o).forEach(walk); } };
+  walk(ld);
+  const types = new Set(nodes.flatMap(n => [].concat(n['@type'] || [])));
+  if (!hidden && f !== 'index.html' && !types.has('BreadcrumbList')) add('WARN', f, 'no BreadcrumbList schema');
+  for (const n of nodes) if (n.telephone && n.telephone !== PHONE) add('ERROR', f, `schema telephone ${n.telephone} does not match ${PHONE}`);
 
   const imgs = [...html.matchAll(/<img\b[^>]*>/g)].map(m => m[0]);
   const noAlt = imgs.filter(t => !/\balt=/.test(t)).length;
@@ -76,6 +88,26 @@ for (const f of pages) {
     if (!ref || seen.has(ref)) continue;
     seen.add(ref);
     if (!existsSync(join(ROOT, ref))) add('ERROR', f, `broken reference: ${m[1]}`);
+  }
+
+  for (const m of html.matchAll(/href="tel:([^"]+)"/g))
+    if (m[1].replace(/[^+\d]/g, '') !== PHONE) { add('ERROR', f, `tel: link ${m[1]} does not match ${PHONE}`); break; }
+  if (!hidden && !html.includes(DRE)) add('WARN', f, `DRE license ${DRE} not shown`);
+  for (const t of imgs) if (!/\bwidth=/.test(t) || !/\bheight=/.test(t)) { add('WARN', f, '<img> without width and height (layout shift risk)'); break; }
+  if (html.length > 500_000) big.push(f);
+
+  // House style: no em or en dashes in titles, descriptions, schema or visible copy
+  const dashIn = [['title', title || ''], ['meta description', desc || ''], ['JSON-LD', JSON.stringify(ld)], ['page copy', text(html)]];
+  for (const [where, s] of dashIn) {
+    const m = s.match(DASH);
+    if (m) add('ERROR', f, `em or en dash in ${where}: "...${s.slice(Math.max(0, m.index - 30), m.index + 30)}..."`);
+  }
+
+  // FAQ schema must match questions people can actually see
+  const bodyText = text(html).toLowerCase();
+  for (const n of nodes) if ([].concat(n['@type']).includes('Question') && n.name) {
+    const q = n.name.toLowerCase().replace(/&[a-z#0-9]+;/g, ' ').replace(/\s+/g, ' ').slice(0, 40);
+    if (!bodyText.includes(q)) add('WARN', f, `FAQ schema question not visible on page: "${n.name.slice(0, 60)}"`);
   }
 
   // Stale-date smell: years in the past that read like "current" claims
@@ -97,6 +129,16 @@ for (const [u] of inSitemap) {
   if (!existsSync(join(ROOT, f))) add('ERROR', 'sitemap.xml', `lists ${u} but the file does not exist`);
 }
 if (!robots.includes(`Sitemap: ${SITE}/sitemap.xml`)) add('ERROR', 'robots.txt', 'missing Sitemap line');
+if (/User-agent: \*\s+(?:Allow: [^\n]*\s+)*Disallow: \/\s*$/m.test(robots)) add('ERROR', 'robots.txt', 'blocks the whole site');
+for (const bot of ['GPTBot', 'OAI-SearchBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended'])
+  if (new RegExp(`User-agent: ${bot}\\s+Disallow: /\\s`).test(robots + '\n')) add('WARN', 'robots.txt', `${bot} is blocked`);
+if (!existsSync(join(ROOT, 'llms.txt'))) add('INFO', 'llms.txt', 'no llms.txt summary for AI assistants');
+const today = Date.now();
+for (const [u, d] of inSitemap) {
+  const days = Math.round((today - Date.parse(d)) / 864e5);
+  if (days > 120) add('INFO', 'sitemap.xml', `${u.slice(SITE.length + 1) || 'index.html'} not updated in ${days} days`);
+}
+if (big.length) add('INFO', `${big.length} pages`, 'HTML over 500 KB (mostly the inline hero scene SVGs); watch Core Web Vitals');
 
 const order = { ERROR: 0, WARN: 1, INFO: 2 };
 findings.sort((a, b) => order[a.level] - order[b.level] || a.page.localeCompare(b.page));
