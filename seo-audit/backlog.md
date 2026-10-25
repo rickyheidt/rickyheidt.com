@@ -19,6 +19,7 @@ to Done with the date. See PLAYBOOK.md section 6.
 | 16 | Pacific Highlands Ranch and Torrey Hills area pages, once there is enough sourced content (subarea price data needs a source at that geography) | New pages | Redfin owns these queries; no agent guide ranks | Medium | 2026-10-21 |
 | 17 | Add "San Diego" to the title, H1 and Place schema name of any other page whose place name is shared with another California place | Technical | Monterey County Carmel Valley crowds Carmel Valley results | Low | 2026-10-21 |
 | 18 | Checker: skip the empty lightbox `<img alt="">` placeholder on index.html and sales.html in the width and height check (it has no src) | Technical | False positive warning | Low | 2026-10-21 |
+| 19 | Real photos on Tier 1 area pages (Ricky to supply), placed near the matching text with descriptive alt text | Images | Area pages have no photos; Google Starter Guide recommends images near relevant text | Medium | 2026-10-25 |
 
 ## Done
 
