@@ -726,6 +726,22 @@ fire, a major project), handle it that run and note it.
 
 ---
 
+**Google Search Central rules (from the SEO Starter Guide and Search Essentials).**
+- Give changes time. Google says to wait a few weeks before judging an edit. Do not rewrite the
+  same page's title, description or H1 again within 28 days of the last change unless it is broken
+  or wrong. Record each title or description change in the report so the next run can measure it
+  in Search Console before touching it again.
+- People first. Write for the reader, then check the wording matches how people actually search
+  (beginners and experts use different words, for example "Mello-Roos" and "special tax"). Never
+  repeat a keyword unnaturally. Keyword stuffing breaks Google's spam policies.
+- No meta keywords tag, no word count targets. Length does not rank, usefulness does.
+- Link to trusted sources (government, districts, SDAR, C.A.R.) with descriptive anchor text. Add
+  `rel="nofollow"` to any outbound link you cannot vouch for.
+- Images help people find the site. When Ricky provides real photos of an area, place them next to
+  the matching section with specific alt text (the place and what is shown). Never use stock or
+  scraped photos presented as the area.
+- Check how Google sees a page with Search Console URL Inspection, not just the browser.
+
 ## 8. Writing standards for site copy
 
 - Write for a smart person who is new to the area. Short sentences, concrete nouns, real names of
@@ -736,6 +752,7 @@ fire, a major project), handle it that run and note it.
 - Use "about" for typical drive times and say when ("about 20 minutes to Sorrento Valley outside
   rush hour").
 - No em dashes, no en dashes, no spaced hyphens used as dashes.
+- No keyword stuffing. Name the place naturally, as a local would.
 - No superlatives about Ricky, no hype adjectives, no exclamation points in body copy.
 - "REALTOR®" with the mark. Spell place names the way the site already does, for example
   "Rancho Peñasquitos" with the ñ in copy (the file name stays `rancho-penasquitos.html`).
