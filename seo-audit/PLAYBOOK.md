@@ -285,6 +285,31 @@ are waiting on. Never mix months in one stat block.
 
 ---
 
+## 5b. Specialist skills (SEO-AEO-GEO Ultimate plugin)
+
+When the `seo-aeo-geo-ultimate` plugin is available in the session, use its specialist skills as
+the method for each phase, scoped to this run's focus area. They add structure and evidence
+discipline; this playbook's guardrails, scope limits and publishing steps still win wherever they
+differ. Skip a skill when its phase has nothing to do this run, and keep the run within budget.
+
+| Phase | Skill | Use it for |
+|---|---|---|
+| 1 Technical | `seo-technical`, `seo-schema`, `seo-sitemap` | Crawl, index, canonical and directive checks; llms.txt; schema tied to visible content; sitemap accuracy |
+| 1 Internal links | `seo-architecture` | Neighbor links, hub coverage, anchors, cannibalization |
+| 2 Search landscape | `seo-research` | Query clusters, intent, People also ask, one canonical page per need |
+| 2 and 8 AI answers | `ai-search-research` | Which sources AI answers cite for the focus area's questions |
+| 3 Competitors | `seo-authority`, `seo-competitor-pages` | Who ranks and why, links and mentions they earn, fair comparison briefs |
+| 4 to 6 Pages | `seo-aeo`, `seo-content`, `seo-page` | Answer first summaries, FAQ coverage, claim support, per page review of the focus pages |
+| 8 AI search | `seo-geo` | Entity consistency (name, brokerage, DRE, phone, areas) and citation suitability |
+| 9 Local | `seo-local` | Google Business Profile, Bing Places, NAP, service areas, reviews (report only) |
+| Data | `seo-performance` | Search Console, Bing and Analytics comparisons, kept observational, never causal |
+| Images | `seo-images` | Alt text and image delivery when photos are added |
+| Report | `seo-action-plan` | Turning findings into the "Queued for next run" and "For Ricky" lists |
+
+Do not use the `seo` front door orchestrator or `ai-visibility-monitor` on routine runs. They try
+to run every lane at once and would use far more of the budget than a twice monthly run needs.
+If the plugin is not available, follow the phases below as written and note it in the report.
+
 ## 6. The run, phase by phase
 
 ### Phase 0. Preflight
