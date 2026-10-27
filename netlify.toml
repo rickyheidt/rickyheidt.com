@@ -21,6 +21,13 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# Hero scene fragments: fetched by the page, never a page of their own
+[[headers]]
+  for = "/scenes/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    X-Robots-Tag = "noindex, nofollow"
+
 # Keep the links in the source exactly as written. Netlify's Pretty URLs
 # post-processing rewrites href="about.html" to href="/about", which no longer
 # matches the canonical tags and the sitemap (both use the .html address) and

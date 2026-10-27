@@ -260,7 +260,7 @@
   ST.create({ start: 0, end: 'max', onUpdate: function (st) { velo = clamp(st.getVelocity() / 2200, -1, 1); } });
   G.ticker.add(function () { velo *= 0.9; });
 
-  $$('.scene').forEach(function (scene) {
+  function initScene(scene) {
     var isHome = scene.classList.contains('scene-home');
     var layers = $$('.layer', scene);
     var content = $('.scene-content', scene);
@@ -371,6 +371,13 @@
       tl2.to(glare, { yPercent: 30, scale: 1.5, ease: 'none' }, 0);
       tl2.to(copy, { yPercent: 40, opacity: 0, ease: 'none' }, 0);
     }
+  }
+  // An alternate hero scene may still be arriving from scenes/*.html; its layers
+  // need to be in the DOM before the parallax is built around them.
+  $$('.scene').forEach(function (scene) {
+    if (scene.hasAttribute('data-scene-loading')) {
+      scene.addEventListener('scene:ready', function () { initScene(scene); ST.refresh(); }, { once: true });
+    } else { initScene(scene); }
   });
 
   /* --- Content stays put on load; things below the fold fade in, nothing moves --- */

@@ -923,6 +923,10 @@ html.scroll-locked{overflow:hidden;padding-right:var(--sbw,0)}
 .layer[data-scene]{display:none}
 .scene[data-scene="fair"] .layer:not([data-scene]):not(.layer-sun):not(.layer-stars),.scene[data-scene="racetrack"] .layer:not([data-scene]):not(.layer-sun):not(.layer-stars),.scene[data-scene="highway"] .layer:not([data-scene]):not(.layer-sun):not(.layer-stars):not(.layer-fore){display:none}
 .scene[data-scene="fair"] .layer[data-scene="fair"],.scene[data-scene="highway"] .layer[data-scene="highway"],.scene[data-scene="racetrack"] .layer[data-scene="racetrack"]{display:block}
+/* Fetched scenes fade in over the sky once their layers land */
+.scene-loaded .layer[data-scene]{animation:scene-in .7s ease-out both}
+@keyframes scene-in{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.scene-loaded .layer[data-scene]{animation:none}}
 /* The highway's sunset clouds fade as the scene turns to night, like the sun. */
 .layer-hw-clouds{opacity:calc(1 - var(--night) * .8)}
 .hw-haze{opacity:calc(1 - var(--night) * .85)}
