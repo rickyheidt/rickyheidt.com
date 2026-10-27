@@ -337,6 +337,8 @@
         scrollTrigger: {
           trigger: scene, start: function () { return 'top ' + headerH() + 'px'; }, end: '+=140%',
           pin: true, scrub: 0.7, anticipatePin: 1, invalidateOnRefresh: true,
+          // Measured before anything below it, even when an alternate scene arrives late
+          refreshPriority: 1,
           onUpdate: function (st) {
             setNight(scene, clamp((st.progress - 0.15) / 0.6, 0, 1));
             scene.style.setProperty('--scroll', st.progress.toFixed(3));
@@ -376,7 +378,7 @@
   // need to be in the DOM before the parallax is built around them.
   $$('.scene').forEach(function (scene) {
     if (scene.hasAttribute('data-scene-loading')) {
-      scene.addEventListener('scene:ready', function () { initScene(scene); ST.refresh(); }, { once: true });
+      scene.addEventListener('scene:ready', function () { initScene(scene); ST.sort(); ST.refresh(); }, { once: true });
     } else { initScene(scene); }
   });
 
