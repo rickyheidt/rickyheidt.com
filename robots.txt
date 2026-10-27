@@ -4,6 +4,7 @@ Allow: /
 Disallow: /thank-you.html
 Disallow: /guide-download.html
 Disallow: /downloads/
+Disallow: /scenes/
 
 User-agent: GPTBot
 Allow: /

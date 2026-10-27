@@ -3,6 +3,20 @@
 Newest first. Each automated run adds an entry: date, run type (A on the 1st, B on the 15th), focus
 area, pages changed, checker counts before and after, and the next focus area.
 
+## Performance pass (manual), 2026-10-27
+- Focus: page weight and hero LCP. The three alternate hero scenes (fair, highway, racetrack)
+  were inlined on all 48 pages, 568 KB of SVG per page with one scene shown per visit. They now
+  live in `scenes/*.html`, fetched on demand by the picker; the beach stays inline. HTML per page
+  fell from about 740 KB to 170 KB (home) and 677 KB to 105 KB (About). `scenes/` is noindex
+  in robots.txt and netlify.toml.
+- Phone, slow 4G, 4x CPU (local): home LCP 7.9 s to 2.0 s, Carmel Valley 4.1 s to 0.7 s.
+- Home listing photo and About portrait now load with `fetchpriority="high"` instead of lazy
+  (both are the largest paint on their page).
+- Hero parallax reworked in `js/effects.js` (sun bloom, depth easing, gyroscope on phones,
+  scroll lean). Cache versions bumped: styles v24, effects v13.
+- Not done, needs Ricky: real photos on area pages (backlog 19), freshness lines on Tier 1 pages
+  (only after a content refresh), Review schema (self serving reviews are not eligible for stars).
+
 ## Run A (manual test run), 2026-10-21
 - Focus area: 1, Carmel Valley and the 92130 corridor.
 - Pages changed: carmel-valley.html (September 2026 market snapshot, where it is, getting around,
