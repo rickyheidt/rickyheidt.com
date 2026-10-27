@@ -291,3 +291,29 @@
     window.addEventListener('pageshow',function(){ f.__sent=false; b.removeAttribute('aria-disabled'); b.classList.remove('is-sending'); b.textContent=label; });
   });
 })();
+
+// Team numbers count up when they scroll into view; the final values are already in the HTML
+(function () {
+  var els = document.querySelectorAll('[data-count]');
+  if (!els.length || !('IntersectionObserver' in window) || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  var run = function (el) {
+    var end = +el.getAttribute('data-count'), pre = el.getAttribute('data-prefix') || '', suf = el.getAttribute('data-suffix') || '', t0 = null;
+    var step = function (t) {
+      if (t0 === null) t0 = t;
+      var k = Math.min(1, (t - t0) / 1400), v = Math.round(end * (1 - Math.pow(1 - k, 3)));
+      el.textContent = pre + v + suf;
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { io.unobserve(e.target); run(e.target); } });
+  }, { threshold: 0.4 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+
+// Links with data-interest preselect that option in the page contact form
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a[data-interest]'); if (!a) return;
+  var s = document.querySelector('form[name="contact"] [name="interest"]'); if (s) s.value = a.getAttribute('data-interest');
+});

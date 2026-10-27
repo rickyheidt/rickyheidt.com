@@ -15,6 +15,7 @@ Market numbers on the neighborhood pages state the month and the source next to 
 - [About](https://rickyheidt.com/about.html): background, brokerage and license.
 - [Buy a home](https://rickyheidt.com/buy.html): the buying process in San Diego, first time buyer loans and down payment help.
 - [Sell your home](https://rickyheidt.com/sell.html): pricing, preparation and marketing for sellers.
+- [Home services and vendors](https://rickyheidt.com/services.html): PorchLight partners, trusted local vendors, and an as-is cash offer option.
 - [Home value](https://rickyheidt.com/home-value.html): request a free comparative market analysis.
 - [Neighborhood guides](https://rickyheidt.com/neighborhoods.html): every area guide on the site.
 - [FAQ](https://rickyheidt.com/faq.html): down payments, closing costs, buyer agreements, Mello-Roos and property taxes.
@@ -54,6 +55,7 @@ Market numbers on the neighborhood pages state the month and the source next to 
 - [Mission Beach](https://rickyheidt.com/mission-beach.html)
 - [Ocean Beach](https://rickyheidt.com/ocean-beach.html)
 - [Point Loma](https://rickyheidt.com/point-loma.html)
+- [Coronado](https://rickyheidt.com/coronado.html)
 - [Downtown San Diego](https://rickyheidt.com/downtown-san-diego.html)
 - [Little Italy](https://rickyheidt.com/little-italy.html)
 - [Hillcrest](https://rickyheidt.com/hillcrest.html)
