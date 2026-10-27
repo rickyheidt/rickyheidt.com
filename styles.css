@@ -1061,3 +1061,8 @@ a.svc-ext{color:var(--ocean);font-weight:600}
   .mega-sm{width:100%;padding:4px 0 8px 12px}
   .mega-sm .mega-col ul{grid-template-columns:1fr}
 }
+.stat-row+.stat-note{margin:-20px 0 30px;font-size:.8rem;color:var(--ink-soft)}
+.stat-hl{background:linear-gradient(150deg,#2b8a8f,#14506b);border-color:transparent}
+.stat-hl b{color:#fff}
+.stat-hl span{color:#d9f1ef}
+.stat-note a{color:inherit}
