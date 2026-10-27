@@ -246,7 +246,14 @@ section{padding:84px 0}
 .nt{opacity:calc(var(--night) * .62)}
 .nt2{opacity:calc(var(--night) * .58)}
 .layer{position:absolute;top:-7%;left:-6%;right:-6%;bottom:-2%;pointer-events:none;container-type:size}
+.layer{will-change:transform}
 .layer-inner,.layer-art{position:absolute;inset:0;will-change:transform}
+/* Low-sun bloom that follows the pointer (JS positions it); dies out as the scene turns to night */
+.scene-glare{position:absolute;left:50%;top:38%;width:min(120vw,1500px);aspect-ratio:1;margin:-50% 0 0 -50%;pointer-events:none;border-radius:50%;will-change:transform;
+  background:radial-gradient(circle at 50% 50%,rgba(255,236,196,.42) 0%,rgba(255,190,130,.22) 18%,rgba(255,150,110,.08) 36%,rgba(255,150,110,0) 60%);
+  mix-blend-mode:screen;opacity:calc(1 - var(--night) * .95)}
+.scene-home .scene-glare{top:34%}
+@media (max-width:767px){.scene-glare{width:150vw;top:42%}}
 .layer svg{position:absolute;bottom:0;left:60%;width:max(100cqw,160cqh);height:max(100cqh,62.5cqw);transform:translateX(-60%)}
 .layer-bluff .bluff-v{display:none}
 .layer-bluff .bluff-v.is-on{display:block}
@@ -385,6 +392,10 @@ html.fx-cursor input,html.fx-cursor textarea,html.fx-cursor select{cursor:auto}
 .sale-media img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
 .sale-media[data-gallery]{cursor:zoom-in}
 .sale:hover .sale-media img{transform:scale(1.05)}
+/* With the motion layer on, the image already carries a scroll transform, so the hover zoom moves to its frame */
+.fx .sale-media{transition:transform .6s ease}
+.fx .sale-media img{transition:none}
+.fx .sale:hover .sale-media{transform:scale(1.03)}
 .sale-media .h-art{left:-6%;right:-6%}
 .sold-badge{position:absolute;top:14px;left:14px;z-index:2;background:var(--coral);color:#fff;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
 .sold-badge.live{background:var(--sea)}
@@ -912,6 +923,10 @@ html.scroll-locked{overflow:hidden;padding-right:var(--sbw,0)}
 .layer[data-scene]{display:none}
 .scene[data-scene="fair"] .layer:not([data-scene]):not(.layer-sun):not(.layer-stars),.scene[data-scene="racetrack"] .layer:not([data-scene]):not(.layer-sun):not(.layer-stars),.scene[data-scene="highway"] .layer:not([data-scene]):not(.layer-sun):not(.layer-stars):not(.layer-fore){display:none}
 .scene[data-scene="fair"] .layer[data-scene="fair"],.scene[data-scene="highway"] .layer[data-scene="highway"],.scene[data-scene="racetrack"] .layer[data-scene="racetrack"]{display:block}
+/* Fetched scenes fade in over the sky once their layers land */
+.scene-loaded .layer[data-scene]{animation:scene-in .7s ease-out both}
+@keyframes scene-in{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.scene-loaded .layer[data-scene]{animation:none}}
 /* The highway's sunset clouds fade as the scene turns to night, like the sun. */
 .layer-hw-clouds{opacity:calc(1 - var(--night) * .8)}
 .hw-haze{opacity:calc(1 - var(--night) * .85)}

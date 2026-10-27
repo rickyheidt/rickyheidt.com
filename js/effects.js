@@ -254,7 +254,13 @@
   G.to(bar, { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: 0.3 } });
 
   /* --- Hero scene --- */
-  $$('.scene').forEach(function (scene) {
+  // Scroll velocity, smoothed, in -1..1. Drives the "lean" on marquee rows and
+  // the extra stretch on the hero while the page is moving fast.
+  var velo = 0;
+  ST.create({ start: 0, end: 'max', onUpdate: function (st) { velo = clamp(st.getVelocity() / 2200, -1, 1); } });
+  G.ticker.add(function () { velo *= 0.9; });
+
+  function initScene(scene) {
     var isHome = scene.classList.contains('scene-home');
     var layers = $$('.layer', scene);
     var content = $('.scene-content', scene);
@@ -262,23 +268,68 @@
     // The hero is left alone on load: nothing drops, rises or fades in, so it
     // looks the same on every page and does not flicker between them.
 
-    // Mouse depth parallax on every layer, content counter-moves
+    // A soft light bloom (the low sun) that drifts the opposite way to the
+    // foreground, so the cursor feels like it is looking around a lit scene.
+    var glare = document.createElement('div'); glare.className = 'scene-glare';
+    var sunLayer = $('.layer-sun', scene);
+    // Sits in the sky, just above the sun and behind the land, so the land masks it like a real horizon.
+    if (sunLayer && sunLayer.nextSibling) scene.insertBefore(glare, sunLayer.nextSibling); else scene.insertBefore(glare, $('.fx-canvas', scene) || content);
+    var gX = G.quickTo(glare, 'x', { duration: 2.2, ease: 'power2' }), gY = G.quickTo(glare, 'y', { duration: 2.2, ease: 'power2' });
+
+    // Depth parallax on every layer: near layers answer fast and tilt a little,
+    // far layers are lazy and heavy. Content counter-moves to deepen the stack.
     var movers = layers.map(function (l) {
       var d = parseFloat(l.getAttribute('data-depth')) || 0, inner = $('.layer-inner', l);
-      return { d: d, x: G.quickTo(inner, 'x', { duration: 1.2, ease: 'power3' }), y: G.quickTo(inner, 'y', { duration: 1.2, ease: 'power3' }) };
+      var dur = 1.6 - d * 0.9, ease = 'power3';
+      return { d: d,
+        x: G.quickTo(inner, 'x', { duration: dur, ease: ease }), y: G.quickTo(inner, 'y', { duration: dur, ease: ease }),
+        r: G.quickTo(inner, 'rotation', { duration: dur + 0.3, ease: ease }) };
     });
     var cx = G.quickTo(content, 'x', { duration: 1.4, ease: 'power3' }), cy = G.quickTo(content, 'y', { duration: 1.4, ease: 'power3' });
+    var cr = G.quickTo(content, 'rotationY', { duration: 1.6, ease: 'power3' });
+    G.set(content, { transformPerspective: 1200 });
+    function look(nx, ny) {
+      movers.forEach(function (m) {
+        m.x(-nx * m.d * 150); m.y(-ny * m.d * 50);
+        m.r(nx * m.d * 0.9);
+      });
+      gX(nx * 90); gY(ny * 50);
+      cx(nx * 18); cy(ny * 10); cr(nx * 4);
+    }
+    function rest() { look(0, 0); }
     if (FINE) {
       scene.addEventListener('pointermove', function (e) {
-        var r = scene.getBoundingClientRect(), nx = (e.clientX - r.left) / r.width - 0.5, ny = (e.clientY - r.top) / r.height - 0.5;
-        movers.forEach(function (m) { m.x(-nx * m.d * 150); m.y(-ny * m.d * 50); });
-        cx(nx * 18); cy(ny * 10);
-      });
-      scene.addEventListener('pointerleave', function () { movers.forEach(function (m) { m.x(0); m.y(0); }); cx(0); cy(0); });
+        var r = scene.getBoundingClientRect();
+        look((e.clientX - r.left) / r.width - 0.5, (e.clientY - r.top) / r.height - 0.5);
+      }, { passive: true });
+      scene.addEventListener('pointerleave', rest);
+    } else if (window.DeviceOrientationEvent) {
+      // Phones and tablets: tilt the device to look around the scene.
+      var base = null, armed = false;
+      function onTilt(e) {
+        if (e.gamma == null || e.beta == null) return;
+        if (base === null) base = { g: e.gamma, b: e.beta };
+        var nx = clamp((e.gamma - base.g) / 30, -0.5, 0.5), ny = clamp((e.beta - base.b) / 30, -0.5, 0.5);
+        look(nx, ny);
+      }
+      function arm() {
+        if (armed) return; armed = true;
+        var D = window.DeviceOrientationEvent;
+        if (typeof D.requestPermission === 'function') {
+          D.requestPermission().then(function (s) { if (s === 'granted') window.addEventListener('deviceorientation', onTilt, { passive: true }); }).catch(function () {});
+        } else {
+          window.addEventListener('deviceorientation', onTilt, { passive: true });
+        }
+      }
+      // iOS needs a user gesture before it will share orientation; Android does not.
+      if (typeof window.DeviceOrientationEvent.requestPermission === 'function') {
+        scene.addEventListener('touchend', arm, { passive: true, once: true });
+      } else { arm(); }
     }
 
     var cue = $('.scroll-cue', scene);
     var sunL = $('.layer-sun', scene);
+    var edge = $('.scene-edge', scene);
 
     if (isHome && !SMALL) {
       // Pinned "sunset to bioluminescence" sequence
@@ -286,27 +337,47 @@
         scrollTrigger: {
           trigger: scene, start: function () { return 'top ' + headerH() + 'px'; }, end: '+=140%',
           pin: true, scrub: 0.7, anticipatePin: 1, invalidateOnRefresh: true,
-          onUpdate: function (st) { setNight(scene, clamp((st.progress - 0.15) / 0.6, 0, 1)); }
+          onUpdate: function (st) {
+            setNight(scene, clamp((st.progress - 0.15) / 0.6, 0, 1));
+            scene.style.setProperty('--scroll', st.progress.toFixed(3));
+          }
         }
       });
       if (cue) tl.to(cue, { opacity: 0, y: 20, duration: 0.1 }, 0);
+      // The sun sinks, swells and warms as it meets the horizon, then the bloom dies with it.
       tl.to(sunL, { yPercent: 24, scale: 1.08, transformOrigin: '60% 60%', ease: 'none', duration: 0.75 }, 0);
+      tl.fromTo(glare, { scale: 1 }, { scale: 1.9, yPercent: 28, ease: 'none', duration: 0.75 }, 0);
       layers.forEach(function (l) {
         if (l === sunL) return;
         var d = parseFloat(l.getAttribute('data-depth')) || 0;
-        tl.to(l, { scale: 1 + d * 0.55, y: d * 140, transformOrigin: '50% 100%', ease: 'none', duration: 1 }, 0);
+        // Near layers rush down and out of frame faster than far ones, and drift
+        // sideways a touch so the camera feels like it is tracking, not sliding.
+        tl.to(l, { scale: 1 + d * 0.55, y: d * 140, x: -d * 60, transformOrigin: '50% 100%', ease: 'none', duration: 1 }, 0);
       });
       tl.to(copy, { y: -70, opacity: 0, ease: 'none', duration: 0.32 }, 0.04);
+      if (edge) tl.fromTo(edge, { yPercent: 0 }, { yPercent: 40, ease: 'none', duration: 1 }, 0);
     } else {
       // Interior pages and phones: layers separate as the hero scrolls away
       var tl2 = G.timeline({ scrollTrigger: { trigger: scene, start: 'top top', end: 'bottom top', scrub: true,
-        onUpdate: function (st) { setNight(scene, clamp(st.progress * 1.3, 0, 0.85)); } } });
+        onUpdate: function (st) {
+          setNight(scene, clamp(st.progress * 1.3, 0, 0.85));
+          scene.style.setProperty('--scroll', st.progress.toFixed(3));
+        } } });
       layers.forEach(function (l) {
         var d = parseFloat(l.getAttribute('data-depth')) || 0;
-        tl2.to(l, { y: (1 - d) * (SMALL ? 120 : 260), ease: 'none' }, 0);
+        tl2.to(l, { y: (1 - d) * (SMALL ? 120 : 260), x: -d * (SMALL ? 14 : 36), scale: 1 + d * 0.12, transformOrigin: '50% 100%', ease: 'none' }, 0);
       });
+      if (sunL) tl2.to(sunL, { yPercent: SMALL ? 10 : 18, ease: 'none' }, 0);
+      tl2.to(glare, { yPercent: 30, scale: 1.5, ease: 'none' }, 0);
       tl2.to(copy, { yPercent: 40, opacity: 0, ease: 'none' }, 0);
     }
+  }
+  // An alternate hero scene may still be arriving from scenes/*.html; its layers
+  // need to be in the DOM before the parallax is built around them.
+  $$('.scene').forEach(function (scene) {
+    if (scene.hasAttribute('data-scene-loading')) {
+      scene.addEventListener('scene:ready', function () { initScene(scene); ST.refresh(); }, { once: true });
+    } else { initScene(scene); }
   });
 
   /* --- Content stays put on load; things below the fold fade in, nothing moves --- */
@@ -318,21 +389,43 @@
   $$('[data-stagger]').forEach(function (g) { if (!inView(g)) fadeIn(g.children, g, 0.05); });
   $$('[data-reveal]').forEach(function (el) { if (!inView(el)) fadeIn(el, el); });
 
-  /* --- Scroll speed parallax (orbs, portrait, decorative) --- */
+  /* --- Scroll speed parallax (orbs, portrait, decorative) ---
+   * data-speed="0.6"  vertical drift, positive moves against the scroll
+   * data-speed-x="0.3" optional sideways drift on the same element
+   * -------------------------------------------------------------- */
   $$('[data-speed]').forEach(function (el) {
     var s = parseFloat(el.getAttribute('data-speed')) || 0;
+    var sx = parseFloat(el.getAttribute('data-speed-x')) || 0;
     var trig = el.closest('section') || el;
-    G.fromTo(el, { y: -s * 160 }, { y: s * 160, ease: 'none', scrollTrigger: { trigger: trig, start: 'top bottom', end: 'bottom top', scrub: true } });
+    G.fromTo(el, { y: -s * 160, x: -sx * 160 }, { y: s * 160, x: sx * 160, ease: 'none', scrollTrigger: { trigger: trig, start: 'top bottom', end: 'bottom top', scrub: true } });
   });
   $$('.portrait img').forEach(function (img) {
-    G.fromTo(img, { yPercent: -7 }, { yPercent: 7, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
+    G.fromTo(img, { yPercent: -7, scale: 1.08 }, { yPercent: 7, scale: 1.08, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
+  });
+  $$('.sale-media img').forEach(function (img) {
+    G.fromTo(img, { yPercent: -6, scale: 1.12 }, { yPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
   });
 
-  /* --- Giant scroll-linked marquee --- */
+  /* --- Card grids: columns drift at slightly different rates (desktop only) --- */
+  G.matchMedia().add('(min-width: 768px)', function () {
+    $$('.grid[data-stagger]').forEach(function (g) {
+      var kids = Array.prototype.slice.call(g.children);
+      if (kids.length < 2) return;
+      var cols = g.classList.contains('g4') ? 4 : g.classList.contains('g3') ? 3 : 2;
+      kids.forEach(function (k, i) {
+        var col = i % cols, lift = (col - (cols - 1) / 2) * 14;   // -21..21px between neighbours
+        G.fromTo(k, { y: lift }, { y: -lift, ease: 'none', scrollTrigger: { trigger: g, start: 'top bottom', end: 'bottom top', scrub: 0.4 } });
+      });
+    });
+  });
+
+  /* --- Giant scroll-linked marquee: rows slide past each other and lean with scroll speed --- */
   $$('.marquee-row').forEach(function (row, i) {
     var dir = i % 2 ? 1 : -1;
     G.fromTo(row, { xPercent: dir > 0 ? -30 : 0 }, { xPercent: dir > 0 ? 0 : -30, ease: 'none',
       scrollTrigger: { trigger: row.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.6 } });
+    var skew = G.quickTo(row, 'skewX', { duration: 0.4, ease: 'power2' });
+    G.ticker.add(function () { skew(velo * -9 * dir); });
   });
 
   /* --- Pinned horizontal neighborhood gallery --- */
