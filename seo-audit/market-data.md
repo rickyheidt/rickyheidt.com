@@ -63,6 +63,28 @@ superseded in the Notes column. No source, no row. See PLAYBOOK.md section 6, ph
 | Months of supply | Detached | 92024 Encinitas | 2026-09 | 2.6 | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92024-Encinitas | 2026-10-21 | Recorded, not yet on the site |
 | Median sales price, year to date | Attached | 92024 Encinitas | 2026-09 | $1,199,500 (-4.0%) | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92024-Encinitas | 2026-10-21 | Recorded, not yet on the site |
 
+Rows added 2026-11-01 (run A, Del Mar and Solana Beach). October 2026 updates were not published on 2026-11-01: the 2026-10 URLs serve the September report (byte identical).
+
+| Metric | Type | Geography | Period | Value | Source | URL | Pulled | Notes |
+|---|---|---|---|---|---|---|---|---|
+| Median sales price, year to date | Detached | 92014 Del Mar | 2026-09 | $3,988,730 (+35.8%, 92 sales vs 65) | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92014-DelMar | 2026-11-01 | Re-pulled; on del-mar.html and solana-beach.html (comparison) |
+| Median sales price | Detached | 92014 Del Mar | 2026-09 | $4,450,000 (+66.4%, 5 sales, small sample) | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92014-DelMar | 2026-11-01 | On del-mar.html with small sample note |
+| Inventory | Detached | 92014 Del Mar | 2026-09 | 32 (-36.0% YoY) | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92014-DelMar | 2026-11-01 | On del-mar.html |
+| Months of supply | Detached | 92014 Del Mar | 2026-09 | 3.5 | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92014-DelMar | 2026-11-01 | On del-mar.html, solana-beach.html (comparison) |
+| Percent of original list price received, year to date | Detached | 92014 Del Mar | 2026-09 | 96.4% | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92014-DelMar | 2026-11-01 | On del-mar.html |
+| Days on market until sale, year to date | Detached | 92014 Del Mar | 2026-09 | 49 | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92014-DelMar | 2026-11-01 | On del-mar.html |
+| Median sales price, year to date | Attached | 92014 Del Mar | 2026-09 | $1,449,000 (-30.6%, 33 sales) | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92014-DelMar | 2026-11-01 | On del-mar.html, solana-beach.html (comparison) |
+| Inventory and months of supply | Attached | 92014 Del Mar | 2026-09 | 9 homes, 2.4 months | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92014-DelMar | 2026-11-01 | On del-mar.html |
+| Median sales price, year to date | Detached | 92075 Solana Beach | 2026-09 | $2,877,000 (-4.1%, 53 sales vs 38) | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92075-SolanaBeach | 2026-11-01 | On solana-beach.html, del-mar.html (comparison) |
+| Median sales price | Detached | 92075 Solana Beach | 2026-09 | $2,800,000 (-6.7%, 9 sales) | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92075-SolanaBeach | 2026-11-01 | On solana-beach.html |
+| Inventory and months of supply | Detached | 92075 Solana Beach | 2026-09 | 16 homes, 3.0 months | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92075-SolanaBeach | 2026-11-01 | On solana-beach.html, del-mar.html (comparison) |
+| Percent of original list price received, year to date | Detached | 92075 Solana Beach | 2026-09 | 96.5% (September alone 91.9%) | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92075-SolanaBeach | 2026-11-01 | On solana-beach.html |
+| Days on market until sale, year to date | Detached | 92075 Solana Beach | 2026-09 | 45 | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92075-SolanaBeach | 2026-11-01 | On solana-beach.html |
+| Median sales price, year to date | Attached | 92075 Solana Beach | 2026-09 | $1,656,250 (+10.4%, 48 sales) | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92075-SolanaBeach | 2026-11-01 | On solana-beach.html, del-mar.html (comparison) |
+| Median sales price | Attached | 92075 Solana Beach | 2026-09 | $1,545,000 (+26.1%, 4 sales, small sample) | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92075-SolanaBeach | 2026-11-01 | On solana-beach.html with small sample note |
+| Percent of original list price and days on market, year to date | Attached | 92075 Solana Beach | 2026-09 | 97.2%, 32 days | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92075-SolanaBeach | 2026-11-01 | On solana-beach.html |
+| Inventory and months of supply | Attached | 92075 Solana Beach | 2026-09 | 19 homes, 3.3 months | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92075-SolanaBeach | 2026-11-01 | On solana-beach.html |
+
 ## Tier 2 areas
 
 | Metric | Type | Geography | Period | Value | Source | URL | Pulled | Notes |
@@ -89,7 +111,10 @@ superseded in the Notes column. No source, no row. See PLAYBOOK.md section 6, ph
 
 | Metric | Geography | Period | Value | Source | URL | Pulled | Notes |
 |---|---|---|---|---|---|---|---|
-| 30 year fixed average | US | Week of 2026-10-15 | 7.40% | Freddie Mac PMMS | https://www.freddiemac.com/pmms | 2026-10-21 | On carmel-valley.html |
+| 30 year fixed average | US | Week of 2026-10-29 | 7.24% | Freddie Mac PMMS | https://www.freddiemac.com/pmms | 2026-11-01 | On del-mar.html and solana-beach.html |
+| 15 year fixed average | US | Week of 2026-10-29 | 6.60% | Freddie Mac PMMS | https://www.freddiemac.com/pmms | 2026-11-01 | Not on the site |
+| 30 year fixed average | US | Week of 2026-10-22 | 7.32% | Freddie Mac PMMS | https://www.freddiemac.com/pmms/docs/PMMS_history.csv | 2026-11-01 | Not on the site |
+| 30 year fixed average | US | Week of 2026-10-15 | 7.40% | Freddie Mac PMMS | https://www.freddiemac.com/pmms | 2026-10-21 | On carmel-valley.html; superseded by 2026-10-29 for new copy, Carmel Valley keeps its dated figure until its next refresh |
 | 15 year fixed average | US | Week of 2026-10-15 | 6.71% | Freddie Mac PMMS | https://www.freddiemac.com/pmms | 2026-10-21 | Not on the site |
 | Next FOMC meeting | US | 2026 | October 27 to 28, 2026 (then December 8 to 9) | Federal Reserve | https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm | 2026-10-21 | Not on the site |
 | Conforming loan limit, 1 unit baseline | US | 2026 | $832,750 | FHFA | https://www.fhfa.gov/document/d/cll/fhfa-cll-addendum-cy2026.pdf | 2026-10-21 | Not on the site |

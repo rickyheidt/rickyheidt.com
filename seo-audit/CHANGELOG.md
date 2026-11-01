@@ -3,6 +3,17 @@
 Newest first. Each automated run adds an entry: date, run type (A on the 1st, B on the 15th), focus
 area, pages changed, checker counts before and after, and the next focus area.
 
+## Run A, 2026-11-01
+- Focus area: 2, Del Mar and Solana Beach.
+- Pages changed: del-mar.html and solana-beach.html (September 2026 market section, where it is,
+  getting around, things to know including short term rental rules, a Del Mar and Solana Beach
+  comparison, seven new FAQs between them, descriptions, dateModified), coronado.html (description),
+  services.html (title and description), llms.txt, sitemap.xml (two lastmod dates).
+- Checker: 0 errors, 6 warnings, 9 notes before; 0 errors, 3 warnings, 9 notes after.
+- Report: `reports/2026-11-01.md`.
+- Next run: 2026-11-15, run B (market refresh with October 2026 data), focus area 3 (Rancho Santa
+  Fe, Fairbanks Ranch and Santaluz).
+
 ## Performance pass (manual), 2026-10-27
 - Focus: page weight and hero LCP. The three alternate hero scenes (fair, highway, racetrack)
   were inlined on all 48 pages, 568 KB of SVG per page with one scene shown per visit. They now

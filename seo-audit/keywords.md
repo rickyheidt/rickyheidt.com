@@ -43,17 +43,24 @@ Note, 2026-10-21: most unqualified "Carmel Valley" queries mix in Carmel Valley,
 
 | Query | Intent | Our page | Our position | Top results (type) | PAA captured | Source | Last checked |
 |---|---|---|---|---|---|---|---|
-| Del Mar homes for sale | Buy | del-mar.html | | | | | |
-| Del Mar real estate agent | Local | del-mar.html | | | | | |
-| Del Mar home prices | Market | del-mar.html | | | | | |
+| Del Mar CA homes for sale 92014 | Buy | del-mar.html | Not in results | Homes.com x many (portal), Redfin 92014 (portal), Compass (brokerage), Zillow (portal) | Median price, days on market (answered on page) | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
+| Del Mar real estate agent | Local | del-mar.html | Not in results | HomeLight, Agent Pronto, Bankrate, Ramsey (directories), BHHS Del Mar office, Homes.com agent profile, sonjahuter.com | How to choose an agent | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
+| Del Mar housing market 2026 median home price | Market | del-mar.html | Not in results | Houzeo, Redfin (some Del Mar San Jose and Florida mixed in), ActiveRain agent monthly reports, city-stats, Altos | Median price, buyer or seller market (answered on page) | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
+| Del Mar short term rental rules | Rules | del-mar.html | Not in results | City of Del Mar news, Del Mar Sandpiper, Avalara, Fox 5, Coast News | Permit, fees, effective date (answered on page) | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
+| Del Mar vs Solana Beach | Comparison | del-mar.html and solana-beach.html | Not in results | Listing pages, SV Premier area pages, no direct comparison page | Prices, schools, train, STR (answered on both pages) | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
+| Del Mar bluffs train realignment | Living | del-mar.html | Not in results | SANDAG, NBC 7, Voice of San Diego, City of Solana Beach | Project page linked | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
+
+Note, 2026-11-01: unqualified "Del Mar" results mix in Del Mar in San Jose and Del Mar in Collier County, Florida. Watch whether the page needs "CA" or "San Diego" in the title once it is indexed and Search Console shows queries (no title change this run).
 
 ## Solana Beach (solana-beach.html)
 
 | Query | Intent | Our page | Our position | Top results (type) | PAA captured | Source | Last checked |
 |---|---|---|---|---|---|---|---|
-| Solana Beach homes for sale | Buy | solana-beach.html | | | | | |
-| Solana Beach real estate agent | Local | solana-beach.html | | | | | |
-| selling a house in Solana Beach | Sell | solana-beach.html | | | | | |
+| Solana Beach homes for sale 92075 | Buy | solana-beach.html | Not in results | Orchard, Homes.com, Redfin, Zillow (portals), Compass (brokerage) | Median price (answered on page) | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
+| Solana Beach real estate agent | Local | solana-beach.html | Not in results | Agent Pronto, HomeLight, Bankrate (directories), Caspersen Group (agent), Compass agent profiles | How to choose an agent | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
+| Solana Beach housing market 2026 | Market | solana-beach.html | Not in results | Houzeo, Zillow ZHVI, city-stats, ActiveRain agent monthly reports, Altos | Buyer or seller market (answered on page) | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
+| living in Solana Beach, what do homes cost | Living | solana-beach.html | Not in results | Redfin living guide, Zillow, NeighborhoodScout, HomeSnacks, Orchard | Cost, condos vs houses (answered on page) | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
+| Solana Beach short term vacation rental permit | Rules | solana-beach.html | Not in results | City of Solana Beach PDFs, municipal code, STR data sites | 7 day minimum, annual permit (answered on page) | Web search (approximate); GSC shows no Del Mar or Solana Beach queries, page not indexed in Google (URL Inspection) | 2026-11-01 |
 
 ## Rancho Santa Fe (rancho-santa-fe.html)
 
@@ -98,3 +105,22 @@ Tools. Analytics could not be read this run (see the report).
 | Home page | 1 | 11 | 7.4 | GSC | last 28 days |
 | about.html | 0 | 4 | 8.3 | GSC | last 28 days |
 | Any query or page | 0 | 0 | n/a | Bing | No data returned yet |
+
+## Search Console, Bing and Analytics, 2026-11-01
+
+| Query or page | Clicks | Impressions | Avg position | Source | Window |
+|---|---|---|---|---|---|
+| Site total | 2 | 80 | 24.7 | GSC | 2026-10-02 to 2026-10-29 |
+| Site total, prior 28 days | 0 | 0 | n/a | GSC | 2026-09-04 to 2026-10-01 (no rows) |
+| Home page | 2 | 26 | 6.0 | GSC | 2026-10-02 to 2026-10-29 |
+| 16046-summer-sage-rd.html | 0 | 25 | 9.8 | GSC | same |
+| about.html | 0 | 10 | 7.2 | GSC | same |
+| home-value.html | 0 | 10 | 72.5 | GSC | same |
+| north-park.html ("north park san diego", 5 impressions) | 0 | 5 | 39.4 | GSC | same |
+| downtown-san-diego.html (4 condo queries) | 0 | 5 | 68 | GSC | same |
+| neighborhoods.html | 0 | 4 | 40.5 | GSC | same |
+| "heidt" (home page) | 0 | 2 | 8.5 | GSC | same |
+| "map of san diego neighborhoods" (neighborhoods.html) | 0 | 1 | 24 | GSC | same |
+| del-mar.html, solana-beach.html | 0 | 0 | n/a | GSC | Discovered, currently not indexed |
+| Any query or page | 0 | 0 | n/a | Bing | 2026-10-22 to 2026-10-29 daily totals all zero |
+| Analytics | n/a | n/a | n/a | GA4 | Not readable: connected accounts only see homesbyheidtgroup.com |

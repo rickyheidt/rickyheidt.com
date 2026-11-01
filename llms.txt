@@ -26,8 +26,8 @@ Market numbers on the neighborhood pages state the month and the source next to 
 ## Core areas
 
 - [Carmel Valley (92130)](https://rickyheidt.com/carmel-valley.html): includes Pacific Highlands Ranch, Torrey Hills and Del Mar Heights.
-- [Del Mar (92014)](https://rickyheidt.com/del-mar.html)
-- [Solana Beach (92075)](https://rickyheidt.com/solana-beach.html)
+- [Del Mar (92014)](https://rickyheidt.com/del-mar.html): September 2026 market snapshot, short term rental permits, coastal permits, schools and a Del Mar or Solana Beach comparison.
+- [Solana Beach (92075)](https://rickyheidt.com/solana-beach.html): September 2026 market snapshot, short term rental rules, the COASTER station, schools and a Solana Beach or Del Mar comparison.
 - [Rancho Santa Fe (92067, 92091)](https://rickyheidt.com/rancho-santa-fe.html)
 - [Poway (92064)](https://rickyheidt.com/poway.html)
 - [Encinitas (92024, 92007)](https://rickyheidt.com/encinitas.html): Leucadia, Cardiff by the Sea, Olivenhain, Old and New Encinitas.
