@@ -111,6 +111,8 @@
     function loop(now) {
       self.raf = 0;
       if (!self.visible || document.hidden) return;
+      // Phones get 30 frames a second: the glow drifts just as well and the main thread gets half of its time back.
+      if (SMALL && now - self.last < 30) { self.raf = requestAnimationFrame(loop); return; }
       var dt = Math.min(48, now - self.last); self.last = now;
       self.step(dt); self.draw();
       self.raf = requestAnimationFrame(loop);
@@ -224,6 +226,27 @@
     scene.style.setProperty('--night', v.toFixed(3));
     var f = heroField(); if (f) f.night = v;
   }
+
+  /* --- Decorative SVG loops (waves, rides, traffic) only run while their scene is on
+   * screen and the tab is visible. Off screen they would still cost a style and layout
+   * pass on every frame, which is most of the main-thread work on a phone. Reduced
+   * motion keeps them paused for good (handled below). --- */
+  function sceneLoops(scene) {
+    var shown = true;
+    function apply() {
+      var run = shown && !REDUCE && !document.hidden;
+      $$('svg', scene).forEach(function (s) {
+        if (!s.pauseAnimations) return;
+        if (run) s.unpauseAnimations(); else s.pauseAnimations();
+      });
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { shown = es[0].isIntersecting; apply(); }, { rootMargin: '40px' }).observe(scene);
+    }
+    document.addEventListener('visibilitychange', apply);
+    scene.addEventListener('scene:ready', apply);   // an alternate scene arrived: same rule for its loops
+  }
+  $$('.scene').forEach(sceneLoops);
 
   if (REDUCE || !HAS_GSAP) {
     // Static, readable fallback. Pause SVG loop animations for reduced motion.

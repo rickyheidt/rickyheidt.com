@@ -21,6 +21,13 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# Self-hosted web fonts: the files never change in place (a new version gets a new name),
+# so browsers can keep them for a year without asking.
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
 # Hero scene fragments: fetched by the page, never a page of their own
 [[headers]]
   for = "/scenes/*"
