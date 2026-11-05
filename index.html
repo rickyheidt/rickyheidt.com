@@ -39,7 +39,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=26">
+<link rel="stylesheet" href="styles.css?v=27">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -500,7 +500,20 @@ sc.removeAttribute("data-scene-loading");sc.classList.add("scene-loaded");sc.dis
 </div></article></div>
 <p style="margin-top:28px"><a class="btn btn-ghost" href="sales.html">See all sales and reviews</a></p></div></section>
 
-<section class="section-ink bio"><canvas class="fx-canvas" data-particles="bio" aria-hidden="true"></canvas><div class="wrap"><blockquote class="quote" data-reveal>&ldquo;Ricky is a true professional. He was very courteous, punctual and responsive throughout the buying process. I would highly recommend working with him.&rdquo;<cite>Buyer client, via PorchLight Realty</cite></blockquote><p class="hint" aria-hidden="true">Move through the water</p></div></section>
+<section class="section-ink bio" id="testimonials"><canvas class="fx-canvas" data-particles="bio" aria-hidden="true"></canvas><div class="wrap">
+<div class="tide" data-tide data-reveal>
+<h2 class="sr-only">What clients say about working with Ricky</h2>
+<div class="tide-stack">
+<blockquote class="quote tide-quote is-on">&ldquo;Ricky is a true professional. He was very courteous, punctual and responsive throughout the buying process.&rdquo;<cite>Irene G., buyer client <span class="tide-src">Zillow review</span></cite></blockquote>
+<blockquote class="quote tide-quote">&ldquo;He&rsquo;s friendly and responsive. Was always available to hop on a call or text and answer questions.&rdquo;<cite>Buyer client, Oceanside <span class="tide-src">Zillow review</span></cite></blockquote>
+<blockquote class="quote tide-quote">&ldquo;We were incredibly impressed by Ricky&rsquo;s exceptional knowledge throughout the home-buying process.&rdquo;<cite>Fayez S., buyer client <span class="tide-src">Zillow review</span></cite></blockquote>
+<blockquote class="quote tide-quote">&ldquo;Very professional, great communicator, understood our needs and kept on looking for the right house for us.&rdquo;<cite>Buyer client, Escondido <span class="tide-src">Zillow review</span></cite></blockquote>
+<blockquote class="quote tide-quote">&ldquo;I would highly recommend working with him.&rdquo;<cite>Irene G., buyer client <span class="tide-src">Zillow review</span></cite></blockquote>
+</div>
+<canvas class="tide-water" aria-hidden="true"></canvas>
+</div>
+<p class="hint" aria-hidden="true">Move through the water</p>
+</div></section>
 <!-- review:start -->
 <section class="leave" id="review"><div class="wrap">
 <div class="leave-card">
@@ -574,5 +587,6 @@ sc.removeAttribute("data-scene-loading");sc.classList.add("scene-loaded");sc.dis
 <script src="js/beach.js?v=14" defer></script>
 <script src="js/eggs.js?v=7" defer></script>
 <script src="js/effects.js?v=14" defer></script>
+<script src="js/tide.js?v=1" defer></script>
 </body>
 </html>

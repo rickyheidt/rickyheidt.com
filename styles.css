@@ -1085,3 +1085,24 @@ a.svc-ext{color:var(--ocean);font-weight:600}
 .stat-hl b{color:#fff}
 .stat-hl span{color:#d9f1ef}
 .stat-note a{color:inherit}
+
+/* Tide testimonials: rotating client quotes washed over by a wave (js/tide.js) */
+.tide{position:relative;max-width:860px;margin:0 auto}
+.tide-stack{position:relative;z-index:1}
+.tide-quote{margin:0;max-width:none}
+.tide-src{display:inline-block;margin-left:10px;padding:2px 10px;border:1px solid rgba(143,244,255,.35);border-radius:999px;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#8ff4ff;vertical-align:middle}
+.tide-quote:not(.is-on){display:none}
+.tide.is-ready .tide-stack{display:grid}
+.tide.is-ready .tide-quote{display:block;grid-area:1/1;align-self:center}
+.tide.is-ready .tide-quote:not(.is-on){opacity:0;pointer-events:none;user-select:none;-webkit-user-select:none}
+.tide-w{display:inline-block;white-space:pre-wrap;will-change:opacity,transform,filter}
+.tide-water{position:absolute;top:-110px;left:50%;width:100vw;height:calc(100% + 220px);margin-left:-50vw;z-index:2;pointer-events:none;opacity:0;transition:opacity .4s}
+.tide.is-washing .tide-water{opacity:1}
+.tide-dots{position:relative;z-index:3;display:flex;justify-content:center;gap:10px;margin-top:26px}
+.tide-dots button{width:22px;height:22px;padding:0;border:0;background:none;cursor:pointer;display:grid;place-items:center;border-radius:50%}
+.tide-dots button::before{content:"";width:7px;height:7px;border-radius:50%;background:#8ff4ff;opacity:.35;transition:opacity .3s,transform .3s}
+.tide-dots button[aria-current="true"]::before{opacity:1;transform:scale(1.35)}
+.tide-dots button:hover::before,.tide-dots button:focus-visible::before{opacity:.8}
+.tide-dots button:focus-visible{outline:2px solid #8ff4ff;outline-offset:2px}
+@media (max-width:640px){.tide-water{top:-90px;height:calc(100% + 180px)}.tide-src{display:block;width:max-content;margin:8px auto 0}}
+@media (prefers-reduced-motion:reduce){.tide-water{display:none}.tide-w{will-change:auto}}
