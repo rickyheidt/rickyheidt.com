@@ -29,6 +29,12 @@ area, pages changed, checker counts before and after, and the next focus area.
   three plus a recrawl of the listing (old price in Google) and carmel-valley. The Pages report was
   last updated 2026-10-22 and lagged badly (it still listed 28 pages as discovered, not indexed, and
   north-park as crawled, not indexed); trust URL Inspection over that report.
+- 2026-11-08: School rankings removed sitewide (Ricky left it to the audit's judgment): no Niche
+  grades or ranks remain; the "How good are the schools" FAQs became "How can I compare ... schools"
+  pointing to the California School Dashboard. Card blurb "top-rated public schools" changed to
+  "San Dieguito schools". Ricky's background is now the same everywhere: born in Rancho Santa Fe,
+  lived in Del Mar as a kid, grew up mostly in Carmel Valley, Torrey Pines High School. Do not
+  reintroduce school rankings.
 - Next run unchanged: 2026-11-15, run B (market refresh with October 2026 data for carmel-valley,
   del-mar and solana-beach, plus county figures), focus area 3 (Rancho Santa Fe, Fairbanks Ranch
   and Santaluz). First run with phase 1b and full Analytics.
