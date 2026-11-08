@@ -499,7 +499,8 @@ and `purchase` are not sent by the site; ignore them. Never edit the tag snippet
 - **Bing and Google disagree:** a page or query that does well on one engine and not the other.
   Check indexing in the weaker one, internal links and the title match. Bing results feed Copilot
   and ChatGPT search, so a Bing gap is worth closing.
-- **Not indexed:** a Tier 1 page still "Discovered, currently not indexed". Add links to it this run
+- **Not indexed:** check status with URL Inspection, not the Indexing > Pages report, which can lag
+  by weeks. A Tier 1 page still "Discovered, currently not indexed". Add links to it this run
   from indexed pages with descriptive anchors, and put "request indexing for [URL]" under "Needs a
   human" (the run never submits URLs).
 - **Referrals:** non AI referrers (portals, directories, local news, the brokerage) go to phase 9 as

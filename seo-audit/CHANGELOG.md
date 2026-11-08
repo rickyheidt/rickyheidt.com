@@ -23,6 +23,12 @@ area, pages changed, checker counts before and after, and the next focus area.
   small sample rule, comparison sections in the market refresh, owner requested listing changes,
   blocking analytics and never submitting forms in browser checks, new report sections and
   scorecard rows.
+- 2026-11-08: Indexing check (URL Inspection). Indexed: home, carmel-valley, del-mar, solana-beach,
+  rancho-santa-fe, encinitas, sell, buy, home-value, the listing, north-park and 25 other area and
+  info pages. Not indexed: poway, pacific-beach, rancho-bernardo. Ricky requested indexing for those
+  three plus a recrawl of the listing (old price in Google) and carmel-valley. The Pages report was
+  last updated 2026-10-22 and lagged badly (it still listed 28 pages as discovered, not indexed, and
+  north-park as crawled, not indexed); trust URL Inspection over that report.
 - Next run unchanged: 2026-11-15, run B (market refresh with October 2026 data for carmel-valley,
   del-mar and solana-beach, plus county figures), focus area 3 (Rancho Santa Fe, Fairbanks Ranch
   and Santaluz). First run with phase 1b and full Analytics.
