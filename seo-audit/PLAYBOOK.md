@@ -464,9 +464,9 @@ data starts 2026-10-21, the day the stream was created.
 posts to `guide-download.html`. Netlify's form handling rewrites those actions, so after a real
 submission the visitor lands on `/thank-you` or `/guide-download` (no `.html`). The property turns a
 page view of either page into the key events `thank_you` and `guide_download`; the rules must match
-`thank-you` and `guide-download` without `.html`, or real leads are missed. Check the two event
+`thank-you` and `guide-download` without `.html`, or real leads are missed (fixed 2026-11-08). Check the two event
 create rules on the web stream each run (read only) and flag them under "Needs a human" if they
-still require `.html`. Report the two key events by the session's landing page and channel. For
+have changed. Report the two key events by the session's landing page and channel. For
 dates before the rules were fixed, count page views whose path contains `thank-you` or
 `guide-download`. Also list (read only) the key events the property has and note any change.
 Since 2026-11-08, Google Tag Manager (GTM-TD52K2JX) also sends `phone_click` (tel: links),

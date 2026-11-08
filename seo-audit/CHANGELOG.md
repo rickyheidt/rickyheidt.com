@@ -15,9 +15,9 @@ area, pages changed, checker counts before and after, and the next focus area.
   Netlify previews and bot like sessions must be filtered (playbook phase 1b).
 - 2026-11-08: Lead tracking set up. Key events: thank_you, guide_download (event create rules on the
   web stream), phone_click, text_click, calendly_click, calendly_booked (GTM-TD52K2JX tags).
-  Open issue: the thank_you and guide_download rules match `thank-you.html` and
-  `guide-download.html`, but real submissions land on `/thank-you` and `/guide-download`, so Ricky
-  needs to edit both rules (backlog 25).
+  The thank_you and guide_download rules first required `.html`, which real submissions (landing
+  on `/thank-you` and `/guide-download`) never match; Ricky fixed both rules on 2026-11-08 to match
+  `thank-you` and `guide-download`. Form leads count from then on.
 - 2026-11-08: Playbook updated: new phase 1b (traffic and leads), Netlify check at preflight, deploy
   failure handling, a fixed speed test method, GSDAR and NSDCAR URL patterns and naming, a 10 sale
   small sample rule, comparison sections in the market refresh, owner requested listing changes,
