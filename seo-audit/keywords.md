@@ -141,5 +141,5 @@ Source label: GA4.
 | San Diego sessions (desktop and mobile) | 16 (12 engaged) | Likely the real local audience |
 | Referrals from AI assistants | 0 | |
 | Leads (thank-you.html or guide-download.html page views) | 0 | No form leads in the window |
-| Key events configured | none | Only automatic events (page_view, scroll, click, first_visit) |
+| Key events configured | thank_you and guide_download, added 2026-11-08 | Created from page views of thank-you.html and guide-download.html; the default close_convert_lead, qualify_lead and purchase also exist |
 | Top pages by views | / 105, /index.html 39, about 13, listing 5, sales 5 | |

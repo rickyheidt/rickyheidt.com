@@ -457,9 +457,10 @@ city. These look like crawlers and other automated visits, so leave them out of 
 data starts 2026-10-21, the day the stream was created.
 
 **What counts as a lead.** Every site form posts to `thank-you.html`, and the relocation guide form
-posts to `guide-download.html`, so a page view of either page is the dependable lead signal. Report
-those page views by the session's landing page and channel. Also list (read only) the key events the
-property has. Calls, texts and Calendly clicks are not tracked by the site's code today; if they are
+posts to `guide-download.html`. Since 2026-11-08 the property turns a page view of either page into
+the key events `thank_you` and `guide_download`, so report those two key events by the session's
+landing page and channel (they count from 2026-11-08 onward; before that, use page views of the two
+pages). Also list (read only) the key events the property has and note any change. Calls, texts and Calendly clicks are not tracked by the site's code today; if they are
 not key events in GA4 or GTM, add "mark phone, text and Calendly clicks as key events in GA4 or GTM"
 under "Needs a human". Never edit the tag snippets to add tracking, and never read form submissions
 (they hold personal data).
