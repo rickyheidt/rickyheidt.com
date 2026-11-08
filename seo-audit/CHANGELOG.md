@@ -36,6 +36,10 @@ area, pages changed, checker counts before and after, and the next focus area.
   Del Mar and Carmel Valley, Torrey Pines High School. He is a North County native, not a Carmel
   Valley native. Never mention his age or life stages (no "as a kid", "as a teenager", "my teens"). Do not
   reintroduce school rankings.
+- 2026-11-08: Netlify now deploys every push to `main` automatically (seen on deploy
+  6af0d6ffb65c4cf50ccf7512, commit 53d0fe8, `manual_deploy: false`). Everything on `main` through
+  53d0fe8 is live, including the school and background changes. Playbook phase 11 step 6 updated:
+  one push per run, confirm the automatic deploy, manual deploy only as a fallback.
 - Next run unchanged: 2026-11-15, run B (market refresh with October 2026 data for carmel-valley,
   del-mar and solana-beach, plus county figures), focus area 3 (Rancho Santa Fe, Fairbanks Ranch
   and Santaluz). First run with phase 1b and full Analytics.

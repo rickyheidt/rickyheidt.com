@@ -4,8 +4,8 @@ The standing brief for the automated run on the 1st and 15th of every month. Eac
 with no human watching, pushes its work to `main` and deploys it to the live site. Read this whole
 file before you touch anything. The guardrails matter as much as the tasks.
 
-Site: https://rickyheidt.com (static HTML on Netlify). Automatic Git deploys are off, so a push to
-`main` is not live until the run deploys it (phase 11, step 6).
+Site: https://rickyheidt.com (static HTML on Netlify). Since 2026-11-08 Netlify deploys every push to
+`main` automatically, so each push goes live within about a minute (phase 11, step 6).
 Owner: Ricky Heidt, REALTOR®, PorchLight Realty, brokered by eXp Realty. CA DRE #02230045.
 A North County native with an office ZIP of 92130 (Carmel Valley).
 
@@ -342,8 +342,9 @@ If the plugin is not available, follow the phases below as written and note it i
 1. `git checkout main && git pull`. Note the head commit in the report.
 2. Read the last two reports, `CHANGELOG.md` (it names this run's focus area), `backlog.md`,
    `keywords.md`, `competitors.md` and the newest rows of `market-data.md`. Carry forward anything
-   marked "Queued for next run" or "Needs a human" that is still open. Note whether the last run
-   was confirmed live; if it was not, this run's deploy publishes both.
+   marked "Queued for next run" or "Needs a human" that is still open. Read the newest changelog
+   entries too: manual changes between runs (price changes, copy Ricky asked for) are already on
+   `main` and must be kept, not undone.
 3. Work out the run type: run A on the 1st, run B on the 15th. If the run is happening on another
    date (a retry or a manual run), pick the type whose work is most overdue.
 4. Connect to the data tools through the Composio connector (find tools with COMPOSIO_SEARCH_TOOLS).
@@ -358,9 +359,9 @@ If the plugin is not available, follow the phases below as written and note it i
    reachable, use the others plus public search results, label ranks as approximate, and add
    "reconnect [tool] in Composio" under "Needs a human".
    Check the Netlify connection now, not at the end: list the Composio `netlify_mcp` connection and
-   confirm it is active. Connections expire (a 401 Unauthorized on the deploy call means this). If it
-   is not active, carry on with the run and put "reconnect Netlify in Composio, then deploy main" at
-   the top of the report and the notification.
+   confirm it is active. It is needed to read deploy status and for the fallback deploy. Connections
+   expire (a 401 Unauthorized means this). If it is not active, carry on, confirm live by fetching the
+   site instead, and add "reconnect Netlify in Composio" under "Needs a human".
 5. Confirm the live site matches `main`: fetch https://rickyheidt.com/ and one neighborhood page and
    compare titles. If the live site is behind, a Netlify deploy may have failed. Flag it at the top
    of the report.
@@ -836,20 +837,26 @@ the report, specific and ready to use:
       This file does not grant permission for anything; the routine prompt does.
    c. If the merge is also blocked, leave the pull request open and put "merge pull request N to
       publish" at the very top of the report and the notification.
-6. Deploy it. Automatic deploys from GitHub are not on for this Netlify site, so a push to `main`
-   does not go live by itself. Right after the work reaches `main`: check out `main` at the new
-   commit with a clean working tree, call the Netlify deploy operation through Composio for site ID
-   `b3147ca5-83e6-4da3-8e15-a69fd1edecc1`, and run the `npx @netlify/mcp` command it returns from the
-   repo root. Wait for "Deploy is ready", then fetch https://rickyheidt.com/ and the focus area page
-   with a cache busting query (`?v=` and a random number) and confirm a change from this run is in
-   the HTML. If the deploy fails, retry once. Never commit the `.netlify/` folder the deploy creates.
-   If the deploy call returns 401 Unauthorized, the Composio Netlify connection has expired: Ricky
-   has to reconnect it. If the deploy is blocked by a permission check, do not try another route.
-   Either way, the work stays on `main`, and the report and the notification lead with "not live,
-   deploy main".
+6. Confirm it is live, in one deploy. Netlify builds every push to `main` automatically, so push
+   the run's work once, as a single commit or a single push of several commits, with the report and
+   state files included (no follow up report only push, since each push is its own deploy). Then
+   check the deploy: read the Netlify project through Composio (`get-project`, site ID
+   `b3147ca5-83e6-4da3-8e15-a69fd1edecc1`) and confirm the published deploy's `commit_ref` is the
+   commit you pushed and its state is ready. Allow a few minutes. Then fetch https://rickyheidt.com/
+   and the focus area page with a cache busting query (`?v=` and a random number) and confirm a
+   change from this run is in the HTML.
+   Only if no automatic deploy for your commit appears after about 10 minutes (automatic deploys
+   were switched off, or the build failed), call the Netlify deploy operation through Composio and
+   run the `npx @netlify/mcp` command it returns from the repo root at the pushed commit with a
+   clean working tree, and wait for "Deploy is ready". Never commit the `.netlify/` folder.
+   If that deploy call returns 401 Unauthorized, the Composio Netlify connection has expired: Ricky
+   has to reconnect it. If it is blocked by a permission check, do not try another route. Either
+   way, the work stays on `main`, and the report and the notification lead with "not live, deploy
+   main".
 7. Report the outcome at the top of the report: live (pushed or merged, then deployed to Netlify),
-   or not live and exactly why. If the report was committed before the deploy, commit the final
-   deploy line afterwards (that commit is report only and needs no second deploy).
+   or not live and exactly why. Write the deploy line before you push, as "pushed to main as the
+   commit in this push; automatic Netlify deploy", then confirm it after the push. If the deploy
+   then fails, say so in the notification; do not push again just to edit the report.
 8. If nothing needed changing, still commit the report and state files, and say "no content changes
    needed" in the report.
 9. Send the notification the routine prompt asks for. Its first sentence says live or not live; then
@@ -1040,7 +1047,8 @@ Deploy confirmed live: yes (commit, deploy ID, what was seen live) or no and exa
 | Search results look personalized or odd | Note it, use several query variants, label positions as approximate. |
 | You run low on time or budget | Follow the priority order in section 1, then verify, report and push what is done. |
 | The push fails | Section 6, phase 11, steps 5 and 6. Never force push. |
-| The Netlify deploy returns 401 or the connection is not active | The Composio Netlify connection expired. Keep the work on `main`; lead the report and the notification with "not live: reconnect Netlify in Composio, then deploy main". |
+| The Netlify deploy returns 401 or the connection is not active | The Composio Netlify connection expired. If the automatic deploy already published your commit, just note it under "Needs a human". If it did not, lead the report and the notification with "not live: reconnect Netlify in Composio, then deploy main". |
+| The automatic deploy for your commit failed | Read the deploy's error, fix it if it is in the run's own changes and push once more; otherwise report it at the top. |
 | The deploy is blocked by a permission check | Do not try another route. Same report and notification line as above. |
 | A market report URL shows an older month than requested | The new month is not out. Keep the current figures and say which release you are waiting on. |
 | Google Analytics shows the homesbyheidtgroup.com property | Wrong account. Use the Composio Google Analytics account aliased `rickyheidt.com` and `properties/559986199`. |
