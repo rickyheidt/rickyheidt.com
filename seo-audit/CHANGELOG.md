@@ -32,8 +32,9 @@ area, pages changed, checker counts before and after, and the next focus area.
 - 2026-11-08: School rankings removed sitewide (Ricky left it to the audit's judgment): no Niche
   grades or ranks remain; the "How good are the schools" FAQs became "How can I compare ... schools"
   pointing to the California School Dashboard. Card blurb "top-rated public schools" changed to
-  "San Dieguito schools". Ricky's background is now the same everywhere: born in Rancho Santa Fe,
-  lived in Del Mar as a kid, grew up mostly in Carmel Valley, Torrey Pines High School. Do not
+  "San Dieguito schools". Ricky's background, as he gave it: born and raised in Rancho Santa Fe,
+  moved to Del Mar as a teenager, spent most of those years in Carmel Valley, Torrey Pines High
+  School. Use this wording everywhere; he is a North County native, not a Carmel Valley native. Do not
   reintroduce school rankings.
 - Next run unchanged: 2026-11-15, run B (market refresh with October 2026 data for carmel-valley,
   del-mar and solana-beach, plus county figures), focus area 3 (Rancho Santa Fe, Fairbanks Ranch
