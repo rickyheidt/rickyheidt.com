@@ -4,7 +4,8 @@ The standing brief for the automated run on the 1st and 15th of every month. Eac
 with no human watching, and publishes straight to the live site. Read this whole file before you
 touch anything. The guardrails matter as much as the tasks.
 
-Site: https://rickyheidt.com (static HTML, Netlify, deploys on every push to `main`).
+Site: https://rickyheidt.com (static HTML on Netlify). Automatic Git deploys are off, so a push to
+`main` is not live until the run deploys it (phase 11, step 6).
 Owner: Ricky Heidt, REALTOR®, PorchLight Realty, brokered by eXp Realty. CA DRE #02230045.
 A North County native with an office ZIP of 92130 (Carmel Valley).
 
@@ -26,6 +27,7 @@ real estate, it is probably not worth making.
 5. Sources, and how far to trust each one
 6. The run, phase by phase
 7. Focus rotation
+7b. Google Search Central rules
 8. Writing standards for site copy
 9. Templates
 10. When things go wrong
@@ -39,16 +41,17 @@ real estate, it is probably not worth making.
 |---|---|---|
 | 0 | Preflight: pull `main`, read state files, see which data tools are connected | No |
 | 1 | Technical baseline: `node seo-audit/audit.mjs`, crawl checks, page speed | Fixes only |
+| 1b | Traffic and leads: Search Console, Bing and Analytics by page, channel and lead | No |
 | 2 | Search landscape for the focus area: queries, rankings, People also ask, AI answers | No |
 | 3 | Competitor intelligence: who ranks, what they published, where we are behind | No |
 | 4 | Market data: latest full month for the county and each area we can match | Yes |
 | 5 | Local news and rule changes that affect owners, buyers and sellers | Yes, when sourced |
-| 6 | On-page upgrades to the focus area pages, driven by phases 2 to 5 | Yes |
+| 6 | On-page upgrades to the focus area pages, driven by phases 1b to 5 | Yes |
 | 7 | One or two meaningful content additions from the backlog | Yes |
 | 8 | AI search readiness and entity consistency | Yes |
 | 9 | Off-site and local signals, written up for Ricky to act on | No |
 | 10 | Verify: checker, browser check, fact check, compliance read | Reverts if needed |
-| 11 | Publish, report, update state files | Commit and push |
+| 11 | Publish, deploy, confirm live, report, update state files | Commit, push, deploy |
 
 **The two runs each month lean differently.**
 - **The 1st (run A)** leans technical and competitive: full technical sweep, competitor deep dive,
@@ -58,16 +61,18 @@ real estate, it is probably not worth making.
   mid month, so this run does the full market refresh across every page that quotes a number, plus
   the news and rules sweep, a lighter competitor check (new pages and rank movement only), and
   on-page upgrades for the focus area.
-- Both runs: always run the checker, always fix errors, always work the focus area, always write
-  the report and update the state files.
+- Both runs: always run the checker, always pull traffic and leads (phase 1b), always fix errors,
+  always work the focus area, always deploy and confirm live, always write the report and update
+  the state files.
 
 **If time or budget runs short, stop in this order of priority** (do the top items first):
 1. Anything that breaks a guardrail or the build (checker ERROR, wrong phone, a dash, a bad fact).
 2. Market numbers that are now stale by more than one released month.
-3. The focus area pages.
-4. Competitor watch.
-5. New content.
-Always leave enough room to verify, write the report and push. A smaller, clean run beats a big
+3. The traffic and leads pull (phase 1b), because it decides which pages come first.
+4. The focus area pages, and any page phase 1b flags.
+5. Competitor watch.
+6. New content.
+Always leave enough room to verify, write the report, push and deploy. A smaller, clean run beats a big
 broken one.
 
 ---
@@ -156,7 +161,12 @@ live where. See guardrail 6.
 3. **The active listing page** (`16046-summer-sage-rd.html`) and the sales page facts (`sales.html`
    sold prices, team ranking text): do not edit price, status, details or claims. Only check that the
    page loads and its schema parses. If the listing looks sold, stale or off market from public
-   sources, flag it at the top of the report.
+   sources, flag it at the top of the report. A scheduled run never changes listing facts. When
+   Ricky asks for a listing change directly in a conversation, update every place the fact appears
+   so they never disagree: the listing page title, Open Graph title, schema `name` and
+   `offers.price`, the price block and details table, the listing card on `index.html`, the
+   mention on the area page (for example `poway.html`) and the card on `sales.html`. Search all
+   HTML for the old value before you commit.
 4. **Ricky's voice:** plain, warm, local, knowledgeable, never salesy. No hype, no filler, no
    "nestled", "boasts", "vibrant", "hidden gem", "dream home", "look no further". **Never use em
    dashes or en dashes** in site copy, schema, reports, the changelog or commit messages. Use commas,
@@ -277,6 +287,18 @@ them.
   others), Nextdoor public posts, Quora, YouTube, and AI assistant answers. Use them to learn what
   people ask and what the market says. Never quote or cite them.
 
+### Where the MLS figures live
+- The SDAR figures are published as "Greater San Diego Association of REALTORS®" (GSDAR) reports by
+  10K Research. Name them that way on the site. ZIP reports:
+  `http://sdar.stats.10kresearch.com/docs/lmu/YYYY-MM/x/92130-CarmelValley` (and 92014-DelMar,
+  92075-SolanaBeach, 92067-RanchoSantaFe, 92024-Encinitas, 92064-Poway). County Monthly Indicators:
+  `http://sdar.stats.10kresearch.com/docs/mmi/YYYY-MM/x/report`. The `x/SanDiegoCounty` path serves
+  an old 2024 report; do not use it.
+- Carlsbad ZIPs (92008, 92009, 92010, 92011) are North San Diego County REALTORS® (NSDCAR) reports:
+  `http://nsdcar.stats.10kresearch.com/docs/lmu/YYYY-MM/x/92008-Carlsbad`.
+- When a month is not out yet, these URLs quietly serve the latest month instead. Always read the
+  month printed at the top of the PDF ("Local Market Update for September 2026") before you use it.
+
 ### Release timing
 Monthly market data for a month usually appears in the first three weeks of the next month,
 varying by source. On each run, use the newest month that every source you quote has published. If
@@ -317,7 +339,8 @@ If the plugin is not available, follow the phases below as written and note it i
 1. `git checkout main && git pull`. Note the head commit in the report.
 2. Read the last two reports, `CHANGELOG.md` (it names this run's focus area), `backlog.md`,
    `keywords.md`, `competitors.md` and the newest rows of `market-data.md`. Carry forward anything
-   marked "Queued for next run" or "Needs a human" that is still open.
+   marked "Queued for next run" or "Needs a human" that is still open. Note whether the last run
+   was confirmed live; if it was not, this run's deploy publishes both.
 3. Work out the run type: run A on the 1st, run B on the 15th. If the run is happening on another
    date (a retry or a manual run), pick the type whose work is most overdue.
 4. Connect to the data tools through the Composio connector (find tools with COMPOSIO_SEARCH_TOOLS).
@@ -330,6 +353,10 @@ If the plugin is not available, follow the phases below as written and note it i
    and click data we have, so use it in phases 1 to 3, with Bing alongside it. If a tool is not
    reachable, use the others plus public search results, label ranks as approximate, and add
    "reconnect [tool] in Composio" under "Needs a human".
+   Check the Netlify connection now, not at the end: list the Composio `netlify_mcp` connection and
+   confirm it is active. Connections expire (a 401 Unauthorized on the deploy call means this). If it
+   is not active, carry on with the run and put "reconnect Netlify in Composio, then deploy main" at
+   the top of the report and the notification.
 5. Confirm the live site matches `main`: fetch https://rickyheidt.com/ and one neighborhood page and
    compare titles. If the live site is behind, a Netlify deploy may have failed. Flag it at the top
    of the report.
@@ -371,9 +398,12 @@ Then check by hand (the checker cannot see these):
 **Speed and Core Web Vitals**
 - Every page is over 500 KB because of the inline animated hero scenes (SVG). That is Ricky's
   intentional design. Do not remove, simplify or move the scenes. Do measure the cost: load the
-  home page and two neighborhood pages in Playwright at phone width (390 by 844) with CPU
-  throttling if available, and record Largest Contentful Paint, Cumulative Layout Shift and total
-  transfer size. If the PageSpeed Insights API is reachable without a key, fetch it for the home
+  home page and two neighborhood pages in Playwright at phone width (390 by 844) and record Largest
+  Contentful Paint, Cumulative Layout Shift and total transfer size. Use the same method every run
+  so the numbers trend: serve the repo locally, emulate Slow 4G through the Chrome DevTools
+  Protocol (`Network.emulateNetworkConditions`, about 400 Kbps down, 400 ms latency) and a 4x CPU
+  slowdown, wait for load plus 3 seconds, and say in the report if you had to use another method.
+  Flag CLS above 0.1 on any page. If the PageSpeed Insights API is reachable without a key, fetch it for the home
   page and the focus area page (mobile) and record the scores. Compare with the last report. If
   numbers got worse by a lot, report it with the likely cause and a proposed fix for a human.
 - Safe fixes you may make: add `width` and `height` to `<img>` tags (use the real file
@@ -399,6 +429,66 @@ Then check by hand (the checker cannot see these):
   Little Italy.
 - Look for keyword cannibalization: two of our pages aiming at the same query. Pick the one that
   should win, sharpen the other toward a different intent, and link between them.
+
+### Phase 1b. Traffic and leads (every run)
+
+The goal is to know where visits and leads come from, and to put this run's effort where it pays.
+Every account stays read only. These numbers live only in `seo-audit/` files, never on the site.
+
+**Windows.** Use the last 28 complete days ending 3 days before the run (Search Console lags 2 to 3
+days), and the 28 days before that. Use the same two windows in every tool. Label every number with
+its source (GSC, Bing, GA4) and window.
+
+**Pull:**
+- **Search Console:** totals; by page; by query; query plus page for the top 20 pages and the focus
+  pages; by device. URL Inspection for the focus pages and any Tier 1 page not yet indexed.
+- **Bing Webmaster Tools:** top queries, top pages, daily totals, crawl stats and crawl issues, and
+  URL inspection for the focus pages.
+- **Google Analytics (GA4, the property for `G-PR2986LP9P`):** sessions, engaged sessions and key
+  events by landing page; the same by session default channel group; sessions by session source for
+  referrals; and the leads below by landing page and by channel.
+
+**What counts as a lead.** Every site form posts to `thank-you.html`, and the relocation guide form
+posts to `guide-download.html`, so a page view of either page is the dependable lead signal. Report
+those page views by the session's landing page and channel. Also list (read only) the key events the
+property has. Calls, texts and Calendly clicks are not tracked by the site's code today; if they are
+not key events in GA4 or GTM, add "mark phone, text and Calendly clicks as key events in GA4 or GTM"
+under "Needs a human". Never edit the tag snippets to add tracking, and never read form submissions
+(they hold personal data).
+
+**Turn it into decisions.** One line each in the report, with the numbers that triggered it:
+- **Leads:** the landing pages and channels that produced leads are the site's best pages. Keep them
+  fresh first, and note which areas the leads point to. They show where demand is and feed the
+  focus area and the backlog.
+- **Traffic, no leads:** a page in the top 10 by sessions with no lead in the window. Review its
+  answer first summary, the call to action wording near the top and halfway down, and its links to
+  the home value and contact pages. Never touch the form markup.
+- **Impressions, few clicks:** a page or query with click through rate well under the site average
+  and enough impressions to matter. Rewrite the title or description in phase 6, unless it changed
+  in the last 28 days (section 7b).
+- **Striking distance:** queries at average position 5 to 20. These lead phase 6.
+- **Wrong page ranking:** a query where Search Console shows a different page from the one
+  `keywords.md` maps. Fix it as cannibalization (phase 1, internal linking).
+- **AI assistants:** sessions referred by chatgpt.com, perplexity.ai, copilot.microsoft.com,
+  gemini.google.com or any other AI assistant, by landing page. Those pages are being cited. Keep
+  their numbers current every run, keep their key answers short and self contained, and track the
+  trend in the scorecard.
+- **Bing and Google disagree:** a page or query that does well on one engine and not the other.
+  Check indexing in the weaker one, internal links and the title match. Bing results feed Copilot
+  and ChatGPT search, so a Bing gap is worth closing.
+- **Not indexed:** a Tier 1 page still "Discovered, currently not indexed". Add links to it this run
+  from indexed pages with descriptive anchors, and put "request indexing for [URL]" under "Needs a
+  human" (the run never submits URLs).
+- **Referrals:** non AI referrers (portals, directories, local news, the brokerage) go to phase 9 as
+  citation and link leads.
+
+**Small numbers.** While the site is new (roughly under 100 clicks or 300 sessions in 28 days),
+describe what you see and do not draw conclusions. Never say a change caused a traffic move; say what
+changed and when, and let the trend build across runs. Once a year of data exists, also compare with
+the same 28 days a year earlier.
+
+**Record** the tables in `keywords.md` under "Search Console, Bing and Analytics, YYYY-MM-DD", the
+decisions in the report's "Traffic and leads" section, and the scorecard rows.
 
 ### Phase 2. Search landscape for the focus area
 
@@ -431,8 +521,9 @@ For each priority query, using search (and Search Console data when available), 
   the intent. A listing search query will be won by portals, so we aim our guide pages at the
   informational and comparison versions of that need instead.
 
-Find the **striking distance** queries: where we are roughly positions 5 to 20. Those are the best
-return for on-page work this run. List them first in phase 6.
+Find the **striking distance** queries: where we are roughly positions 5 to 20, from Search
+Console first (phase 1b) and web search second. Those are the best return for on-page work this run.
+List them first in phase 6.
 
 ### Phase 3. Competitor intelligence
 
@@ -492,8 +583,9 @@ comparisons with neighbor areas, and a clear next step. Length alone does not wi
   price cut (Tier B source, labeled).
 - Each Tier 1 area and as many Tier 2 and 3 areas as a source covers at that geography (city, ZIP
   or MLS area): median price, closed sales, days on market, inventory or months of supply, and
-  year over year change. Small areas swing wildly month to month. Where a monthly figure is based
-  on a small number of sales, prefer a 3 month or 12 month figure from the same source and say so.
+  year over year change. Small areas swing wildly month to month. When a month has fewer than 10
+  closed sales for that property type, lead with the year to date or rolling 12 month figure from
+  the same report, and show the monthly median only with a small sample note.
 - Rates: Freddie Mac PMMS 30 year and 15 year fixed, with the week's date. Note the next Federal
   Reserve meeting date from the Fed's calendar.
 - Affordability and loans: C.A.R. affordability for San Diego County when released, the current
@@ -508,7 +600,10 @@ Each row: metric, property type, geography, period, value, source, URL, date pul
   example a Tier 1 median up or down more than 15 percent in a month), confirm it with a second
   source or a 3 month figure before publishing, and explain it on the page if it is real.
 - Update every place the figure appears: home page, buy, sell, home value, FAQ, sales, the hub and
-  each neighborhood page. Search all HTML for the old value and the old month so none are left
+  each neighborhood page, including comparison sections and FAQ answers on neighboring area pages
+  (for example the Del Mar and Solana Beach comparison appears on both pages) and the FAQPage
+  schema text, which repeats the visible answer. A comparison must use the same source and month
+  for both places. Search all HTML for the old value and the old month so none are left
   behind (`grep -n "September 2026" *.html`, and search for the old number itself).
 - Write the meaning, not just the number. For each area page, two to four plain sentences: what it
   means for buyers right now (leverage, rate buydowns, seller credits, inspection room) and for
@@ -598,7 +693,9 @@ clearly benefit from his local take (a favorite trail, which streets get the sea
 buyers ask him most), add a short prompt for him under "Needs a human" in the report, with the page
 and the exact question. Never write fake first person stories.
 
-**Striking distance first.** Start with the pages for queries in positions 5 to 20 from phase 2.
+**Striking distance first.** Start with the pages phase 1b flagged (striking distance queries,
+impressions without clicks, traffic without leads, AI cited pages), then the queries in positions
+5 to 20 from phase 2.
 Usually the fix is: match the title and H1 more closely to the query, answer the People also ask
 questions on the page, add the missing section a competitor has, refresh the numbers, and add
 internal links from two or three related pages with anchors that use the query wording.
@@ -655,7 +752,8 @@ meet all of that this run, add it to the backlog instead.
   paragraphs that state the place, the fact, the month and the source. AI answers lift exactly these.
 - **Test it:** ask two or three focus area questions the way a person would ask an AI assistant,
   using search, and note which sites get cited and whether we do. Record it in the report so the
-  trend is visible over time.
+  trend is visible over time, next to the AI assistant referral sessions from phase 1b, which are
+  the real measure.
 
 ### Phase 9. Off-site and local signals (write up for Ricky, do not act)
 
@@ -716,6 +814,10 @@ the report, specific and ready to use:
    repo root. Wait for "Deploy is ready", then fetch https://rickyheidt.com/ and the focus area page
    with a cache busting query (`?v=` and a random number) and confirm a change from this run is in
    the HTML. If the deploy fails, retry once. Never commit the `.netlify/` folder the deploy creates.
+   If the deploy call returns 401 Unauthorized, the Composio Netlify connection has expired: Ricky
+   has to reconnect it. If the deploy is blocked by a permission check, do not try another route.
+   Either way, the work stays on `main`, and the report and the notification lead with "not live,
+   deploy main".
 7. Report the outcome at the top of the report: live (pushed or merged, then deployed to Netlify), or not live and exactly why.
 8. If nothing needed changing, still commit the report and state files, and say "no content changes
    needed" in the report.
@@ -751,7 +853,9 @@ fire, a major project), handle it that run and note it.
 
 ---
 
-**Google Search Central rules (from the SEO Starter Guide and Search Essentials).**
+## 7b. Google Search Central rules
+
+From the SEO Starter Guide and Search Essentials.
 - Give changes time. Google says to wait a few weeks before judging an edit. Do not rewrite the
   same page's title, description or H1 again within 28 days of the last change unless it is broken
   or wrong. Record each title or description change in the report so the next run can measure it
@@ -798,9 +902,9 @@ fire, a major project), handle it that run and note it.
 Run type: A (technical and competitive) or B (market)
 Focus area: ...
 Head commit at start: ...
-Data tools available: Search Console yes or no, Ahrefs yes or no, others ...
+Data tools available: Search Console, Bing, Google Analytics, Netlify (yes or no for each), others ...
 Checker: X errors, Y warnings before. X errors, Y warnings after.
-Deploy confirmed live: yes or no
+Deploy confirmed live: yes (commit, deploy ID, what was seen live) or no and exactly why
 
 ## Top of mind (anything Ricky must see first)
 - Failures, the listing page status, a deploy problem, anything risky. "Nothing urgent" if none.
@@ -808,15 +912,30 @@ Deploy confirmed live: yes or no
 ## Scorecard
 | Measure | Last run | This run |
 |---|---|---|
+| Search Console clicks and impressions, 28 days (prior 28) | | |
+| Search Console average position and CTR | | |
+| Bing clicks and impressions, 28 days | | |
+| GA4 sessions, organic Google and organic Bing | | |
+| GA4 sessions referred by AI assistants | | |
+| Leads (thank-you and guide-download page views) and the top lead channel | | |
+| Tier 1 pages indexed (URL Inspection) | | |
 | Priority queries in top 10 (approximate unless Search Console) | | |
 | Priority queries in striking distance (5 to 20) | | |
 | Focus area pages updated with the latest month | | |
 | Pages with dateModified | | |
-| Mobile LCP, home page | | |
+| Mobile LCP and CLS, home page (section 6 phase 1 method) | | |
 | Times we were cited in AI answer checks | | |
+
+## Search Console, Bing and Analytics
+- Totals and changes by source, top pages and queries, indexing, crawl health. Say when data is too
+  thin to conclude.
+
+## Traffic and leads
+- Where leads came from (landing page, channel), and one line per decision from phase 1b
 
 ## Changed and published
 - page: what changed and why (source name and month for any number)
+- Title and description change log: page, old, new, date (for the 28 day rule)
 
 ## Market snapshot used
 | Metric | Geography | Period | Value | Source |
@@ -899,3 +1018,5 @@ Deploy confirmed live: yes or no
   from `main`.
 - Runs should suggest improvements to this playbook in the report under "Queued for next run"
   rather than editing it themselves.
+- Known checker gap: it warns about `<img>` tags without a `src` (the lightbox placeholder on
+  `index.html`, `sales.html` and the listing page). Those warnings are false positives.
