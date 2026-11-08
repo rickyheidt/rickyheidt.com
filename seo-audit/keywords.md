@@ -124,3 +124,22 @@ Tools. Analytics could not be read this run (see the report).
 | del-mar.html, solana-beach.html | 0 | 0 | n/a | GSC | Discovered, currently not indexed |
 | Any query or page | 0 | 0 | n/a | Bing | 2026-10-22 to 2026-10-29 daily totals all zero |
 | Analytics | n/a | n/a | n/a | GA4 | Not readable: connected accounts only see homesbyheidtgroup.com |
+
+## Google Analytics baseline, 2026-11-08 (manual check after access was granted)
+
+Property `properties/559986199` (G-PR2986LP9P). Window 2026-10-21 (stream created) to 2026-11-07.
+Source label: GA4.
+
+| Measure | Value | Note |
+|---|---|---|
+| All sessions | 123 (36 engaged) | Before cleaning |
+| Sessions on 127.0.0.1, localhost or a netlify.app preview | 26 | Test and preview traffic, excluded |
+| Sessions on rickyheidt.com | 97 | |
+| Organic Search (google), rickyheidt.com | 11 (10 engaged) | The best quality traffic so far |
+| Organic Social (ig, m.facebook.com) | 2 (1 engaged) | |
+| Direct, rickyheidt.com | 84 (7 engaged) | Mostly unengaged desktop sessions from Council Bluffs and Glenview plus (not set) cities: likely automated |
+| San Diego sessions (desktop and mobile) | 16 (12 engaged) | Likely the real local audience |
+| Referrals from AI assistants | 0 | |
+| Leads (thank-you.html or guide-download.html page views) | 0 | No form leads in the window |
+| Key events configured | none | Only automatic events (page_view, scroll, click, first_visit) |
+| Top pages by views | / 105, /index.html 39, about 13, listing 5, sales 5 | |

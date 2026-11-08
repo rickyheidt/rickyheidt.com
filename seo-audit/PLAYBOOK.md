@@ -346,8 +346,9 @@ If the plugin is not available, follow the phases below as written and note it i
 4. Connect to the data tools through the Composio connector (find tools with COMPOSIO_SEARCH_TOOLS).
    These accounts are already connected there: Google Search Console (property
    `https://rickyheidt.com/`), Bing Webmaster Tools (site `https://rickyheidt.com/`), Google
-   Analytics (GA4 measurement ID `G-PR2986LP9P`, the rickyheidt.com property, not the
-   homesbyheidtgroup.com one) and Netlify (site `rickytherealtorsd`, site ID
+   Analytics (GA4 property `properties/559986199`, account "Rickyheidt.com", web stream
+   "Ricky Website" with measurement ID `G-PR2986LP9P`; use the Composio account aliased
+   `rickyheidt.com`, not the homesbyheidtgroup.com property) and Netlify (site `rickytherealtorsd`, site ID
    `b3147ca5-83e6-4da3-8e15-a69fd1edecc1`). Use them read only, except the Netlify deploy in phase 11.
    Never change a setting, submit or remove URLs, or edit a property. Search Console is the best rank
    and click data we have, so use it in phases 1 to 3, with Bing alongside it. If a tool is not
@@ -447,6 +448,13 @@ its source (GSC, Bing, GA4) and window.
 - **Google Analytics (GA4, the property for `G-PR2986LP9P`):** sessions, engaged sessions and key
   events by landing page; the same by session default channel group; sessions by session source for
   referrals; and the leads below by landing page and by channel.
+
+**Clean the GA4 numbers first.** Report only sessions where `hostName` is exactly `rickyheidt.com`.
+Local test pages (`127.0.0.1`, `localhost`) and Netlify deploy previews (`*.netlify.app`) also send
+data to the property. Then list, as a separate line, sessions with no engagement from data center
+cities (for example Council Bluffs, Iowa and Glenview, Illinois in the first weeks) or a `(not set)`
+city. These look like crawlers and other automated visits, so leave them out of conclusions. GA4
+data starts 2026-10-21, the day the stream was created.
 
 **What counts as a lead.** Every site form posts to `thank-you.html`, and the relocation guide form
 posts to `guide-download.html`, so a page view of either page is the dependable lead signal. Report
@@ -777,7 +785,9 @@ the report, specific and ready to use:
 
 1. `node seo-audit/audit.mjs` must exit 0. Compare counts to the start of the run.
 2. Open every changed page in Playwright (Chromium is installed, do not run `playwright install`)
-   at 390 px and 1280 px wide. Confirm the page renders, the hero scene still runs, nothing overlaps,
+   at 390 px and 1280 px wide. In every Playwright session (this check and the phase 1 speed test),
+   block requests to `googletagmanager.com` and `google-analytics.com` with `page.route` so the
+   run's own visits never land in Google Analytics. Confirm the page renders, the hero scene still runs, nothing overlaps,
    and there are no console errors. Save a screenshot of the main focus page in the run's working
    area for your own check (do not commit screenshots).
 3. **Fact check:** every number you changed appears in `market-data.md` with a source and a date
