@@ -36,7 +36,7 @@ to Done with the date. See PLAYBOOK.md section 6.
 | 7 | "in 2025" on sales.html is a client review date, accurate, no change | 2026-10-21 | Run A, test run |
 | 25 | GA4 event create rules fixed: thank_you matches `thank-you`, guide_download matches `guide-download` (Ricky, verified through the Admin API) | 2026-11-08 | Manual |
 | 26 | Niche school rankings and grades removed from carmel-valley, del-mar, encinitas, poway, rancho-santa-fe and solana-beach (body, FAQ and schema); schools now named with district and California School Dashboard links, per guardrail 6 and Ricky's go ahead | 2026-11-08 | Manual |
-| 27 | Ricky's background made consistent: born and raised in Rancho Santa Fe, moved to Del Mar as a teenager, most of those years in Carmel Valley, Torrey Pines High School (index, about, carmel-valley, del-mar, rancho-santa-fe, llms.txt) | 2026-11-08 | Manual |
+| 27 | Ricky's background made consistent: born in Rancho Santa Fe, grew up in Rancho Santa Fe, Del Mar and Carmel Valley, Torrey Pines High School, no age references (index, about, carmel-valley, del-mar, rancho-santa-fe, llms.txt) | 2026-11-08 | Manual |
 | 24 | Del Mar and Solana Beach comparison sections on both pages (in place of a separate page for now) | 2026-11-01 | Run A |
 | 23 | Meta description and title warnings on coronado.html and services.html fixed | 2026-11-01 | Run A |
 | 11 | Baseline recorded in the 2026-10-21 report (Playwright, phone, 4x CPU throttle) | 2026-10-21 | Run A, test run |
