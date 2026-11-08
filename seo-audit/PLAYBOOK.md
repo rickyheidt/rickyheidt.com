@@ -460,9 +460,14 @@ data starts 2026-10-21, the day the stream was created.
 posts to `guide-download.html`. Since 2026-11-08 the property turns a page view of either page into
 the key events `thank_you` and `guide_download`, so report those two key events by the session's
 landing page and channel (they count from 2026-11-08 onward; before that, use page views of the two
-pages). Also list (read only) the key events the property has and note any change. Calls, texts and Calendly clicks are not tracked by the site's code today; if they are
-not key events in GA4 or GTM, add "mark phone, text and Calendly clicks as key events in GA4 or GTM"
-under "Needs a human". Never edit the tag snippets to add tracking, and never read form submissions
+pages). Also list (read only) the key events the property has and note any change.
+Since 2026-11-08, Google Tag Manager (GTM-TD52K2JX) also sends `phone_click` (tel: links),
+`text_click` (sms: links), `calendly_click` (any calendly.com/rickyheidt link, including the pop up
+buttons) and `calendly_booked` (a meeting actually scheduled in the Calendly pop up). Report all
+six lead events by landing page and channel, with `calendly_booked`, `thank_you` and
+`guide_download` as the strongest signals. A phone or text click only means the button was tapped.
+If any of the six is not marked as a key event, add "mark [event] as a key event in GA4" under
+"Needs a human". Never edit the tag snippets to add tracking, and never read form submissions
 (they hold personal data).
 
 **Turn it into decisions.** One line each in the report, with the numbers that triggered it:
