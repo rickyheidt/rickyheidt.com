@@ -1,8 +1,8 @@
 # San Diego SEO, competitor and market audit playbook
 
 The standing brief for the automated run on the 1st and 15th of every month. Each run works alone,
-with no human watching, and publishes straight to the live site. Read this whole file before you
-touch anything. The guardrails matter as much as the tasks.
+with no human watching, pushes its work to `main` and deploys it to the live site. Read this whole
+file before you touch anything. The guardrails matter as much as the tasks.
 
 Site: https://rickyheidt.com (static HTML on Netlify). Automatic Git deploys are off, so a push to
 `main` is not live until the run deploys it (phase 11, step 6).
@@ -72,8 +72,8 @@ real estate, it is probably not worth making.
 4. The focus area pages, and any page phase 1b flags.
 5. Competitor watch.
 6. New content.
-Always leave enough room to verify, write the report, push and deploy. A smaller, clean run beats a big
-broken one.
+Always leave enough room to verify, write the report, push and deploy. A smaller, clean run beats a
+big broken one.
 
 ---
 
@@ -153,11 +153,12 @@ live where. See guardrail 6.
    leave the old text alone and list it under "Needs a human". Never invent, estimate, round up,
    extrapolate or "fill in" a statistic. Never cite a source you did not actually open.
 2. **Never touch:** the license number, phone, email, brokerage names or logos, legal or Fair
-   Housing text, any form markup or field, `netlify/functions/`, `netlify.toml`, the Google tag (`G-PR2986LP9P`) and Google Tag Manager
-   (`GTM-TD52K2JX`) snippets, the Follow Up Boss
-   wiring, the Google verification files (`google*.html`, `BingSiteAuth.xml`), `downloads/`, or the relocation guide PDF.
-   Do not rename, move or delete pages, and do not change any URL. If something there looks wrong,
-   report it.
+   Housing text, any form markup or field, `netlify/functions/`, `netlify.toml`, the Google tag
+   (`G-PR2986LP9P`) and Google Tag Manager (`GTM-TD52K2JX`) snippets, the Follow Up Boss wiring, the
+   verification files (`google*.html`, `BingSiteAuth.xml`), `downloads/`, or the relocation guide
+   PDF. Do not rename, move or delete pages, and do not change any URL. Outside the repo, never change
+   anything in Google Analytics, Tag Manager, Search Console, Bing Webmaster Tools or Netlify: the
+   Netlify deploy in phase 11 is the only write. If something there looks wrong, report it.
 3. **The active listing page** (`16046-summer-sage-rd.html`) and the sales page facts (`sales.html`
    sold prices, team ranking text): do not edit price, status, details or claims. Only check that the
    page loads and its schema parses. If the listing looks sold, stale or off market from public
@@ -198,7 +199,7 @@ live where. See guardrail 6.
      lender, tax professional or attorney for their situation.
 7. **Original words only.** Never copy text, tables, photos, maps or charts from competitors or
    portals. Facts are fine, the wording must be ours, and attribution goes in plain words
-   ("according to the San Diego Association of REALTORS®, September 2026").
+   ("according to the Greater San Diego Association of REALTORS®, September 2026").
 8. **Geography must match the number.** Never put a county median on a Del Mar page as if it were
    Del Mar. Never put a city figure on a micro neighborhood. Say exactly what geography the number
    covers.
@@ -206,8 +207,8 @@ live where. See guardrail 6.
    revert the edit. If a page looks broken in the browser check, revert it.
 10. **Never imitate, disparage or name competitors on the site.** Competitor names live only in
     `seo-audit/` files, which are not linked from the site. Beat them on usefulness.
-11. **Public data only.** No logging in to anything, no scraping behind logins, no paid data you
-    do not have a connector for, no automated mass requests to competitor sites. A handful of polite
+11. **Public data only.** Apart from the accounts already connected in Composio (phase 0), no
+    logging in to anything, no scraping behind logins, no paid data you do not have a connector for, no automated mass requests to competitor sites. A handful of polite
     fetches of public pages and sitemaps per competitor per run is the limit.
 12. **No personal data.** Never put an owner's name, a buyer's name or anything from Follow Up Boss
     or form submissions into the site, the reports or commit messages.
@@ -225,7 +226,7 @@ Every one is plain Markdown so Ricky can read it on GitHub.
 | `CHANGELOG.md` | One entry per run: date, run type, focus area, pages changed, checker counts, next focus area | Every run |
 | `reports/YYYY-MM-DD.md` | The full run report (template in section 9) | Every run |
 | `market-data.md` | Ledger of every market number used on the site: metric, geography, month, value, source, URL, pulled date | Every run that pulls data |
-| `keywords.md` | Keyword map: target query, intent, the page that should win it, our approximate position, who holds the top spots, last checked | Run A fully, run B for the focus area |
+| `keywords.md` | Keyword map (target query, intent, the page that should win it, our position, who holds the top spots, last checked), plus the dated Search Console, Bing and Analytics tables from phase 1b | Run A fully, run B for the focus area; data tables every run |
 | `competitors.md` | Competitor roster and per run snapshots, including their sitemap page counts | Run A fully, run B lightly |
 | `backlog.md` | Ranked list of content ideas and fixes not yet done, each with the evidence behind it | Every run |
 
@@ -244,8 +245,10 @@ fetched it. When sources disagree, prefer the higher tier, say so in the report,
 them.
 
 ### Tier A, publish with confidence
-- **San Diego Association of REALTORS® (SDAR)** monthly market statistics and press releases.
-  County and often city or ZIP level figures for detached and attached homes.
+- **San Diego Association of REALTORS® (SDAR)** monthly market statistics, published as Greater San
+  Diego Association of REALTORS® (GSDAR) reports, and North San Diego County REALTORS® (NSDCAR) for
+  the Carlsbad ZIPs. County and ZIP level figures for detached and attached homes. See "Where the
+  MLS figures live" below.
 - **California Association of REALTORS® (C.A.R.)** monthly home sales and price report (county and
   some city level), the Housing Affordability Index, and the annual forecast.
 - **Freddie Mac Primary Mortgage Market Survey (PMMS)**, published weekly on Thursdays, for the 30
@@ -397,15 +400,16 @@ Then check by hand (the checker cannot see these):
   each type. If you can reach the Schema Markup Validator or the Rich Results Test, use it.
 
 **Speed and Core Web Vitals**
-- Every page is over 500 KB because of the inline animated hero scenes (SVG). That is Ricky's
-  intentional design. Do not remove, simplify or move the scenes. Do measure the cost: load the
+- Every page has an inline animated beach hero scene (SVG), and the other hero scenes load on demand
+  from `scenes/` (noindex on purpose). That is Ricky's intentional design. Do not remove, simplify or
+  move the scenes. Do measure the cost: load the
   home page and two neighborhood pages in Playwright at phone width (390 by 844) and record Largest
   Contentful Paint, Cumulative Layout Shift and total transfer size. Use the same method every run
   so the numbers trend: serve the repo locally, emulate Slow 4G through the Chrome DevTools
   Protocol (`Network.emulateNetworkConditions`, about 400 Kbps down, 400 ms latency) and a 4x CPU
   slowdown, wait for load plus 3 seconds, and say in the report if you had to use another method.
-  Flag CLS above 0.1 on any page. If the PageSpeed Insights API is reachable without a key, fetch it for the home
-  page and the focus area page (mobile) and record the scores. Compare with the last report. If
+  Flag CLS above 0.1 on any page. If the PageSpeed Insights API is reachable without a key, fetch
+  it for the home page and the focus area page (mobile) and record the scores. Compare with the last report. If
   numbers got worse by a lot, report it with the likely cause and a proposed fix for a human.
 - Safe fixes you may make: add `width` and `height` to `<img>` tags (use the real file
   dimensions), add `loading="lazy"` to images below the fold, add `decoding="async"`. Never lazy
@@ -445,7 +449,7 @@ its source (GSC, Bing, GA4) and window.
   pages; by device. URL Inspection for the focus pages and any Tier 1 page not yet indexed.
 - **Bing Webmaster Tools:** top queries, top pages, daily totals, crawl stats and crawl issues, and
   URL inspection for the focus pages.
-- **Google Analytics (GA4, the property for `G-PR2986LP9P`):** sessions, engaged sessions and key
+- **Google Analytics (GA4 `properties/559986199`):** sessions, engaged sessions and key
   events by landing page; the same by session default channel group; sessions by session source for
   referrals; and the leads below by landing page and by channel.
 
@@ -457,17 +461,22 @@ city. These look like crawlers and other automated visits, so leave them out of 
 data starts 2026-10-21, the day the stream was created.
 
 **What counts as a lead.** Every site form posts to `thank-you.html`, and the relocation guide form
-posts to `guide-download.html`. Since 2026-11-08 the property turns a page view of either page into
-the key events `thank_you` and `guide_download`, so report those two key events by the session's
-landing page and channel (they count from 2026-11-08 onward; before that, use page views of the two
-pages). Also list (read only) the key events the property has and note any change.
+posts to `guide-download.html`. Netlify's form handling rewrites those actions, so after a real
+submission the visitor lands on `/thank-you` or `/guide-download` (no `.html`). The property turns a
+page view of either page into the key events `thank_you` and `guide_download`; the rules must match
+`thank-you` and `guide-download` without `.html`, or real leads are missed. Check the two event
+create rules on the web stream each run (read only) and flag them under "Needs a human" if they
+still require `.html`. Report the two key events by the session's landing page and channel. For
+dates before the rules were fixed, count page views whose path contains `thank-you` or
+`guide-download`. Also list (read only) the key events the property has and note any change.
 Since 2026-11-08, Google Tag Manager (GTM-TD52K2JX) also sends `phone_click` (tel: links),
 `text_click` (sms: links), `calendly_click` (any calendly.com/rickyheidt link, including the pop up
 buttons) and `calendly_booked` (a meeting actually scheduled in the Calendly pop up). Report all
 six lead events by landing page and channel, with `calendly_booked`, `thank_you` and
 `guide_download` as the strongest signals. A phone or text click only means the button was tapped.
-If any of the six is not marked as a key event, add "mark [event] as a key event in GA4" under
-"Needs a human". Never edit the tag snippets to add tracking, and never read form submissions
+All six were marked as key events on 2026-11-08. If any stops being one, add "mark [event] as a key
+event in GA4" under "Needs a human". The template key events `close_convert_lead`, `qualify_lead`
+and `purchase` are not sent by the site; ignore them. Never edit the tag snippets to add tracking, and never read form submissions
 (they hold personal data).
 
 **Turn it into decisions.** One line each in the report, with the numbers that triggered it:
@@ -623,8 +632,8 @@ Each row: metric, property type, geography, period, value, source, URL, date pul
   means for buyers right now (leverage, rate buydowns, seller credits, inspection room) and for
   sellers (pricing to the market, prep, timing), tied to the numbers you just published.
 - Always state the month and the source next to the number: "The median price of a detached home
-  in Carmel Valley (92130) was $X in September 2026, according to the San Diego Association of
-  REALTORS®."
+  in Carmel Valley (92130) was $X in September 2026, according to the Greater San Diego
+  Association of REALTORS®."
 
 **Seasonal angles for the next 60 days** (pick the ones that apply to the run date): holiday and
 winter listing strategy, the January and February run up to spring, spring market prep, school year
@@ -672,8 +681,10 @@ have all of it. A Tier 2 or 3 page should have most of it.
 
 **The anatomy of a winning area page:**
 1. **Title** (60 characters or less): place first, intent second, brand last when it fits.
-   The current pattern is "Carmel Valley Real Estate and Homes | Ricky Heidt, REALTOR®". Change
-   it only when phase 2 shows a better match for how people search, and keep it unique on the site.
+   The usual pattern is "Del Mar Real Estate and Homes | Ricky Heidt, REALTOR®". Where the place
+   name is shared with somewhere else (Carmel Valley in Monterey County, Del Mar in San Jose and
+   Florida), add "San Diego" or the ZIP, as `carmel-valley.html` does. Change a title only when
+   phase 1b or phase 2 shows a better match for how people search, and keep it unique on the site.
 2. **Meta description** (155 characters or less): what the page gives, the month of the data, a
    reason to click. Unique.
 3. **H1** that names the place. One per page.
@@ -793,8 +804,9 @@ the report, specific and ready to use:
 2. Open every changed page in Playwright (Chromium is installed, do not run `playwright install`)
    at 390 px and 1280 px wide. In every Playwright session (this check and the phase 1 speed test),
    block requests to `googletagmanager.com` and `google-analytics.com` with `page.route` so the
-   run's own visits never land in Google Analytics. Confirm the page renders, the hero scene still runs, nothing overlaps,
-   and there are no console errors. Save a screenshot of the main focus page in the run's working
+   run's own visits never land in Google Analytics. Never submit a site form, book in Calendly or
+   follow a `tel:` or `sms:` link during checks: forms reach Follow Up Boss as real leads. Confirm
+   the page renders, the hero scene still runs, nothing overlaps, and there are no console errors. Save a screenshot of the main focus page in the run's working
    area for your own check (do not commit screenshots).
 3. **Fact check:** every number you changed appears in `market-data.md` with a source and a date
    from this run. Spot check three of them against the source page again.
@@ -813,7 +825,7 @@ the report, specific and ready to use:
    counts before and after, and the next focus area.
 3. Update `market-data.md`, `keywords.md`, `competitors.md` and `backlog.md`.
 4. Commit with a clear message without dashes, for example `San Diego SEO and market refresh,
-   2026-11-15, Del Mar and Solana Beach`.
+   YYYY-MM-DD, [focus area]`.
 5. Publish to `main`, with no human step, using the first route that works:
    a. `git push origin main`. On a network error retry up to 4 times, waiting 2, 4, 8 and 16
       seconds. If `main` moved, pull and merge once, rerun the checker, and push again. Never force.
@@ -834,9 +846,14 @@ the report, specific and ready to use:
    has to reconnect it. If the deploy is blocked by a permission check, do not try another route.
    Either way, the work stays on `main`, and the report and the notification lead with "not live,
    deploy main".
-7. Report the outcome at the top of the report: live (pushed or merged, then deployed to Netlify), or not live and exactly why.
+7. Report the outcome at the top of the report: live (pushed or merged, then deployed to Netlify),
+   or not live and exactly why. If the report was committed before the deploy, commit the final
+   deploy line afterwards (that commit is report only and needs no second deploy).
 8. If nothing needed changing, still commit the report and state files, and say "no content changes
    needed" in the report.
+9. Send the notification the routine prompt asks for. Its first sentence says live or not live; then
+   the top Search Console, Bing and Analytics changes, leads, what changed on the site, the market
+   numbers and sources, competitor moves, what needs Ricky and the next focus area.
 
 ---
 
@@ -933,13 +950,14 @@ Deploy confirmed live: yes (commit, deploy ID, what was seen live) or no and exa
 | Bing clicks and impressions, 28 days | | |
 | GA4 sessions, organic Google and organic Bing | | |
 | GA4 sessions referred by AI assistants | | |
-| Leads (thank-you and guide-download page views) and the top lead channel | | |
+| Leads: calendly_booked, thank_you, guide_download, calendly_click, phone_click, text_click (cleaned, rickyheidt.com only) | | |
+| Top lead landing page and channel | | |
 | Tier 1 pages indexed (URL Inspection) | | |
 | Priority queries in top 10 (approximate unless Search Console) | | |
 | Priority queries in striking distance (5 to 20) | | |
 | Focus area pages updated with the latest month | | |
 | Pages with dateModified | | |
-| Mobile LCP and CLS, home page (section 6 phase 1 method) | | |
+| Mobile LCP and CLS, home page (phase 1 method) | | |
 | Times we were cited in AI answer checks | | |
 
 ## Search Console, Bing and Analytics
@@ -985,7 +1003,7 @@ Deploy confirmed live: yes (commit, deploy ID, what was seen live) or no and exa
 ### `market-data.md` row
 ```
 | Metric | Type | Geography | Period | Value | Source | URL | Pulled |
-| Median sales price | Detached | 92130 Carmel Valley | 2026-09 | $X | SDAR | https://... | 2026-10-15 |
+| Median sales price | Detached | 92130 Carmel Valley | 2026-09 | $X | GSDAR Local Market Update | http://sdar.stats.10kresearch.com/docs/lmu/2026-09/x/92130-CarmelValley | 2026-10-15 |
 ```
 
 ### `keywords.md` row
@@ -1021,6 +1039,11 @@ Deploy confirmed live: yes (commit, deploy ID, what was seen live) or no and exa
 | Search results look personalized or odd | Note it, use several query variants, label positions as approximate. |
 | You run low on time or budget | Follow the priority order in section 1, then verify, report and push what is done. |
 | The push fails | Section 6, phase 11, steps 5 and 6. Never force push. |
+| The Netlify deploy returns 401 or the connection is not active | The Composio Netlify connection expired. Keep the work on `main`; lead the report and the notification with "not live: reconnect Netlify in Composio, then deploy main". |
+| The deploy is blocked by a permission check | Do not try another route. Same report and notification line as above. |
+| A market report URL shows an older month than requested | The new month is not out. Keep the current figures and say which release you are waiting on. |
+| Google Analytics shows the homesbyheidtgroup.com property | Wrong account. Use the Composio Google Analytics account aliased `rickyheidt.com` and `properties/559986199`. |
+| GA4 numbers jump with no matching Search Console change | Check hostname and city first (test pages, previews, bots) before reading anything into it. |
 
 ---
 

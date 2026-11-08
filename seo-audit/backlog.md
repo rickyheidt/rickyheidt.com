@@ -21,7 +21,10 @@ to Done with the date. See PLAYBOOK.md section 6.
 | 18 | Checker: skip the empty lightbox `<img alt="">` placeholder on index.html and sales.html in the width and height check (it has no src) | Technical | False positive warning | Low | 2026-10-21 |
 | 20 | Del Mar bluffs and coastal permit explainer (bluff top lots, seawalls, coastal development permits, the rail realignment) for Del Mar and Solana Beach | New content | A competitor started publishing on Del Mar bluff permits (2026-10-16); no official explainer ranks | Medium | 2026-11-01 |
 | 21 | Re-check whether new Del Mar short term rental permits are limited to primary residences or capped; only news and third party sites say so | Facts | City of Del Mar news item (2026-02-23) does not say; delmar.ca.us municipal code page not fetched | Low | 2026-11-01 |
-| 22 | Del Mar and Solana Beach October 2026 numbers once the GSDAR updates publish (run B, 2026-11-15) | Market | October URLs served the September report on 2026-11-01 | High | 2026-11-01 |
+| 22 | October 2026 numbers for carmel-valley.html, del-mar.html and solana-beach.html (and their comparison sections and FAQs) once the GSDAR updates publish (run B, 2026-11-15) | Market | October URLs served the September report on 2026-11-01 | High | 2026-11-01 |
+| 25 | Ricky to edit the GA4 event create rules: thank_you should match page_location contains `thank-you` and guide_download contains `guide-download` (drop `.html`), because Netlify sends submitters to /thank-you and /guide-download | Tracking | Live form action is `thank-you` after Netlify processing, checked 2026-11-08 | High | 2026-11-08 |
+| 26 | Ricky to decide: keep the Niche school rankings on the Carmel Valley, Del Mar and Solana Beach pages, or switch to district and Dashboard links only (guardrail 6 says never rank a school) | Compliance | Open since 2026-10-21 | Medium | 2026-11-08 |
+| 27 | Ricky to decide one wording for where he grew up (Del Mar page says Del Mar; llms.txt and other pages say Carmel Valley) | Entity | Found 2026-11-01 | Low | 2026-11-08 |
 | 19 | Real photos on Tier 1 area pages (Ricky to supply), placed near the matching text with descriptive alt text | Images | Area pages have no photos; Google Starter Guide recommends images near relevant text | Medium | 2026-10-25 |
 
 ## Done

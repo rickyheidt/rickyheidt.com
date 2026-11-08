@@ -3,6 +3,30 @@
 Newest first. Each automated run adds an entry: date, run type (A on the 1st, B on the 15th), focus
 area, pages changed, checker counts before and after, and the next focus area.
 
+## Manual changes between runs, 2026-11-04 to 2026-11-08
+- 2026-11-04: 16046 Summer Sage Rd list price changed to $2,250,000 at Ricky's request, in all seven
+  places it appears (listing page title, Open Graph, schema name and offers.price, price block,
+  details table, index.html card, poway.html, sales.html). Do not change it back.
+- 2026-11-04: Netlify connection in Composio reconnected (it had expired: 401). main deployed and
+  confirmed live, including the 2026-11-01 run. PRs #13 (rotating testimonials) and #14 (home page
+  speed: self hosted fonts, no hero layout shift) were merged and are live as of 2026-11-08.
+- 2026-11-08: Google Analytics is readable: `properties/559986199` through the Composio account
+  aliased `rickyheidt.com`. Baseline in `keywords.md`. GA4 data starts 2026-10-21; local test pages,
+  Netlify previews and bot like sessions must be filtered (playbook phase 1b).
+- 2026-11-08: Lead tracking set up. Key events: thank_you, guide_download (event create rules on the
+  web stream), phone_click, text_click, calendly_click, calendly_booked (GTM-TD52K2JX tags).
+  Open issue: the thank_you and guide_download rules match `thank-you.html` and
+  `guide-download.html`, but real submissions land on `/thank-you` and `/guide-download`, so Ricky
+  needs to edit both rules (backlog 25).
+- 2026-11-08: Playbook updated: new phase 1b (traffic and leads), Netlify check at preflight, deploy
+  failure handling, a fixed speed test method, GSDAR and NSDCAR URL patterns and naming, a 10 sale
+  small sample rule, comparison sections in the market refresh, owner requested listing changes,
+  blocking analytics and never submitting forms in browser checks, new report sections and
+  scorecard rows.
+- Next run unchanged: 2026-11-15, run B (market refresh with October 2026 data for carmel-valley,
+  del-mar and solana-beach, plus county figures), focus area 3 (Rancho Santa Fe, Fairbanks Ranch
+  and Santaluz). First run with phase 1b and full Analytics.
+
 ## Run A, 2026-11-01
 - Focus area: 2, Del Mar and Solana Beach.
 - Pages changed: del-mar.html and solana-beach.html (September 2026 market section, where it is,
