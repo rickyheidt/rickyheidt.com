@@ -7,7 +7,8 @@ file before you touch anything. The guardrails matter as much as the tasks.
 Site: https://rickyheidt.com (static HTML on Netlify). Since 2026-11-08 Netlify deploys every push to
 `main` automatically, so each push goes live within about a minute (phase 11, step 6).
 Owner: Ricky Heidt, REALTOR®, PorchLight Realty, brokered by eXp Realty. CA DRE #02230045.
-A North County native with an office ZIP of 92130 (Carmel Valley).
+A San Diego native (grew up in Rancho Santa Fe, Del Mar and Carmel Valley) who works anywhere in
+San Diego County. Office ZIP 92130 (Carmel Valley).
 
 **The mission.** When someone searches for anything about buying, selling, owning or moving to a
 home in San Diego County, rickyheidt.com should be the most useful, most current and most local
@@ -924,6 +925,13 @@ From the SEO Starter Guide and Search Essentials.
 - No em dashes, no en dashes, no spaced hyphens used as dashes.
 - No keyword stuffing. Name the place naturally, as a local would.
 - No superlatives about Ricky, no hype adjectives, no exclamation points in body copy.
+- Ricky works the whole county and will travel anywhere for a client. Do not lead with North
+  County or "born and raised in North County"; mention his roots once where it fits and frame him
+  as a San Diego REALTOR®. North County detail belongs on the North County area pages.
+- Keep his voice plain and confident. No gimmicky proof of local knowledge (which streets flood with
+  school traffic, which villages carry Mello-Roos), and no disclaimers that make him sound new, such
+  as "this is the team's production rather than my individual volume". Team figures are clearly
+  labeled as PorchLight Realty Group's by their heading and the RealTrends source line.
 - "REALTOR®" with the mark. Spell place names the way the site already does, for example
   "Rancho Peñasquitos" with the ñ in copy (the file name stays `rancho-penasquitos.html`).
 - Prefer the word "home" over "property" in consumer copy.
