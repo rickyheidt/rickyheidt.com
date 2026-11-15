@@ -104,6 +104,10 @@
       load().then(function(){
         box.innerHTML='';
         window.Calendly.initInlineWidget({url:url(box.getAttribute('data-calendly-inline')),parentElement:box});
+      }).catch(function(){
+        // The calendar was blocked (a content blocker or a network hiccup): say so and keep the link.
+        var f=box.querySelector('.cal-fallback'), a=f&&f.querySelector('a');
+        if(f&&a){ f.textContent='The calendar could not load here. '; a.textContent='Open my booking page'; f.appendChild(a); f.appendChild(document.createTextNode(' to pick a time.')); }
       });
     };
     if('IntersectionObserver' in window){
@@ -323,3 +327,65 @@ document.addEventListener('click', function (e) {
   var a = e.target.closest && e.target.closest('a[data-interest]'); if (!a) return;
   var s = document.querySelector('form[name="contact"] [name="interest"]'); if (s) s.value = a.getAttribute('data-interest');
 });
+
+
+// Long guides get an "On this page" bar built from their section headings. It sticks under
+// the header, marks the section being read, and keeps that chip in view as the page scrolls.
+(function () {
+  var prose = document.querySelector('.layout > .prose'); if (!prose || prose.querySelector('.jump')) return;
+  var heads = [].slice.call(prose.querySelectorAll('h2'));
+  if (heads.length < 4) return;
+  var short = [[/market/i, 'Market'], [/^living/i, 'Living here'], [/^where /i, 'Location'], [/^homes you/i, 'Homes'],
+    [/^schools/i, 'Schools'], [/^getting around/i, 'Getting around'], [/^things to know/i, 'Before you buy'],
+    [/^buying in/i, 'Buying'], [/^selling in/i, 'Selling'], [/faq$/i, 'FAQ'], [/ (vs\.?|versus|compared) /i, 'Compare']];
+  var nav = document.createElement('nav'), used = {}, links = [];
+  nav.className = 'jump jump-auto'; nav.setAttribute('aria-label', 'On this page');
+  heads.forEach(function (h) {
+    var text = h.textContent.trim(), label = text;
+    for (var i = 0; i < short.length; i++) if (short[i][0].test(text)) { label = short[i][1]; break; }
+    if (!h.id) {
+      var id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48) || 'section';
+      while (used[id] || document.getElementById(id)) id += '-2';
+      h.id = id;
+    }
+    used[h.id] = 1;
+    var a = document.createElement('a'); a.href = '#' + h.id; a.textContent = label;
+    nav.appendChild(a); links.push(a);
+  });
+  prose.insertBefore(nav, prose.firstChild);
+  var header = document.querySelector('.site-header');
+  function size() { if (header) document.documentElement.style.setProperty('--hh', header.offsetHeight + 'px'); }
+  size(); window.addEventListener('resize', size);
+  // A heading named in the address (a shared link) only exists now, so go to it.
+  if (location.hash.length > 1) { var t = document.getElementById(decodeURIComponent(location.hash.slice(1))); if (t && heads.indexOf(t) > -1) t.scrollIntoView(); }
+  var current = null;
+  function mark(i) {
+    if (i === current) return; current = i;
+    links.forEach(function (a, k) { if (k === i) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+    var a = links[i]; if (a) nav.scrollLeft = a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2;
+  }
+  // The section being read is the last heading that has passed the upper part of the screen.
+  function spy() {
+    var line = (header ? header.offsetHeight : 0) + 140, at = -1;
+    for (var i = 0; i < heads.length; i++) { if (heads[i].getBoundingClientRect().top <= line) at = i; else break; }
+    mark(at);
+  }
+  var tick = false;
+  window.addEventListener('scroll', function () { if (tick) return; tick = true; requestAnimationFrame(function () { tick = false; spy(); }); }, { passive: true });
+  spy();
+})();
+
+// Pages load ahead of the click. When someone rests the pointer on a link (or presses down
+// on a phone), the browser quietly fetches that page, so it opens almost at once. Skipped
+// for data saver, for files and off-site links, and in browsers without the feature.
+(function () {
+  if (!(window.HTMLScriptElement && HTMLScriptElement.supports && HTMLScriptElement.supports('speculationrules'))) return;
+  var c = navigator.connection; if (c && c.saveData) return;
+  var s = document.createElement('script'); s.type = 'speculationrules';
+  s.textContent = JSON.stringify({ prefetch: [{ eagerness: 'moderate', where: { and: [
+    { href_matches: '/*' },
+    { not: { href_matches: ['/downloads/*', '/guide-download*', '/thank-you*', '/*.pdf'] } },
+    { not: { selector_matches: '[target="_blank"],[download],[data-calendly]' } }
+  ] } }] });
+  document.head.appendChild(s);
+})();
