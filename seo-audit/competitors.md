@@ -19,6 +19,7 @@ Add a business here only after seeing it rank for one of our queries. Do not see
 | HomeLight, Agent Pronto, Bankrate, Ramsey (agent directories) | 3 | various | not fetched | Del Mar and Solana Beach agent queries | 2026-11-01 | 2026-11-01 |
 | Homes.com, Orchard, Zillow, Houzeo, city-stats, Altos | 3 | various | not fetched | Del Mar and Solana Beach buy and market queries | 2026-11-01 | 2026-11-01 |
 | Del Mar Sandpiper, Coast News, City of Del Mar news | 4 | various | not fetched | Del Mar short term rental queries | 2026-11-01 | 2026-11-01 |
+| bcre.com | 2 | https://bcre.com | https://bcre.com/sitemap.xml | RSF real estate, Covenant, Fairbanks Ranch | 2026-11-15 | 2026-11-15 |
 | Coldwell Banker | 2 | https://www.coldwellbankerhomes.com | not fetched (enterprise scale) | Carmel Valley Mello-Roos and HOA queries through listing pages | 2026-10-21 | 2026-10-21 |
 | Douglas Elliman | 2 | https://www.elliman.com | not fetched | One 92130 listing for "Carmel Valley Mello-Roos" | 2026-10-21 | 2026-10-21 |
 | Redfin | 3 | https://www.redfin.com | not fetched | Most Carmel Valley, 92130, Pacific Highlands Ranch and Torrey Hills queries | 2026-10-21 | 2026-10-21 |
@@ -30,6 +31,34 @@ Groups: 1 local agent or team, 2 brokerage page, 3 portal or aggregator, 4 local
 ## Snapshots
 
 Newest run first. One block per competitor checked that run (template in PLAYBOOK.md section 9).
+
+### Run of 2026-11-15 (run B, focus Rancho Santa Fe)
+
+Light pass (run B). Positions are approximate. rickyheidt.com did not appear for any of 10 RSF queries.
+
+#### Sonja Huter (group 1), sonjahuter.com
+- Ranks for: RSF luxury homes, living in RSF, RSF real estate agent (profile)
+- Sitemap: 401 blog URLs, 22 static, 4 neighborhood, 46 property; nine RSF posts with lastmod 2026-11-12 to 13
+- Market report: yes, RSF October report published 2026-10-07; no data source named in the text
+- Decision: close now (dated, sourced October 2026 figures for 92067 and 92091 added)
+
+#### SV Premier (group 1), svpremier.com
+- Ranks for: RSF real estate (annual reports 2023 to 2025), luxury homes, Fairbanks Ranch, Santaluz
+- Sitemap: post 1,257 and page 1,018 URLs; lastmods unchanged since mid October
+- Market report: annual, latest covers 2025
+- Decision: close now on freshness
+
+#### Caspersen Group, Compass (group 1), caspersengroup.com
+- Ranks for: RSF real estate agent (about 15)
+- Sitemap: 84 posts, 82 pages; seven RSF community pages updated 2026-10-12 (Covenant, Fairbanks Ranch, Cielo, The Bridges, RSF Farms, Del Rayo Estates); North County fall 2026 market post
+- Decision: backlog (subarea pages need subarea data)
+
+#### Amy Green (group 1), amygreenrealtor.com
+- Sitemap: 227 blog URLs (was 221); new Encinitas (2026-11-13) and Carlsbad (2026-10-28) market posts; no RSF content
+- Decision: watch for the Encinitas focus
+
+#### Also seen ranking for RSF (group 1 and 2), not yet profiled
+bcre.com (about 47,600 URLs, mostly listings), The Guiltinan Group, Bree Bornstein, Battiata, Barbara Chamizo, Neuhaus. Profile in the next run A that covers RSF.
 
 ### Run of 2026-11-01 (run A, focus Del Mar and Solana Beach)
 

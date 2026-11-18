@@ -66,9 +66,16 @@ Note, 2026-11-01: unqualified "Del Mar" results mix in Del Mar in San Jose and D
 
 | Query | Intent | Our page | Our position | Top results (type) | PAA captured | Source | Last checked |
 |---|---|---|---|---|---|---|---|
-| Rancho Santa Fe real estate | Buy | rancho-santa-fe.html | | | | | |
-| Rancho Santa Fe luxury homes | Buy | rancho-santa-fe.html | | | | | |
-| Rancho Santa Fe Covenant | Living | rancho-santa-fe.html | | | | | |
+| Rancho Santa Fe real estate | Buy | rancho-santa-fe.html | Not in results | SV Premier annual reports (agent), bcre.com (brokerage), Redfin (portal) | Median price (answered) | Web search (approximate); GSC has no RSF queries; page indexed | 2026-11-15 |
+| Rancho Santa Fe luxury homes | Buy | rancho-santa-fe.html | Not in results | Redfin, JamesEdition (portals), SV Premier, Sonja Huter (agents) | | Web search (approximate) | 2026-11-15 |
+| Rancho Santa Fe homes for sale 92067 | Buy | rancho-santa-fe.html | Not in results | Century 21, Homes.com x4 (portals) | Listing intent, ignore | Web search (approximate) | 2026-11-15 |
+| Rancho Santa Fe housing market 2026 | Market | rancho-santa-fe.html | Not in results | Zillow, Houzeo, Weichert, TopHap, Trulia | Buyer or seller market (answered) | Web search (approximate) | 2026-11-15 |
+| Rancho Santa Fe real estate agent | Local | rancho-santa-fe.html | Not in results | HomeLight, Agent Pronto (directories), Sonja Huter profile, Luxury Presence | How to choose an agent | Web search (approximate) | 2026-11-15 |
+| living in Rancho Santa Fe | Living | rancho-santa-fe.html | Not in results | Sonja Huter guide, Apartments.com, SV Premier, Redfin, NeighborhoodScout | Is RSF a city (answered) | Web search (approximate) | 2026-11-15 |
+| Rancho Santa Fe Covenant | Living | rancho-santa-fe.html | Not in results | neighborhoods.com, Guiltinan Group (agent), Rocket Homes, RSF Post, Elliman, the Association's Covenant PDF | What is the Covenant (answered) | Web search (approximate) | 2026-11-15 |
+| Fairbanks Ranch homes | Buy | rancho-santa-fe.html | Not in results | Homes.com, Orchard, Redfin (portals) | Is Fairbanks Ranch in RSF (open, needs Ricky) | Web search (approximate) | 2026-11-15 |
+| Santaluz homes for sale | Buy | none (Santaluz is in 92127 per portals) | Not in results | Compass, Prevu, Redfin, neighborhoods.com, BHGRE | | Web search (approximate) | 2026-11-15 |
+| Rancho Santa Fe fire insurance | Rules | rancho-santa-fe.html | Not in results | RSF Fire District ISO page (government), RSF Post, Coast News | Defensible space inspection (answered) | Web search (approximate) | 2026-11-15 |
 
 ## Poway (poway.html)
 
@@ -143,3 +150,28 @@ Source label: GA4.
 | Leads (thank-you.html or guide-download.html page views) | 0 | No form leads in the window |
 | Key events configured | thank_you, guide_download, phone_click, text_click, calendly_click, calendly_booked, all added 2026-11-08, counted once per event | thank_you and guide_download come from page views of thank-you.html and guide-download.html; the other four are sent by GTM-TD52K2JX; the template key events close_convert_lead, qualify_lead and purchase also exist and nothing on the site sends them |
 | Top pages by views | / 105, /index.html 39, about 13, listing 5, sales 5 | |
+
+## Search Console, Bing and Analytics, 2026-11-15
+
+Windows: 2026-10-16 to 2026-11-12 (prior 2026-09-18 to 2026-10-15). GA4 data starts 2026-10-21.
+
+| Query or page | Clicks | Impressions | Avg position | Source | Window |
+|---|---|---|---|---|---|
+| Site total | 9 | 174 | 40.4 | GSC | 2026-10-16 to 2026-11-12 |
+| Site total, prior 28 days | 0 | 0 | n/a | GSC | returned no rows (conflicts with the 2026-10-21 pull) |
+| Home page | 4 | 40 | 5.6 | GSC | same |
+| 16046-summer-sage-rd.html | 4 | 45 | 8.6 | GSC | same |
+| carmel-valley.html | 1 | 1 | 3 | GSC | same |
+| about.html | 0 | 14 | 7.1 | GSC | same |
+| downtown-san-diego.html | 0 | 19 | 72.9 | GSC | same |
+| home-value.html | 0 | 16 | 75.9 | GSC | same |
+| neighborhoods.html | 0 | 11 | 59.5 | GSC | same |
+| "heidt" (home page) | 0 | 2 | 8.5 | GSC | same |
+| Desktop / mobile | 6 / 3 | 113 / 59 | 46.0 / 27.7 | GSC | same |
+| Any query or page | 0 | 0 | n/a | Bing | daily totals zero 2026-10-22 to 2026-11-12; 1 page in index |
+| Sessions, rickyheidt.com only | 121 sessions, 77 bot like | | | GA4 | 2026-10-16 to 2026-11-12 |
+| Organic Search google | 14 sessions (12 engaged) | | | GA4 | same |
+| Direct | 101 sessions (8 engaged) | | | GA4 | same |
+| Referral tagassistant.google.com | 4 sessions (3 engaged) | | | GA4 | Tag Assistant testing |
+| AI assistant referrals, Bing organic | 0 | | | GA4 | same |
+| Lead key events | phone_click 2, calendly_click 1 (all Tag Assistant tests), others 0 | | | GA4 | same |

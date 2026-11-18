@@ -3,6 +3,18 @@
 Newest first. Each automated run adds an entry: date, run type (A on the 1st, B on the 15th), focus
 area, pages changed, checker counts before and after, and the next focus area.
 
+## Run B, 2026-11-15
+- Focus area: 3, Rancho Santa Fe, Fairbanks Ranch and Santaluz.
+- Pages changed: rancho-santa-fe.html (October 2026 market section for 92067 and 92091, things to
+  know, three new FAQs, description, dateModified), carmel-valley.html, del-mar.html and
+  solana-beach.html (October 2026 GSDAR figures everywhere, Freddie Mac rate, description month,
+  dateModified; Del Mar and Solana Beach tax date corrected to April 12, 2027), llms.txt,
+  sitemap.xml (four lastmod dates).
+- Checker: 0 errors, 3 warnings, 10 notes before and after.
+- Netlify connection in Composio returns 401; relying on the automatic deploy from main.
+- Report: `reports/2026-11-15.md`.
+- Next run: 2026-12-01, run A, focus area 4 (Poway).
+
 ## Manual changes between runs, 2026-11-04 to 2026-11-08
 - 2026-11-04: 16046 Summer Sage Rd list price changed to $2,250,000 at Ricky's request, in all seven
   places it appears (listing page title, Open Graph, schema name and offers.price, price block,

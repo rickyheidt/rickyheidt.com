@@ -21,13 +21,16 @@ to Done with the date. See PLAYBOOK.md section 6.
 | 18 | Checker: skip the empty lightbox `<img alt="">` placeholder on index.html and sales.html in the width and height check (it has no src) | Technical | False positive warning | Low | 2026-10-21 |
 | 20 | Del Mar bluffs and coastal permit explainer (bluff top lots, seawalls, coastal development permits, the rail realignment) for Del Mar and Solana Beach | New content | A competitor started publishing on Del Mar bluff permits (2026-10-16); no official explainer ranks | Medium | 2026-11-01 |
 | 21 | Re-check whether new Del Mar short term rental permits are limited to primary residences or capped; only news and third party sites say so | Facts | City of Del Mar news item (2026-02-23) does not say; delmar.ca.us municipal code page not fetched | Low | 2026-11-01 |
-| 22 | October 2026 numbers for carmel-valley.html, del-mar.html and solana-beach.html (and their comparison sections and FAQs) once the GSDAR updates publish (run B, 2026-11-15) | Market | October URLs served the September report on 2026-11-01 | High | 2026-11-01 |
+| 28 | Rancho Santa Fe fire and insurance explainer (Fire Hazard Severity Zones by parcel, AB 38 inspections, the district WUI ordinance 2025-04, FAIR Plan), from official sources | New content | RSF fire insurance query is won by the fire district and local news; competitor pages do not explain it | Medium | 2026-11-15 |
+| 29 | Bing indexing: only 1 page in the Bing index; Ricky to submit the sitemap in Bing Webmaster Tools, then recheck | Indexing | Bing crawl stats 2026-11-15 | High | 2026-11-15 |
+| 30 | Confirm whether Fairbanks Ranch is inside the Covenant and its ZIP; add a short subsection if sourced | Facts | No official source found 2026-11-15 | Low | 2026-11-15 |
 | 19 | Real photos on Tier 1 area pages (Ricky to supply), placed near the matching text with descriptive alt text | Images | Area pages have no photos; Google Starter Guide recommends images near relevant text | Medium | 2026-10-25 |
 
 ## Done
 
 | # | Item | Done | Run |
 |---|---|---|---|
+| 22 | October 2026 GSDAR numbers on carmel-valley, del-mar and solana-beach, including comparisons and FAQs | 2026-11-15 | Run B |
 | 1 | `llms.txt` added at the site root | 2026-10-21 | Run A, test run |
 | 2 | `dateModified` and a visible "Updated October 2026" line on carmel-valley.html (keep adding as pages are refreshed) | 2026-10-21 | Run A, test run |
 | 4 | Ledger started; inventory found no market statistics on the site before this run | 2026-10-21 | Run A, test run |
