@@ -102,6 +102,20 @@ for (const [slug, [name, url]] of Object.entries(LINKS)) {
   else if (oldCounty.test(html)) html = html.replace(oldCounty, hoodLinks);
   else problems.push(`${slug}: search link under the contact form not found`);
 
+  // 3. Search tile in the article, right after the "Homes you'll find" list.
+  const tile =
+    `<aside class="hood-tile" aria-label="Search ${name} homes for sale">` +
+    `<div class="hood-tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11h6"/><circle cx="16.5" cy="16.5" r="3.5"/><path d="m19 19 2.5 2.5"/></svg></div>` +
+    `<div class="hood-tile-body"><span class="hood-tile-eyebrow">Live MLS listings</span>` +
+    `<h3>See every home for sale in ${name}</h3>` +
+    `<p>Browse current ${name} listings on a map, save your favorites, and get an alert when something new hits the market.</p></div>` +
+    `<a class="btn btn-coral" href="${href.replace('utm_campaign=hood-search', 'utm_campaign=hood-search-tile')}" rel="noopener" target="_blank">Search ${name} Homes <span aria-hidden="true">&rarr;</span></a>` +
+    `</aside>`;
+  html = html.replace(/<aside class="hood-tile".*?<\/aside>/s, '');
+  const homesList = /(<h2>Homes you(?:'|&#x27;)ll find<\/h2>.*?<\/ul>)/s;
+  if (homesList.test(html)) html = html.replace(homesList, `$1${tile}`);
+  else problems.push(`${slug}: "Homes you'll find" list not found for the search tile`);
+
   if (html !== before) {
     writeFileSync(file, html);
     changed++;

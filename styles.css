@@ -1124,3 +1124,12 @@ a.svc-ext{color:var(--ocean);font-weight:600}
 .tide-dots button:focus-visible{outline:2px solid #8ff4ff;outline-offset:2px}
 @media (max-width:640px){.tide-water{top:-90px;height:calc(100% + 180px)}.tide-src{display:block;width:max-content;margin:8px auto 0}}
 @media (prefers-reduced-motion:reduce){.tide-water{display:none}.tide-w{will-change:auto}}
+
+/* Neighborhood home search tile (added by seo-audit/hood-search-links.mjs) */
+.hood-tile{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;margin:32px 0;padding:26px 28px;border-radius:22px;color:#fff;background:radial-gradient(120% 140% at 100% 0%,rgba(143,244,255,.22),transparent 55%),linear-gradient(135deg,var(--ocean),var(--sea));box-shadow:var(--shadow)}
+.hood-tile-icon{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.16);color:#fff}
+.hood-tile-eyebrow{display:block;font-size:.74rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#ffe0c2;margin-bottom:.35em}
+.prose .hood-tile h3{color:#fff;font-size:1.3rem;margin:0 0 .3em}
+.prose .hood-tile p{color:#e3f1f2;font-size:.95rem;margin:0}
+.hood-tile .btn{white-space:nowrap}
+@media (max-width:760px){.hood-tile{grid-template-columns:1fr;gap:14px;padding:22px}.hood-tile-icon{width:46px;height:46px;border-radius:14px}.hood-tile .btn{width:100%;white-space:normal;text-align:center}}
